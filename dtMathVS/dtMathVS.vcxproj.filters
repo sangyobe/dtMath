@@ -1,0 +1,323 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일\dtMath">
+      <UniqueIdentifier>{e83b0c51-7b2b-4570-b7c4-46e372e10f1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\djLib">
+      <UniqueIdentifier>{649a0131-6877-4aea-b456-cd09abb34d5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\dtMath">
+      <UniqueIdentifier>{3a739673-cb66-408f-bc14-96b9cd749251}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="testCompareClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testDecomposition.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testEulerAngles.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testMatrix.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testMatrix3.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testMatrixInverse.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testPrint.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testQuaternion.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testRotation.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testTransform.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testVector.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testVector3.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testVector4.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testVector6.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testOriErr.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="dhTerm.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testContiAlgebraicRiccatiEq.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testQuadProg.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testMPC.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testGnuPlot.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="testCscMatrix.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="testCompareClass.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testDecomposition.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testEulerAngles.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testMatrix.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testMatrix3.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testMatrixInverse.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testPrint.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testQuaternion.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testRotation.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testTransform.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testVector.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testVector3.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testVector4.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="testVector6.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dhTimeCheck.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtCommaInit.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtDefine.h">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtLDLT.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtLLT.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtLowerTriangular.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtMath.h">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtMatrix.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtMatrix3.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtNoPivLU.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtPartialPivLU.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtQuaternion.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtRotation.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtSVD.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtTransform.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtUpperTriangular.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtVector.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtVector3.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtVector4.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtVector6.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="testOriErr.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dhTerm.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtQR.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="djBezier.hpp">
+      <Filter>헤더 파일\djLib</Filter>
+    </ClInclude>
+    <ClInclude Include="djBezierOri.hpp">
+      <Filter>헤더 파일\djLib</Filter>
+    </ClInclude>
+    <ClInclude Include="testContiAlgebraicRiccatiEq.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtCARE.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="testQuadProg.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtQuadProg.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtGaitCPG.hpp">
+      <Filter>헤더 파일\djLib</Filter>
+    </ClInclude>
+    <ClInclude Include="dtGaitPlaner.hpp">
+      <Filter>헤더 파일\djLib</Filter>
+    </ClInclude>
+    <ClInclude Include="dtSwingBezier.hpp">
+      <Filter>헤더 파일\djLib</Filter>
+    </ClInclude>
+    <ClInclude Include="dtBezier.hpp">
+      <Filter>헤더 파일\djLib</Filter>
+    </ClInclude>
+    <ClInclude Include="dtStanceBezier.hpp">
+      <Filter>헤더 파일\djLib</Filter>
+    </ClInclude>
+    <ClInclude Include="testMPC.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtGnuPlot.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="testGnuPlot.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtCscMatrix.hpp">
+      <Filter>헤더 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="testCscMatrix.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtCARE.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtCommaInit.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtGnuPlot.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtLDLT.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtLLT.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtLowerTriangular.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtMatrix3.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtNoPivLU.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtPartialPivLU.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtQR.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtQuadProg.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtQuaternion.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtRotation.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtCscMatrix.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtSVD.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtTransform.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtUpperTriangular.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtVector.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtVector3.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtVector4.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+    <ClInclude Include="dtMath\dtVector6.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dtMath\dtMatrix.ipp">
+      <Filter>소스 파일\dtMath</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,1165 @@
+/*!
+\file       dtGnuPlot.hpp
+\brief      dtGnuPlot, Graphing utility for dtMath in windows
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Who is next author?
+\date       2021. 07. 06
+\version    1.0.0
+\see       gnuplot software must be installed (http://www.gnuplot.info/)
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
+
+#pragma once
+#include <stdio.h>
+#include <stdint.h>
+#include <windows.h>
+#include <string.h>
+#include <tchar.h>
+#include "dtMath.h"
+
+class CGnuPlotHandle
+{
+public:
+    HWND hParent;
+    HWND hText;
+    HWND hGraph;
+
+    CGnuPlotHandle();
+    int8_t GetHandle(const char *gnuplotName);
+    int8_t GetHandle(const WCHAR *gnuplotName);
+
+private:
+    static BOOL CALLBACK GetTextWindowA(HWND hWnd, LPARAM lParam);
+    static BOOL CALLBACK GetGraphWindowA(HWND hWnd, LPARAM lParam);
+    static BOOL CALLBACK GetTextWindowW(HWND hWnd, LPARAM lParam);
+    static BOOL CALLBACK GetGraphWindowW(HWND hWnd, LPARAM lParam);
+};
+
+template <typename m_type = float>
+class CdtGnuPlot
+{
+private:
+    CGnuPlotHandle m_hWnd;
+
+    int m_dataNum;
+    char m_filePath[64][256];
+
+    bool m_firstPlot = false;
+    char m_strCmd[4096];
+    int m_strCmdPos;
+
+    void Cmd(char *format);
+    void Cmd(WCHAR *format);
+    int8_t MakeDataFile(const m_type *y, const int dataLen);
+    int8_t MakeDataFile(const m_type *x, const m_type *y, const int dataLen);
+    int8_t MakeDataFile(const m_type *x, const m_type *y, const m_type *z, const int dataLen);
+
+public:
+    enum PointType
+    {
+        PT_DOT = 0,
+        PT_PLUS,
+        PT_CROSS,
+        PT_ASTERISK,
+        PT_SQUARE,
+        PT_SQUARE_FILL,
+        PT_CIRCLE,
+        PT_CIRCLE_FILL,
+        PT_TRIANGLE_UP,
+        PT_TRIANGLE_UP_FILL,
+        PT_TRIANGLE_DN,
+        PT_TRIANGLE_DN_FILL,
+        PT_DIAMOND,
+        PT_DIAMOND_FILL,
+        PT_PANTAGON,
+        PT_PANTAGON_FILL
+    };
+
+public:
+    CdtGnuPlot();
+    CdtGnuPlot(const char *gnuplotName);
+    CdtGnuPlot(const WCHAR *gnuplotName);
+    ~CdtGnuPlot();
+
+    // send a command to gnuplot
+    void Cmd(const char *format, ...);
+    void Cmd(const WCHAR *format, ...);
+
+    // plot data
+    void SetData(const char *filePath);
+    template <uint16_t row, uint16_t col>
+    int8_t SetData(const CdtMatrix<row, col, m_type> &m);
+    
+    // plot properties
+    void SetGrid(bool on = true);
+    void SetTitle(const char *name, const int size = 0, const char * font = nullptr);
+    void SetXlabel(const char *name, const int size = 0, const char * font = nullptr);
+    void SetYlabel(const char *name, const int size = 0, const char * font = nullptr);
+    void SetZlabel(const char *name, const int size = 0, const char * font = nullptr);
+    void SetXtics(const int majorTic = 0, const int minorTic = -1);
+    void SetYtics(const int majorTic = 0, const int minorTic = -1);
+    void SetZtics(const int majorTic = 0, const int minorTic = -1);
+    void SetXrange(const m_type min, const m_type max);
+    void SetYrange(const m_type min, const m_type max);
+    void SetZrange(const m_type min, const m_type max);
+    void SetMultiPlot(const int row, const int col, const char *title = nullptr, const int fontSz = 0, const char *font = nullptr);
+
+    // generate the plot scripts to send to gnuplot
+    void Point(const char *filePath, const int idxX, const int idxY,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const char pointType = PT_PLUS, const int pointSz = -1);
+    int8_t Point(const int idxX, const int idxY,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const char pointType = PT_PLUS, const int pointSz = -1);
+    int8_t Point(const m_type *x, const m_type *y, const int dataLen,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const char pointType = PT_PLUS, const int pointSz = -1);
+
+    void Line(const char *filePath, const int idxX, const int idxY,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1);
+    int8_t Line(const int idxX, const int idxY,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1);
+    int8_t Line(const m_type *x, const m_type *y, const int dataLen,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1);
+
+    void LinePoint(const char *filePath, const int idxX, const int idxY,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+    int8_t LinePoint(const int idxX, const int idxY,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+    int8_t LinePoint(const m_type *x, const m_type *y, const int dataLen,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+
+    void Dash(const char *filePath, const int idxX, const int idxY,
+        const char *title = nullptr, const char *pattern = "-",
+        const char *colorName = nullptr, const int lineWidth = -1);
+    int8_t Dash(const int idxX, const int idxY,
+        const char *title = nullptr, const char *pattern = "-",
+        const char *colorName = nullptr, const int lineWidth = -1);
+    int8_t Dash(const m_type *x, const m_type *y, const int dataLen,
+        const char *title = nullptr, const char *pattern = "-",
+        const char *colorName = nullptr, const int lineWidth = -1);
+
+    // generate the splot(3D) scripts to send to gnuplot
+    void Point(const char *filePath, const int idxX, const int idxY, const int idxZ,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const char pointType = -1, const int pointSz = -1);
+    int8_t Point(const int idxX, const int idxY, const int idxZ,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const char pointType = -1, const int pointSz = -1);
+    int8_t Point(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const char pointType = -1, const int pointSz = -1);
+
+    void Line(const char *filePath, const int idxX, const int idxY, const int idxZ,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1);
+    int8_t Line(const int idxX, const int idxY, const int idxZ,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1);
+    int8_t Line(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1);
+
+    void LinePoint(const char *filePath, const int idxX, const int idxY, const int idxZ,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+    int8_t LinePoint(const int idxX, const int idxY, const int idxZ,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+    int8_t LinePoint(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+
+    void Dash(const char *filePath, const int idxX, const int idxY, const int idxZ,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1, const char *pattern = nullptr);
+    int8_t Dash(const int idxX, const int idxY, const int idxZ,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1, const char *pattern = nullptr);
+    int8_t Dash(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
+        const char *title = nullptr, const char *colorName = nullptr,
+        const int lineWidth = -1, const char *pattern = nullptr);
+    
+    // send the plot(or splot) script
+    void Draw();
+};
+
+template <typename m_type>
+inline CdtGnuPlot<m_type>::CdtGnuPlot()
+{
+    m_dataNum = 0;
+    memset(m_filePath, 0, sizeof(m_filePath));
+    memset(m_strCmd, 0, sizeof(m_strCmd));
+    m_strCmdPos = 0;
+
+    m_hWnd.GetHandle("wgnuplot.exe");
+
+    Cmd("reset"); // init setting
+    Cmd("set autoscale"); //
+    Cmd("set grid x y z vertical"); // grid on
+    Cmd("set xyplane at 0");
+    //Cmd("set mxtics"); // set minor tic marks
+    //Cmd("set mytics"); // set minor tic marks
+    //Cmd("set mztics"); // set minor tic marks
+    Cmd("set key spacing 0.9");
+}
+
+template <typename m_type>
+inline CdtGnuPlot<m_type>::CdtGnuPlot(const char *gnuplotPath)
+{
+    m_dataNum = 0;
+    memset(m_filePath, 0, sizeof(m_filePath));
+    memset(m_strCmd, 0, sizeof(m_strCmd));
+    m_strCmdPos = 0;
+
+    m_hWnd.GetHandle(gnuplotPath);
+
+    Cmd("reset"); // init setting
+    Cmd("set autoscale"); //
+    Cmd("set grid x y z vertical"); // grid on
+    Cmd("set xyplane at 0");
+    //Cmd("set mxtics"); // set minor tic marks
+    //Cmd("set mytics"); // set minor tic marks
+    //Cmd("set mztics"); // set minor tic marks
+    Cmd("set key spacing 0.9");
+}
+
+template <typename m_type>
+inline CdtGnuPlot<m_type>::CdtGnuPlot(const WCHAR *gnuplotPath)
+{
+    m_dataNum = 0;
+    memset(m_filePath, 0, sizeof(m_filePath));
+    memset(m_strCmd, 0, sizeof(m_strCmd));
+    m_strCmdPos = 0;
+
+    m_hWnd.GetHandle(gnuplotPath);
+
+    Cmd(L"clear"); // show windows & "clear" command erases the current screen or output 
+    Cmd(L"reset"); // init setting
+    Cmd(L"set autoscale"); //
+    Cmd(L"set grid x y z vertical"); // grid on
+    Cmd(L"set xyplane at 0");
+    //Cmd(L"set mxtics"); // set minor tic marks
+}
+
+template <typename m_type>
+inline CdtGnuPlot<m_type>::~CdtGnuPlot()
+{
+    //if (m_hWndGraph)	::SendMessage(m_hWndGraph, WM_CLOSE, 0, 0);
+    //if (m_hWndText)	::SendMessage(m_hWndText, WM_CLOSE, 0, 0);
+    //if (m_hWndParent) ::SendMessage(m_hWndParent, WM_CLOSE, 0, 0);
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Cmd(const char *format, ...)
+{
+    va_list ap;
+    char strCmd[1024];
+
+    va_start(ap, format);
+    vsprintf_s(strCmd, sizeof(strCmd), format, ap);
+    va_end(ap);
+
+    if (m_hWnd.hText)
+    {
+        for (char *p = strCmd; *p; ++p)
+        {
+            PostMessageA(m_hWnd.hText, WM_CHAR, *p, 1);
+        }
+        PostMessageA(m_hWnd.hText, WM_CHAR, '\n', 1);
+    }
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Cmd(const WCHAR *format, ...)
+{
+    va_list ap;
+    WCHAR strCmd[1024];
+
+    va_start(ap, format);
+    vswprintf_s(strCmd, sizeof(strCmd) / sizeof(WCHAR), format, ap);
+    va_end(ap);
+
+    if (m_hWnd.hText)
+    {
+        for (WCHAR *p = strCmd; *p; ++p)
+        {
+            PostMessageW(m_hWnd.hText, WM_CHAR, *p, 1);
+        }
+        PostMessageW(m_hWnd.hText, WM_CHAR, '\n', 1);
+    }
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::SetData(const char *filePath)
+{
+    memcpy(m_filePath, filePath, sizeof(m_filePath));
+}
+
+template<typename m_type>
+template<uint16_t row, uint16_t col>
+inline int8_t CdtGnuPlot<m_type>::SetData(const CdtMatrix<row, col, m_type>& mat)
+{
+    // file name
+    memset(&m_filePath[63][0], 0, sizeof(char) * 256);
+    sprintf_s(&m_filePath[63][0], 256, "C:\\temp\\%p-%02d.dat", this, 63);
+
+    FILE *fp;
+    fopen_s(&fp, &m_filePath[63][0], "w");
+
+    if (fp)
+    {
+        for (int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                fprintf(fp, "%f\t", mat(i,j));
+            }
+            fprintf(fp, "\n");
+        }
+        fclose(fp);
+    }
+    else return -1;
+
+    return 0;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::SetGrid(bool on)
+{
+    if (on) Cmd("set grid x y z vertical");
+    else Cmd("unset grid");
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::SetTitle(const char * name, int size, const char * font)
+{
+    char strCmd[1024];
+
+    if (font != nullptr && size > 0)
+        sprintf_s(strCmd, "set title \"%s\" font \"%s,%d\"", name, font, size);
+    else if (font == nullptr && size > 0)
+        sprintf_s(strCmd, "set title \"%s\" font \",%d\"", name, size);
+    else if (font != nullptr && size <= 0)
+        sprintf_s(strCmd, "set title \"%s\" font \"%s,10\"", name, font);
+    else
+        sprintf_s(strCmd, "set title \"%s\"", name);
+
+    Cmd(strCmd);
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::SetXlabel(const char * name, int size, const char * font)
+{
+    char strCmd[1024];
+
+    if (font != nullptr && size > 0)
+        sprintf_s(strCmd, "set xlabel \"%s\" font \"%s,%d\"", name, font, size);
+    else if (font == nullptr && size > 0)
+        sprintf_s(strCmd, "set xlabel \"%s\" font \",%d\"", name, size);
+    else if (font != nullptr && size <= 0)
+        sprintf_s(strCmd, "set xlabel \"%s\" font \"%s,10\"", name, font);
+    else
+        sprintf_s(strCmd, "set xlabel \"%s\"", name);
+
+    Cmd(strCmd);
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::SetYlabel(const char * name, int size, const char * font)
+{
+    char strCmd[1024];
+
+    if (font != nullptr && size > 0)
+        sprintf_s(strCmd, "set ylabel \"%s\" font \"%s,%d\"", name, font, size);
+    else if (font == nullptr && size > 0)
+        sprintf_s(strCmd, "set ylabel \"%s\" font \",%d\"", name, size);
+    else if (font != nullptr && size <= 0)
+        sprintf_s(strCmd, "set ylabel \"%s\" font \"%s,10\"", name, font);
+    else
+        sprintf_s(strCmd, "set ylabel \"%s\"", name);
+
+    Cmd(strCmd);
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::SetZlabel(const char * name, int size, const char * font)
+{
+    char strCmd[1024];
+
+    if (font != nullptr && size > 0)
+        sprintf_s(strCmd, "set zlabel \"%s\" font \"%s,%d\"", name, font, size);
+    else if (font == nullptr && size > 0)
+        sprintf_s(strCmd, "set zlabel \"%s\" font \",%d\"", name, size);
+    else if (font != nullptr && size <= 0)
+        sprintf_s(strCmd, "set zlabel \"%s\" font \"%s,10\"", name, font);
+    else
+        sprintf_s(strCmd, "set zlabel \"%s\"", name);
+
+    Cmd(strCmd);
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::SetXtics(const int majorTic, const int minorTic)
+{
+    char strCmd[32];
+
+    if (majorTic < 0) sprintf_s(strCmd, "unset xtics");
+    else if (majorTic == 0) sprintf_s(strCmd, "set xtics autofreq");
+    else sprintf_s(strCmd, "set xtics %d", majorTic);
+
+    Cmd(strCmd);
+
+    memset(strCmd, 0, sizeof(strCmd));
+
+    if (minorTic < 0) sprintf_s(strCmd, "unset mxtics");
+    else if (minorTic == 0) sprintf_s(strCmd, "set mxtics");
+    else sprintf_s(strCmd, "set mxtics %d", minorTic);
+
+    Cmd(strCmd);
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::SetYtics(const int majorTic, const int minorTic)
+{
+    char strCmd[32];
+
+    if (majorTic < 0) sprintf_s(strCmd, "unset ytics");
+    else if (majorTic == 0) sprintf_s(strCmd, "set ytics autofreq");
+    else sprintf_s(strCmd, "set ytics %d", majorTic);
+
+    Cmd(strCmd);
+
+    memset(strCmd, 0, sizeof(strCmd));
+
+    if (minorTic < 0) sprintf_s(strCmd, "unset mytics");
+    else if (minorTic == 0) sprintf_s(strCmd, "set mytics");
+    else sprintf_s(strCmd, "set mytics %d", minorTic);
+
+    Cmd(strCmd);
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::SetZtics(const int majorTic, const int minorTic)
+{
+    char strCmd[32];
+
+    if (majorTic < 0) sprintf_s(strCmd, "unset ztics");
+    else if (majorTic == 0) sprintf_s(strCmd, "set ztics autofreq");
+    else sprintf_s(strCmd, "set ztics %d", majorTic);
+
+    Cmd(strCmd);
+
+    memset(strCmd, 0, sizeof(strCmd));
+
+    if (minorTic < 0) sprintf_s(strCmd, "unset mztics");
+    else if (minorTic == 0) sprintf_s(strCmd, "set mztics");
+    else sprintf_s(strCmd, "set mztics %d", minorTic);
+
+    Cmd(strCmd);
+}
+
+template<typename m_type>
+inline void CdtGnuPlot<m_type>::SetXrange(const m_type min, const m_type max)
+{
+    char strCmd[32];
+    sprintf_s(strCmd, "set xrange [%f:%f]", min, max);
+    Cmd(strCmd);
+}
+
+template<typename m_type>
+inline void CdtGnuPlot<m_type>::SetYrange(const m_type min, const m_type max)
+{
+    char strCmd[32];
+    sprintf_s(strCmd, "set yrange [%f:%f]", min, max);
+    Cmd(strCmd);
+}
+
+template<typename m_type>
+inline void CdtGnuPlot<m_type>::SetZrange(const m_type min, const m_type max)
+{
+    char strCmd[32];
+    sprintf_s(strCmd, "set zrange [%f:%f]", min, max);
+    Cmd(strCmd);
+}
+
+template<typename m_type>
+inline void CdtGnuPlot<m_type>::SetMultiPlot(const int row, const int col, const char *title, const int fontSz, const char *font)
+{
+    char strCmd[1024];
+    int strCmdPos = 0;
+
+    strCmdPos = sprintf_s(strCmd, "set multiplot layout %d,%d", row, col);
+    if (title != nullptr) strCmdPos += sprintf_s(strCmd, " title \"%s\"", title);
+
+    if (font != nullptr && fontSz > 0) strCmdPos += sprintf_s(strCmd, " font \"%s:%d\"", font, fontSz);
+    else if (font != nullptr && fontSz <= 0) strCmdPos += sprintf_s(strCmd, " font \"%s:\"", font);
+    else if (font == nullptr && fontSz > 0) strCmdPos += sprintf_s(strCmd, " font \":%d\"", fontSz);    
+    
+    Cmd(strCmd);
+
+    //m_multiPlot = true;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Point(const char *filePath, const int idxX, const int idxY,
+    const char *title, const char *colorName, const char pointType, const int pointSz)
+{
+    if (!m_firstPlot)
+    {
+        m_firstPlot = true;
+        memset(m_strCmd, 0, sizeof(m_strCmd));
+        m_strCmdPos = sprintf_s(m_strCmd, "plot '%s' using %d:%d with points", filePath, idxX, idxY);
+    }
+    else
+    {
+        m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, ", '%s' using %d:%d with points", filePath, idxX, idxY);
+    }
+
+    if (colorName != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lc rgb \"%s\"", colorName);
+    if (pointType >= 0 && pointType < 16) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pt %d", pointType);
+    else m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pt \"%c\"", pointType);
+    if (pointSz > 0) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " ps %d", pointSz);
+    if (title != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " title \"%s\"", title);
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Point(const int idxX, const int idxY,
+    const char *title, const char *colorName, const char pointType, const int pointSz)
+{
+    if (m_filePath[63][0] == 0) return -1;
+
+    Point(&m_filePath[63][0], idxX, idxY, title, colorName, pointType, pointSz);
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Point(const m_type *x, const m_type *y, const int dataLen,
+    const char *title, const char *colorName, const char pointType, const int pointSz)
+{
+    if (m_dataNum >= 63) return -1;
+
+    if (x != nullptr)
+    {
+        if (MakeDataFile(x, y, dataLen)) return -1;
+        Point(&m_filePath[m_dataNum][0], 1, 2, title, colorName, pointType, pointSz);
+    }
+    else
+    {
+        if (MakeDataFile(y, dataLen)) return -1;
+        Point(&m_filePath[m_dataNum][0], 0, 1, title, colorName, pointType, pointSz);
+    }
+
+    m_dataNum++;
+
+    return 0;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Line(const char *filePath, const int idxX, const int idxY,
+    const char *title, const char *colorName, const int lineWidth)
+{
+    if (!m_firstPlot)
+    {
+        m_firstPlot = true;
+        memset(m_strCmd, 0, sizeof(m_strCmd));
+        m_strCmdPos = sprintf_s(m_strCmd, "plot '%s' using %d:%d with lines", filePath, idxX, idxY);
+    }
+    else
+    {
+        m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, ", '%s' using %d:%d with lines", filePath, idxX, idxY);
+    }
+
+    if (colorName != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lc rgb \"%s\"", colorName);
+    if (lineWidth > 0) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lw %d", lineWidth);
+    if (title != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " title \"%s\"", title);
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Line(const int idxX, const int idxY,
+    const char *title, const char *colorName, const int lineWidth)
+{
+    if (m_filePath[63][0] == 0) return -1;
+
+    Line(&m_filePath[63][0], idxX, idxY, title, colorName, lineWidth);
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Line(const m_type *x, const m_type *y, const int dataLen,
+    const char *title, const char *colorName, const int lineWidth)
+{
+    if (m_dataNum >= 63) return -1;
+
+    if (x != nullptr)
+    {
+        if (MakeDataFile(x, y, dataLen)) return -1;
+        Line(&m_filePath[m_dataNum][0], 1, 2, title, colorName, lineWidth);
+    }
+    else
+    {
+        if (MakeDataFile(y, dataLen)) return -1;
+        Line(&m_filePath[m_dataNum][0], 0, 1, title, colorName, lineWidth);
+    }
+
+    m_dataNum++;
+
+    return 0;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::LinePoint(const char *filePath, const int idxX, const int idxY,
+    const char *title, const char *colorName, const int lineWidth, const char pointType, const int pointSz, const int pointInterval)
+{
+    if (!m_firstPlot)
+    {
+        m_firstPlot = true;
+        memset(m_strCmd, 0, sizeof(m_strCmd));
+        m_strCmdPos = sprintf_s(m_strCmd, "plot '%s' using %d:%d with linespoints", filePath, idxX, idxY);
+    }
+    else
+    {
+        m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, ", '%s' using %d:%d with linespoints", filePath, idxX, idxY);
+    }
+
+    if (colorName != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lc rgb \"%s\"", colorName);
+    if (lineWidth > 0)m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lw %d", lineWidth);
+    if (pointType > 0 && pointType < 16) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pt %d", pointType);
+    else m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pt \"%c\"", pointType);
+    if (pointSz > 0) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " ps %d", pointSz);
+    if (pointInterval) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pi %d", pointInterval);
+    if (title != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " title \"%s\"", title);
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::LinePoint(const int idxX, const int idxY,
+    const char *title, const char *colorName, const int lineWidth, const char pointType, const int pointSz, const int pointInterval)
+{
+    if (m_filePath[63][0] == 0) return -1;
+
+    LinePoint(&m_filePath[63][0], idxX, idxY, title, colorName, lineWidth, pointType, pointSz, pointInterval);
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::LinePoint(const m_type *x, const m_type *y, const int dataLen,
+    const char *title, const char *colorName, const int lineWidth, const char pointType, const int pointSz, const int pointInterval)
+{
+    if (m_dataNum >= 63) return -1;
+
+    if (x != nullptr)
+    {
+        if (MakeDataFile(x, y, dataLen)) return -1;
+        LinePoint(&m_filePath[m_dataNum][0], 1, 2, title, colorName, lineWidth, pointType, pointSz, pointInterval);
+    }
+    else
+    {
+        if (MakeDataFile(y, dataLen)) return -1;
+        LinePoint(&m_filePath[m_dataNum][0], 0, 1, title, colorName, lineWidth, pointType, pointSz, pointInterval);
+    }
+
+    m_dataNum++;
+
+    return 0;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Dash(const char *filePath, const int idxX, const int idxY,
+    const char *title, const char *pattern, const char *colorName, const int lineWidth)
+{
+    if (!m_firstPlot)
+    {
+        m_firstPlot = true;
+        memset(m_strCmd, 0, sizeof(m_strCmd));
+        m_strCmdPos = sprintf_s(m_strCmd, "plot '%s' using %d:%d with lines", filePath, idxX, idxY);
+    }
+    else
+    {
+        m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, ", '%s' using %d:%d with lines", filePath, idxX, idxY);
+    }
+
+    if (colorName != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lc rgb \"%s\"", colorName);
+    if (lineWidth > 0) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lw %d", lineWidth);
+    if (pattern != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " dt \"%s\"", pattern);
+    if (title != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " title \"%s\"", title);
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Dash(const int idxX, const int idxY,
+    const char *title, const char *pattern, const char *colorName, const int lineWidth)
+{
+    if (m_filePath[63][0] == 0) return -1;
+
+    Dash(&m_filePath[63][0], idxX, idxY, title, pattern, colorName, lineWidth);
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Dash(const m_type * x, const m_type * y, const int dataLen,
+    const char *title, const char *pattern, const char *colorName, const int lineWidth)
+{
+    if (m_dataNum >= 63) return -1;
+
+    if (x != nullptr)
+    {
+        if (MakeDataFile(x, y, dataLen)) return -1;
+        Dash(&m_filePath[m_dataNum][0], 1, 2, title, pattern, colorName, lineWidth);
+    }
+    else
+    {
+        if (MakeDataFile(y, dataLen)) return -1;
+        Dash(&m_filePath[m_dataNum][0], 0, 1, title, pattern, colorName, lineWidth);
+    }
+
+    m_dataNum++;
+
+    return 0;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Point(const char *filePath, const int idxX, const int idxY, const int idxZ,
+    const char *title, const char *colorName, const char pointType, const int pointSz)
+{
+    if (!m_firstPlot)
+    {
+        m_firstPlot = true;
+        memset(m_strCmd, 0, sizeof(m_strCmd));
+        m_strCmdPos = sprintf_s(m_strCmd, "splot '%s' using %d:%d:%d with points", filePath, idxX, idxY, idxZ);
+    }
+    else
+    {
+        m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, ", '%s' using %d:%d:%d with points", filePath, idxX, idxY, idxZ);
+    }
+
+    if (colorName != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lc rgb \"%s\"", colorName);
+    if (pointType > 0 && pointType < 16) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pt %d", pointType);
+    else m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pt \"%c\"", pointType);
+    if (pointSz > 0) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " ps %d", pointSz);
+    if (title != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " title \"%s\"", title);
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Point(const int idxX, const int idxY, const int idxZ,
+    const char *title, const char *colorName, const char pointType, const int pointSz)
+{
+    if (m_filePath[63][0] == 0) return -1;
+
+    Point(&m_filePath[63][0], idxX, idxY, idxZ, title, colorName, pointType, pointSz);
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Point(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
+    const char *title, const char *colorName, const char pointType, const int pointSz)
+{
+    if (m_dataNum >= 63) return -1;
+
+    if (MakeDataFile(x, y, z, dataLen)) return -1;
+
+    Point(&m_filePath[m_dataNum][0], 1, 2, 3, title, colorName, pointType, pointSz);
+
+    m_dataNum++;
+
+    return 0;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Line(const char *filePath, const int idxX, const int idxY, const int idxZ,
+    const char *title, const char *colorName, const int lineWidth)
+{
+    if (!m_firstPlot)
+    {
+        m_firstPlot = true;
+        memset(m_strCmd, 0, sizeof(m_strCmd));
+        m_strCmdPos = sprintf_s(m_strCmd, "splot '%s' using %d:%d:%d with lines", filePath, idxX, idxY, idxZ);
+    }
+    else
+    {
+        m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, ", '%s' using %d:%d:%d with lines", filePath, idxX, idxY, idxZ);
+    }
+
+    if (colorName != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lc rgb \"%s\"", colorName);
+    if (lineWidth > 0) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lw %d", lineWidth);
+    if (title != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " title \"%s\"", title);
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Line(const int idxX, const int idxY, const int idxZ,
+    const char *title, const char *colorName, const int lineWidth)
+{
+    if (m_filePath[63][0] == 0) return -1;
+
+    Line(&m_filePath[63][0], idxX, idxY, idxZ, title, colorName, lineWidth);
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Line(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
+    const char *title, const char *colorName, const int lineWidth)
+{
+    if (m_dataNum >= 63) return -1;
+
+    if (MakeDataFile(x, y, z, dataLen)) return -1;
+
+    Line(&m_filePath[m_dataNum][0], 1, 2, 3, title, colorName, lineWidth);
+
+    m_dataNum++;
+
+    return 0;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::LinePoint(const char *filePath, const int idxX, const int idxY, const int idxZ,
+    const char *title, const char *colorName, const int lineWidth, const char pointType, const int pointSz, const int pointInterval)
+{
+    if (!m_firstPlot)
+    {
+        m_firstPlot = true;
+        memset(m_strCmd, 0, sizeof(m_strCmd));
+        m_strCmdPos = sprintf_s(m_strCmd, "splot '%s' using %d:%d:%d with linespoints", filePath, idxX, idxY, idxZ);
+    }
+    else
+    {
+        m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, ", '%s' using %d:%d:%d with linespoints", filePath, idxX, idxY, idxZ);
+    }
+
+    if (colorName != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lc rgb \"%s\"", colorName);
+    if (lineWidth > 0)m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lw %d", lineWidth);
+    if (pointType > 0 && pointType < 16) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pt %d", pointType);
+    else m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pt \"%c\"", pointType);
+    if (pointSz > 0) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " ps %d", pointSz);
+    if (pointInterval) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " pi %d", pointInterval);
+    if (title != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " title \"%s\"", title);
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::LinePoint(const int idxX, const int idxY, const int idxZ,
+    const char *title, const char *colorName, const int lineWidth, const char pointType, const int pointSz, const int pointInterval)
+{
+    if (m_filePath[63][0] == 0) return -1;
+
+    LinePoint(&m_filePath[63][0], idxX, idxY, idxZ, title, colorName, lineWidth, pointType, pointSz, pointInterval);
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::LinePoint(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
+    const char *title, const char *colorName, const int lineWidth, const char pointType, const int pointSz, const int pointInterval)
+{
+    if (m_dataNum >= 63) return -1;
+
+    if (MakeDataFile(x, y, z, dataLen)) return -1;
+
+    LinePoint(&m_filePath[m_dataNum][0], 1, 2, 3, title, colorName, lineWidth, pointType, pointSz, pointInterval);
+
+    m_dataNum++;
+
+    return 0;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Dash(const char *filePath, const int idxX, const int idxY, const int idxZ,
+    const char *title, const char *colorName, const int lineWidth, const char *pattern)
+{
+    if (!m_firstPlot)
+    {
+        m_firstPlot = true;
+        memset(m_strCmd, 0, sizeof(m_strCmd));
+        m_strCmdPos = sprintf_s(m_strCmd, "splot '%s' using %d:%d:%d with lines", filePath, idxX, idxY, idxZ);
+    }
+    else
+    {
+        m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, ", '%s' using %d:%d:%d with lines", filePath, idxX, idxY, idxZ);
+    }
+
+    if (colorName != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lc rgb \"%s\"", colorName);
+    if (lineWidth > 0) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " lw %d", lineWidth);
+    if (pattern != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " dt \"%s\"", pattern);
+    if (title != nullptr) m_strCmdPos += sprintf_s(m_strCmd + m_strCmdPos, 4096 - m_strCmdPos, " title \"%s\"", title);
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Dash(const int idxX, const int idxY, const int idxZ,
+    const char *title, const char *colorName, const int lineWidth, const char *pattern)
+{
+    if (m_filePath[63][0] == 0) return -1;
+
+    Dash(&m_filePath[63][0], idxX, idxY, idxZ, title, colorName, lineWidth, pattern);
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::Dash(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
+    const char *title, const char *colorName, const int lineWidth, const char *pattern)
+{
+    if (m_dataNum >= 63) return -1;
+
+    if (MakeDataFile(x, y, z, dataLen)) return -1;
+
+    Dash(&m_filePath[m_dataNum][0], 1, 2, 3, title, colorName, lineWidth, pattern);
+
+    m_dataNum++;
+
+    return 0;
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Draw()
+{
+    Cmd("clear"); // show windows & "clear" command erases the current screen or output 
+
+    if (m_strCmd[0] != 0)
+        Cmd(m_strCmd);
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Cmd(char * format)
+{
+    if (m_hWnd.hText)
+    {
+        for (char *p = format; *p; ++p)
+        {
+            PostMessageA(m_hWnd.hText, WM_CHAR, *p, 1);
+        }
+        PostMessageA(m_hWnd.hText, WM_CHAR, '\n', 1);
+    }
+}
+
+template <typename m_type>
+inline void CdtGnuPlot<m_type>::Cmd(WCHAR * format)
+{
+    if (m_hWnd.hText)
+    {
+        for (WCHAR *p = format; *p; ++p)
+        {
+            PostMessageW(m_hWnd.hText, WM_CHAR, *p, 1);
+        }
+        PostMessageW(m_hWnd.hText, WM_CHAR, '\n', 1);
+    }
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::MakeDataFile(const m_type *y, const int dataLen)
+{
+    memset(&m_filePath[m_dataNum][0], 0, sizeof(char) * 256);
+    sprintf_s(&m_filePath[m_dataNum][0], 256, "C:\\temp\\%p-%02d.dat", this, m_dataNum);
+
+    FILE *fp;
+    fopen_s(&fp, &m_filePath[m_dataNum][0], "w");
+
+    if (fp)
+    {
+        for (int i = 0; i < dataLen; i++)
+        {
+            fprintf(fp, "%f\n", y[i]);
+        }
+        fclose(fp);
+    }
+    else return -1;
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::MakeDataFile(const m_type *x, const m_type *y, const int dataLen)
+{
+    memset(&m_filePath[m_dataNum][0], 0, sizeof(char) * 256);
+    sprintf_s(&m_filePath[m_dataNum][0], 256, "C:\\temp\\%p-%02d.dat", this, m_dataNum);
+
+    FILE *fp;
+    fopen_s(&fp, &m_filePath[m_dataNum][0], "w");
+
+    if (fp)
+    {
+        for (int i = 0; i < dataLen; i++)
+        {
+            fprintf(fp, "%f\t%f\n", x[i], y[i]);
+        }
+        fclose(fp);
+    }
+    else return -1;
+
+    return 0;
+}
+
+template <typename m_type>
+inline int8_t CdtGnuPlot<m_type>::MakeDataFile(const m_type * x, const m_type * y, const m_type * z, const int dataLen)
+{
+    memset(&m_filePath[m_dataNum][0], 0, sizeof(char) * 256);
+    sprintf_s(&m_filePath[m_dataNum][0], 256, "C:\\temp\\%p-%02d.dat", this, m_dataNum);
+
+    FILE *fp;
+    fopen_s(&fp, &m_filePath[m_dataNum][0], "w");
+
+    if (fp)
+    {
+        for (int i = 0; i < dataLen; i++)
+        {
+            fprintf(fp, "%f\t%f\t%f\n", x[i], y[i], z[i]);
+        }
+        fclose(fp);
+    }
+    else return -1;
+
+    return 0;
+}
+
+
+/* CGnuPlotHandle Class definition */
+inline CGnuPlotHandle::CGnuPlotHandle()
+{
+    hParent = NULL;
+    hText = NULL;
+    hGraph = NULL;
+}
+
+inline int8_t CGnuPlotHandle::GetHandle(const char *gnuplotPath)
+{
+    STARTUPINFOA si;
+    memset(&si, 0, sizeof(si));
+    si.cb = sizeof(STARTUPINFOA);
+    si.dwFlags = STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_HIDE;
+
+    PROCESS_INFORMATION pi;
+    memset(&pi, 0, sizeof(pi));
+
+    char path[MAX_PATH + 1];
+    strncpy_s(path, gnuplotPath, MAX_PATH);
+
+    BOOL bSuccess = CreateProcessA(NULL, path, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+    if (!bSuccess) return -1;
+
+    for (int i = 0; i < 100 && !hText; ++i) {
+        EnumThreadWindows(pi.dwThreadId, GetTextWindowA, (LPARAM)this);
+        Sleep(10);
+    }
+
+    for (int i = 0; i < 100 && !hGraph; ++i) {
+        EnumThreadWindows(pi.dwThreadId, GetGraphWindowA, (LPARAM)this);
+        Sleep(10);
+    }
+
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+
+    if (hParent) {
+        ::ShowWindow(hParent, SW_HIDE);
+    }
+    else return -1;
+
+    return 0;
+}
+
+inline int8_t CGnuPlotHandle::GetHandle(const WCHAR * gnuplotName)
+{
+    STARTUPINFO si;
+    memset(&si, 0, sizeof(si));
+    si.cb = sizeof(STARTUPINFO);
+    si.dwFlags = STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_HIDE;
+
+    PROCESS_INFORMATION pi;
+    memset(&pi, 0, sizeof(pi));
+
+    WCHAR path[MAX_PATH + 1];
+    wcsncpy_s(path, MAX_PATH + 1, gnuplotName, MAX_PATH);
+
+    BOOL bSuccess = CreateProcessW(NULL, path, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+    if (!bSuccess) return -1;
+
+    for (int i = 0; i < 100 && !hText; ++i)
+    {
+        EnumThreadWindows(pi.dwThreadId, GetTextWindowW, (LPARAM)this);
+        Sleep(10);
+    }
+
+    for (int i = 0; i < 100 && !hGraph; ++i)
+    {
+        EnumThreadWindows(pi.dwThreadId, GetGraphWindowW, (LPARAM)this);
+        Sleep(10);
+    }
+
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+
+    if (hParent)
+    {
+        ::ShowWindow(hParent, SW_HIDE);
+    }
+    else return -1;
+
+    return 0;
+}
+
+inline BOOL CGnuPlotHandle::GetTextWindowA(HWND hWnd, LPARAM lParam)
+{
+    CGnuPlotHandle *pThis = (CGnuPlotHandle *)lParam;
+
+    HWND hWndFinded = FindWindowExA(hWnd, NULL, "wgnuplot_text", NULL);
+
+    if (hWnd && hWndFinded)
+    {
+        pThis->hParent = hWnd;
+        pThis->hText = hWndFinded;
+    }
+
+    return TRUE;
+}
+
+inline BOOL CGnuPlotHandle::GetGraphWindowA(HWND hWnd, LPARAM lParam)
+{
+    CGnuPlotHandle *pThis = (CGnuPlotHandle *)lParam;
+
+    HWND hWndFinded = FindWindowExA(NULL, hWnd, "wgnuplot_graph", NULL);
+
+    if (hWndFinded)
+    {
+        pThis->hGraph = hWndFinded;
+    }
+
+    return TRUE;
+}
+
+inline BOOL CGnuPlotHandle::GetTextWindowW(HWND hWnd, LPARAM lParam)
+{
+    CGnuPlotHandle *pThis = (CGnuPlotHandle *)lParam;
+
+    HWND hWndFinded = FindWindowExW(hWnd, NULL, L"wgnuplot_text", NULL);
+
+    if (hWnd && hWndFinded)
+    {
+        pThis->hParent = hWnd;
+        pThis->hText = hWndFinded;
+    }
+
+    return TRUE;
+}
+
+inline BOOL CGnuPlotHandle::GetGraphWindowW(HWND hWnd, LPARAM lParam)
+{
+    CGnuPlotHandle *pThis = (CGnuPlotHandle *)lParam;
+
+    HWND hWndFinded = FindWindowExW(NULL, hWnd, L"wgnuplot_graph", NULL);
+
+    if (hWndFinded)
+    {
+        pThis->hGraph = hWndFinded;
+    }
+
+    return TRUE;
+}
