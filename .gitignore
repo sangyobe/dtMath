@@ -1,17 +1,16 @@
-build/
-build*/
-export/
-cache/
-
-.vagrant/
-
-# IDE
-.vs/
-.cache/
-# Kdevelop
-.kdev4/
-*.kdev4
-# vim
-compile_commands.json
-*.swp
-*.user
+Testing
+CMakeFiles
+build*
+.vscode
+extlib
+G__*
+*.pcm
+*.root
+*.rootmap
+*.dylib
+*.so
+Makefile
+cmake_install.cmake
+CMakeCache.txt
+cmakeGuideSamples
+CTestTestfile.cmake
