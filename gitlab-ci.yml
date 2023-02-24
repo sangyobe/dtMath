@@ -9,26 +9,10 @@ stages:
   - test
 
 
-default:
-  interruptible: true
-  timeout: 10m
-
-
-".cmake_build_script":
+build:
   stage: build
-  extends: ".build_env_setup_for_dtmath"
   retry:
     max: 2
-  rules:
-    - if: "$CI_MERGE_REQUEST_TITLE == /^WIP:/"
-      when: never
-    - if: "$CI_COMMIT_MESSAGE == /^WIP:/"
-      when: never
-    - if: "$CI_COMMIT_TAG"
-      when: never
-    - if: "$UPDATE_DOXYGEN"
-      when: never
-    - when: always
   tags:
     - dtMath_CMake_tag_windows
   script:
