@@ -8,6 +8,7 @@
 # image: localhost:5000/ubuntu-cpptests:20.04
 
 stages:
+  - sast
   - build
   - test
 
@@ -44,3 +45,9 @@ test:
     - lcov -r coverage.info */build/* */tests/* */c++/* -o coverageFiltered.info
     - lcov --list coverageFiltered.info
   coverage: '/Total:\|\s*([0-9.]+%)\s.*$/'
+
+
+sast:
+  stage: sast
+include:
+  - template: Security/SAST.gitlab-ci.yml
