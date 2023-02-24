@@ -1,0 +1,89 @@
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+stages:
+  - test
+  - build
+
+
+default:
+  interruptible: true
+  timeout: 10m
+
+cache:
+  key: "$CI_PROJECT_ID"
+  paths:
+    - cmake
+
+".build_env_setup_for_dtmath":
+  before_script:
+    - apt update -qq 
+    - WORKDIR=$(pwd)
+    - cmake_version=$(cmake --version | head -n 1 | awk -F' ' '{print $3}')
+    - |
+      cmake_major="${cmake_version%%\.*}"
+      cmake_minor="${cmake_version#*.}"
+      cmake_minor="${cmake_minor%.*}"
+      # InstallCmake=false
+      # if [[ $cmake_major -ge 3 && $cmake_minor -lt 15 ]]; then
+      #   [[ $cmake_minor -lt 15 ]] && InstallCmake=true
+      # else
+      #   InstallCmake=true
+      # fi
+      # if [ $InstallCmake == true ]; then
+      #   mkdir -p cmake
+      #   cd cmake
+      #   if [ ! -f "cmake-3.20.5-linux-x86_64.sh" ]; then
+      #     wget -q https://github.com/Kitware/CMake/releases/download/v3.20.5/cmake-3.20.5-linux-x86_64.sh
+      #     sh cmake-3.20.5-linux-x86_64.sh --skip-license --prefix=/usr
+      #   else
+      #     sh cmake-3.20.5-linux-x86_64.sh --skip-license --prefix=/usr
+      #   fi
+      #   cd -
+      # fi
+
+".cmake_build_script":
+  stage: build
+  extends: ".build_env_setup_for_dtmath"
+  retry:
+    max: 2
+  rules:
+    - if: "$CI_MERGE_REQUEST_TITLE == /^WIP:/"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE == /^WIP:/"
+      when: never
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - if: "$UPDATE_DOXYGEN"
+      when: never
+    - when: always
+  tags:
+    - dtMath_CMake_tag_windows
+  script:
+    - git submodule update --init
+    - mkdir -p cmake-build
+    - cd cmake-build
+    - cmake -DCMAKE_BUILD_TYPE=Release -G "GCC" .. -DTEST_PROJECT=ON
+    - make -j$(nproc) package
+
+
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Code-Quality.gitlab-ci.yml
+
+code_quality:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "release"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  services:
+  tags:
+    - cq-sans-dind
+
+sast:
+  stage: test
+
+
