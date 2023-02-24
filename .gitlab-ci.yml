@@ -47,7 +47,14 @@ test:
   coverage: '/Total:\|\s*([0-9.]+%)\s.*$/'
 
 
+code_quality:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  services:
+  tags:
+    - cq-sans-dind
+
 sast:
   stage: sast
-include:
-  - template: Security/SAST.gitlab-ci.yml
+
