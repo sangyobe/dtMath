@@ -16,7 +16,8 @@ build:
 # Runs at 'build' stage
   stage: build
   tags:
-    - dtMath_CMake_tag_windows
+    # - dtMath_CMake_tag_windows
+    - ros-noetic
   script:
     - rm -Rf build  # Guarantee that tests and coverage are using latest src and tests
     - mkdir build
@@ -31,7 +32,8 @@ test:
   only:
     - master
   tags:
-    - dtMath_CMake_tag_windows
+    # - dtMath_CMake_tag_windows
+    - ros-noetic
   script:
     - ./bin/test
     - ls -l
