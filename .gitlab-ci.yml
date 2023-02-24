@@ -12,7 +12,7 @@ stages:
   - build
 
 
-build_scripts:
+".build_scripts":
   script:
     - apt update && DEBIAN_FRONTEND=noninteractive apt install -y git-core
     - rm -Rf build  # Guarantee that tests and coverage are using latest src and tests
@@ -30,7 +30,7 @@ build_win:
   stage: build
   tags:
     - "windows docker image"
-  extends: "build_scripts"
+  extends: ".build_scripts"
 
 # Job name 'build'
 build_linux:
@@ -43,7 +43,7 @@ build_linux:
   tags:
     # - dtMath_CMake_tag_windows
     - ros-noetic
-  extends: "build_scripts"
+  extends: ".build_scripts"
 
 
 # Job name 'test'
