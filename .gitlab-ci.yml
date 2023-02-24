@@ -29,7 +29,7 @@ build_win:
 # Runs at 'build' stage
   stage: build
   tags:
-    - "windows docker image"
+    - "dtMath_CMake_runner_windows"
   extends: ".build_scripts"
 
 # Job name 'build'
