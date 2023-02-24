@@ -47,14 +47,19 @@ test:
   coverage: '/Total:\|\s*([0-9.]+%)\s.*$/'
 
 
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Code-Quality.gitlab-ci.yml
+
 code_quality:
   rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "release"
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   services:
   tags:
     - cq-sans-dind
 
 sast:
-  stage: sast
+  stage: test
+
 
