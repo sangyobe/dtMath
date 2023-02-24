@@ -17,10 +17,10 @@ build:
     - dtMath_CMake_tag_windows
   script:
     - git submodule update --init
-    - mkdir -p cmake-build
-    - cd cmake-build
+    - mkdir build
+    - cd build
     - cmake .. -DCMAKE_BUILD_TYPE=Release -DTEST_PROJECT=ON
-    - make -j$(nproc) package
+    - cmake --build . --config Release
 
 # sast:
 #   stage: test
