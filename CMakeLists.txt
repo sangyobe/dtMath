@@ -61,7 +61,7 @@ target_include_directories(${PROJECT_NAME}
 	PRIVATE user
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+target_link_libraries(${PROJECT_NAME} PRIVATE osqp)
 
 add_library(${PROJECT_NAMESPACE}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 

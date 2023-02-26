@@ -12,15 +12,14 @@ stages:
   - build
 
 
-".build_scripts":
-  script:
-    - apt update && DEBIAN_FRONTEND=noninteractive apt install -y git-core
-    - rm -rf build  # Guarantee that tests and coverage are using latest src and tests
-    - mkdir build
-    - cd build
-    - cmake ..
-    - make -j8
-    - ./bin/test
+# ".build_scripts":
+#   script:
+#     - rm -rf build  # Guarantee that tests and coverage are using latest src and tests
+#     - mkdir build
+#     - cd build
+#     - cmake .. 
+#     - make -j8
+#     - ./bin/test
 
 # build_win:
 #   rules:
@@ -31,6 +30,13 @@ stages:
 #   stage: build
 #   tags:
 #     - "dtMath_CMake_tag_windows"
+#   script:
+#     - rm -rf build  # Guarantee that tests and coverage are using latest src and tests
+#     - mkdir build
+#     - cd build
+#     - cmake .. "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+#     - cmake --build . --config Release --target test -j 16
+#     - ./bin/test
 #   extends: ".build_scripts"
 
 # Job name 'build'
@@ -45,7 +51,15 @@ build_linux:
   tags:
     # - dtMath_CMake_tag_windows
     - ros-noetic
-  extends: ".build_scripts"
+  script:
+    - apt update && DEBIAN_FRONTEND=noninteractive apt install -y git-core
+    - rm -rf build  # Guarantee that tests and coverage are using latest src and tests
+    - mkdir build
+    - cd build
+    - cmake .. 
+    - cmake --build . --config Release --target test -j 16
+    - ./bin/test
+  # extends: ".build_scripts"
 
 
 # # Job name 'test'
