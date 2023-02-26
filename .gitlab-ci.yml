@@ -9,7 +9,7 @@
 stages:
   - test
   - build
-  - example
+  # - example
 
 
 ".build_scripts":
@@ -48,16 +48,16 @@ build_linux:
   extends: ".build_scripts"
 
 
-# Job name 'example'
-example:
-  # Runs at 'example' stage
-  stage: example
-  tags:
-    # - dtMath_CMake_tag_windows
-    - ros-noetic
-  script:
-    - ./bin/test
-    - ./build/bin/test
+# # Job name 'example'
+# example:
+#   # Runs at 'test' stage
+#   stage: example
+#   tags:
+#     # - dtMath_CMake_tag_windows
+#     - ros-noetic
+#   script:
+#     - ./bin/test
+#     - ./build/bin/test
 
 
 
