@@ -5,17 +5,15 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 
-# image: localhost:5000/ubuntu-cpptests:20.04
 
 stages:
   - test
   - build
+  - example
 
 
 ".build_scripts":
-  script:
-    - apt update && DEBIAN_FRONTEND=noninteractive apt install -y git-core
-    - rm -Rf build  # Guarantee that tests and coverage are using latest src and tests
+    - rm -rf build  # Guarantee that tests and coverage are using latest src and tests
     - mkdir build
     - cd build
     - cmake ..
@@ -43,27 +41,22 @@ build_linux:
   tags:
     # - dtMath_CMake_tag_windows
     - ros-noetic
+  script:
+    - apt update && DEBIAN_FRONTEND=noninteractive apt install -y git-core
   extends: ".build_scripts"
 
 
-# Job name 'test'
-test:
+# Job name 'example'
+example:
   # Runs at 'test' stage
-  stage: test
-  only:
-    - master
+  stage: example
   tags:
     # - dtMath_CMake_tag_windows
     - ros-noetic
   script:
     - ./bin/test
-    - ls -l
-    - cd CMakeFiles/test.dir/
-    - ls -l
-    - lcov -d . -c -o coverage.info
-    - lcov -r coverage.info */build/* */tests/* */c++/* -o coverageFiltered.info
-    - lcov --list coverageFiltered.info
-  coverage: '/Total:\|\s*([0-9.]+%)\s.*$/'
+    - ./build/bin/test
+
 
 
 include:
