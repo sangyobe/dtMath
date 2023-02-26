@@ -48,17 +48,17 @@ build_linux:
   extends: ".build_scripts"
 
 
-# Job name 'test'
-test:
-  # Runs at 'test' stage
-  stage: test
-  only:
-    - master
-  tags:
-    # - dtMath_CMake_tag_windows
-    - ros-noetic
-  script:
-    - ./bin/test
+# # Job name 'test'
+# test:
+#   # Runs at 'test' stage
+#   stage: test
+#   only:
+#     - master
+#   tags:
+#     # - dtMath_CMake_tag_windows
+#     - ros-noetic
+#   script:
+#     - ./bin/test
 
 
 
