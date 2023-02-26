@@ -9,6 +9,7 @@
 stages:
   - test
   - build
+  - example
 
 
 ".build_scripts":
@@ -45,6 +46,19 @@ build_linux:
   script:
     - apt update && DEBIAN_FRONTEND=noninteractive apt install -y git-core
   extends: ".build_scripts"
+
+
+# Job name 'example'
+example:
+  # Runs at 'example' stage
+  stage: example
+  tags:
+    # - dtMath_CMake_tag_windows
+    - ros-noetic
+  script:
+    - ./bin/test
+    - ./build/bin/test
+
 
 
 include:
