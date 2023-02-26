@@ -5,6 +5,7 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 
+# image: localhost:5000/ubuntu-cpptests:20.04
 
 stages:
   - test
@@ -13,7 +14,8 @@ stages:
 
 ".build_scripts":
   script:
-    - rm -rf build  # Guarantee that tests and coverage are using latest src and tests
+    - apt update && DEBIAN_FRONTEND=noninteractive apt install -y git-core
+    - rm -Rf build  # Guarantee that tests and coverage are using latest src and tests
     - mkdir build
     - cd build
     - cmake ..
@@ -42,8 +44,6 @@ build_linux:
   tags:
     # - dtMath_CMake_tag_windows
     - ros-noetic
-  script:
-    - apt update && DEBIAN_FRONTEND=noninteractive apt install -y git-core
   extends: ".build_scripts"
 
 
@@ -51,6 +51,8 @@ build_linux:
 test:
   # Runs at 'test' stage
   stage: test
+  only:
+    - master
   tags:
     # - dtMath_CMake_tag_windows
     - ros-noetic
