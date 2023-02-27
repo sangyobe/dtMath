@@ -22,8 +22,6 @@ build_win:
   tags:
     - "dtMath_CMake_tag_windows"
   script:
-    - dir
-    - rmdir /S /Q ./build  # Guarantee that tests and coverage are using latest src and tests
     - mkdir build
     - cd build
     - cmake .. "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
