@@ -29,7 +29,7 @@ build_win:
     # // Todo (230227): currently executables are not run. Administrative rights may not be given.
     # - ./bin/test.exe
     # - cd '../..'
-    # - rmdir /s /q dt-math-cmake
+    - rmdir /s /q dt-math-cmake
 
 # Job name 'build'
 build_linux:
