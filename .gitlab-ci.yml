@@ -22,17 +22,14 @@ build_win:
   tags:
     - "dtMath_CMake_tag_windows"
   script:
-    - cd 'C:\dev'
-    - git clone ssh://git@cody-escm.autoever.com:8022/rlab/art/ctrlpart/personal/joonhee-jo/dt-math-cmake.git
-    - cd dt-math-cmake
-    - rm -rf build  # Guarantee that tests and coverage are using latest src and tests
+    - rmdir /s /q build  # Guarantee that tests and coverage are using latest src and tests
     - mkdir build
     - cd build
     - cmake .. "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
     - cmake --build . --config Release --target test
     - ./bin/test
     - cd ../..
-    - rm -rf dt-math-cmake
+    - rmdir /s /q dt-math-cmake
 
 # Job name 'build'
 build_linux:
