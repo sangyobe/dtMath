@@ -24,8 +24,8 @@ build_win:
   script:
     - mkdir build
     - cd build
-    - cmake .. "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-    - cmake --build . --config Release --target test
+    - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+    - cmake --build . --config Release
     - ./bin/test
     - cd ../..
     - rmdir /s /q dt-math-cmake
