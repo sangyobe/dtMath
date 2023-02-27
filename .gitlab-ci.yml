@@ -26,8 +26,9 @@ build_win:
     - cd build
     - cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
     - cmake --build . --config Release
-    - ./bin/test.exe
-    - cd ../..
+    - cd bin
+    - .\test.exe
+    - cd '..\..\..'
     - rmdir /s /q dt-math-cmake
 
 # Job name 'build'
