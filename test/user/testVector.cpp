@@ -1,8 +1,13 @@
-#include "testPrint.h"
 #include "testVector.h"
+#include "testPrint.h"
 
 #include <dtMath/dtMath.h>
 
+using dtMath::dtMatrix;
+using dtMath::dtVector;
+using dtMath::dtVector3;
+using dtMath::dtVector4;
+using dtMath::dtVector6;
 
 void Test_Vector()
 {
@@ -21,7 +26,7 @@ void VecInit()
     Printf("CommaInit, vec << 1, 2, 3, 4, 5, 6;\n");
     Printf("vec = \n");
 
-    CdtVector<6> vec;
+    dtVector<6> vec;
     vec << 1, 2, 3, 4, 5, 6;
 
     vec.Print();
@@ -32,29 +37,29 @@ void VecMemberFunc()
 {
     PrintHeading("Vector Member Functions ");
 
-    CdtVector<6> vec61;
-    CdtVector3<> vec3;
-    CdtVector4<> vec4;
-    CdtVector6<> vec6;
+    dtVector<6> vec61;
+    dtVector3<> vec3;
+    dtVector4<> vec4;
+    dtVector6<> vec6;
 
     Printf("/* Class Create: with array */\n");
-    float v[3] = { 1,2,3 };
-    CdtVector<3> v31(v, sizeof(v));
+    float v[3] = {1, 2, 3};
+    dtVector<3> v31(v, sizeof(v));
     Printf("array[3] = {1,2,3}\n");
     Printf("vec =\n");
     v31.Print();
     Println;
 
-    Printf("/* Class Create: with CdtVector */\n");
-    CdtVector<3> v31_2(v31);
+    Printf("/* Class Create: with dtVector */\n");
+    dtVector<3> v31_2(v31);
     Printf("vec = [1,2,3]T\n");
     Printf("vec =\n");
     v31_2.Print();
     Println;
 
-    Printf("/* Class Create: with CdtMatrix */\n");
-    CdtMatrix<3, 1> m(v, sizeof(v));
-    CdtVector<3> v31_3(m);
+    Printf("/* Class Create: with dtMatrix */\n");
+    dtMatrix<3, 1> m(v, sizeof(v));
+    dtVector<3> v31_3(m);
     Printf("matrix31 = [1,2,3]T\n");
     Printf("vec =\n");
     v31_3.Print();
@@ -80,19 +85,19 @@ void VecMemberFunc()
     v31.Print();
     Println;
 
-    Printf("/* Function: SetElement(const CdtVector &v) */\n");
+    Printf("/* Function: SetElement(const dtVector &v) */\n");
     Printf("vec = [1,2,3]T\n");
     v31.SetElement(v31_2);
     v31.Print();
     Println;
 
-    Printf("/* Function: SetElement(const CdtMatrix<m_row, 1, m_type> &v) */\n");
+    Printf("/* Function: SetElement(const dtMatrix<m_row, 1, m_type> &v) */\n");
     Printf("matrix = [1,2,3]T\n");
     v31.SetElement(m);
     v31.Print();
     Println;
 
-    Printf("/* Function: SetBlock(const uint16_t idxRow, const CdtVector<row, m_type> &v) */\n");
+    Printf("/* Function: SetBlock(const uint16_t idxRow, const dtVector<row, m_type> &v) */\n");
     vec61.SetBlock(0, v31);
     vec61.SetBlock(3, v31_2);
     Printf("v1 =\n");
@@ -104,7 +109,7 @@ void VecMemberFunc()
     vec61.Print();
     Println;
 
-    Printf("/* Function: SetBlock(const uint16_t idxRow, const CdtVector3<m_type, 3> &v) */\n");
+    Printf("/* Function: SetBlock(const uint16_t idxRow, const dtVector3<m_type, 3> &v) */\n");
     vec3.SetElement(1, 2, 3);
     vec61.SetBlock(0, vec3);
     vec61.SetBlock(3, vec3);
@@ -115,7 +120,7 @@ void VecMemberFunc()
     vec61.Print();
     Println;
 
-    Printf("/* Function: SetBlock(const uint16_t idxRow, const CdtVector4<m_type, 4> &v) */\n");
+    Printf("/* Function: SetBlock(const uint16_t idxRow, const dtVector4<m_type, 4> &v) */\n");
     vec4.SetElement(1, 2, 3, 4);
     vec61.SetBlock(0, vec4);
     vec61.SetBlock(3, vec4);
@@ -126,7 +131,7 @@ void VecMemberFunc()
     vec61.Print();
     Println;
 
-    Printf("/* Function: SetBlock(const uint16_t idxRow, const CdtVector4<m_type, 4> &v) */\n");
+    Printf("/* Function: SetBlock(const uint16_t idxRow, const dtVector4<m_type, 4> &v) */\n");
     vec6.SetElement(1, 2, 3, 4, 5, 6);
     vec61.SetBlock(0, vec6);
     Printf("v6 =\n");
@@ -136,9 +141,9 @@ void VecMemberFunc()
     vec61.Print();
     Println;
 
-    Printf("/* Function: SetBlock(const uint16_t idxRow, const CdtMatrix<row, 1, m_type> &v */\n");
-    float m41[4] = { 4, 3, 2, 1 };
-    CdtMatrix<4, 1> mat41(m41, sizeof(m41));
+    Printf("/* Function: SetBlock(const uint16_t idxRow, const dtMatrix<row, 1, m_type> &v */\n");
+    float m41[4] = {4, 3, 2, 1};
+    dtMatrix<4, 1> mat41(m41, sizeof(m41));
     vec61.SetBlock(0, mat41);
     Printf("mat41 =\n");
     mat41.Print();
@@ -207,11 +212,13 @@ void VecMemberFunc()
 
 void VecMemberAccessOperator()
 {
-    CdtVector<6> vec61;
+    dtVector<6> vec61;
 
     PrintHeading("Vector Member Access operator ");
     Printf("/* Operator: () */\n");
-    Printf("vec(i) = i; Printf(""%%f"", vec(i));\n");
+    Printf("vec(i) = i; Printf("
+           "%%f"
+           ", vec(i));\n");
 
     for (uint16_t i = 0; i < 6; i++)
     {
@@ -226,14 +233,14 @@ void VecMemberAccessOperator()
 void VecArithmeticSum()
 {
     PrintHeading("Vector Arithmetic operators - Sum ");
-    CdtVector<6> vec61;
-    CdtVector<3> vec31;
-    CdtVector<4> vec41;
-    CdtVector3<> vec3;
-    CdtVector4<> vec4;
-    CdtVector6<> vec6;
-    CdtMatrix<6, 1> mat61;
-    float mat[6] = { 1,2,3,4,5,6 };
+    dtVector<6> vec61;
+    dtVector<3> vec31;
+    dtVector<4> vec41;
+    dtVector3<> vec3;
+    dtVector4<> vec4;
+    dtVector6<> vec6;
+    dtMatrix<6, 1> mat61;
+    float mat[6] = {1, 2, 3, 4, 5, 6};
 
     vec61 << 1, 2, 3, 4, 5, 6;
     vec31 << 1, 2, 3;
@@ -252,64 +259,64 @@ void VecArithmeticSum()
     (-vec61).Print();
     Println;
 
-    Printf("/* Operator: +(CdtVector &v) */\n");
+    Printf("/* Operator: +(dtVector &v) */\n");
     Printf("vec + (-vec) =\n");
     (vec61 + (-vec61)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtVector &v) */\n");
+    Printf("/* Operator: -(dtVector &v) */\n");
     Printf("vec - vec =\n");
     (vec61 - vec61).Print();
     Println;
 
-    Printf("/* Operator: +(CdtVector3 &v) */\n");
+    Printf("/* Operator: +(dtVector3 &v) */\n");
     Printf("vec = [1,2,3]T\n");
     Printf("vec3 = [1,2,3]T\n");
     Printf("vec + (-vec3) =\n");
     (vec31 + (-vec3)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtVector3 &v) */\n");
+    Printf("/* Operator: -(dtVector3 &v) */\n");
     Printf("vec - vec3 =\n");
     (vec31 - vec3).Print();
     Println;
 
-    Printf("/* Operator: +(CdtVector4 &v) */\n");
+    Printf("/* Operator: +(dtVector4 &v) */\n");
     Printf("vec = [1,2,3,4]T\n");
     Printf("vec4 = [1,2,3,4]T\n");
     Printf("vec + (-vec4) =\n");
     (vec41 + (-vec4)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtVector4 &v) */\n");
+    Printf("/* Operator: -(dtVector4 &v) */\n");
     Printf("vec = [1,2,3,4]T\n");
     Printf("vec4 = [1,2,3,4]T\n");
     Printf("vec - vec4 =\n");
     (vec41 - vec4).Print();
     Println;
 
-    Printf("/* Operator: +(CdtVector6 &v) */\n");
+    Printf("/* Operator: +(dtVector6 &v) */\n");
     Printf("vec = [1,2,3,4,5,6]T\n");
     Printf("vec6 = [1,2,3,4,5,6]T\n");
     Printf("vec + (-vec6) =\n");
     (vec61 + (-vec6)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtVector6 &v) */\n");
+    Printf("/* Operator: -(dtVector6 &v) */\n");
     Printf("vec = [1,2,3,4,5,6]T\n");
     Printf("vec6 = [1,2,3,4,5,6]T\n");
     Printf("vec - vec6 =\n");
     (vec61 - vec6).Print();
     Println;
 
-    Printf("/* Operator: +(CdtMatrix<m_row, 1, m_type> &v) */\n");
+    Printf("/* Operator: +(dtMatrix<m_row, 1, m_type> &v) */\n");
     Printf("vec = [1,2,3,4,5,6]T\n");
     Printf("mat61 = [1,2,3,4,5,6]T\n");
     Printf("vec + (-mat61) =\n");
     (vec61 + (-mat61)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtMatrix<m_row, 1, m_type> &v) */\n");
+    Printf("/* Operator: -(dtMatrix<m_row, 1, m_type> &v) */\n");
     Printf("vec = [1,2,3,4,5,6]T\n");
     Printf("mat61 = [1,2,3,4,5,6]T\n");
     Printf("vec - mat61 =\n");
@@ -319,14 +326,14 @@ void VecArithmeticSum()
 
 void VecArithmeticProduct()
 {
-    CdtVector<6> vec61;
-    CdtVector<3> vec31;
-    CdtVector<4> vec41;
-    CdtVector3<> vec3;
-    CdtVector4<> vec4;
-    CdtVector6<> vec6;
-    CdtMatrix<6, 1> mat61;
-    float mat[6] = { 1,1,1,1,1,1 };
+    dtVector<6> vec61;
+    dtVector<3> vec31;
+    dtVector<4> vec41;
+    dtVector3<> vec3;
+    dtVector4<> vec4;
+    dtVector6<> vec6;
+    dtMatrix<6, 1> mat61;
+    float mat[6] = {1, 1, 1, 1, 1, 1};
 
     vec61.SetFill(1);
     vec31.SetFill(1);
@@ -350,41 +357,41 @@ void VecArithmeticProduct()
     (vec61 / 10.0f).Print();
     Println;
 
-    Printf("/* Operator: *(const m_type s, CdtVector& v) */\n");
+    Printf("/* Operator: *(const m_type s, dtVector& v) */\n");
     Printf("vec = [1,1,1,1,1,1]T\n");
     Printf("10 * vec =\n");
     (10.0f * vec61).Print();
     Println;
 
-    Printf("/* Operator: *(const CdtMatrix<1, col, m_type>& m) */\n");
+    Printf("/* Operator: *(const dtMatrix<1, col, m_type>& m) */\n");
     Printf("vec = [1,1,1,1,1,1]T, mat16 = [1,1,1,1,1,1]\n");
     Printf("vec * mat16 =\n");
-    CdtMatrix<1, 6> vec16;
+    dtMatrix<1, 6> vec16;
     vec16.SetFill(1);
     (vec61 * vec16).Print();
     Println;
 
-    Printf("/* Operator: dot(const CdtVector& v) */\n");
+    Printf("/* Operator: dot(const dtVector& v) */\n");
     Printf("vec = [1,1,1,1,1,1]T\n");
     Printf("vec dot vec = %f\n", vec61.dot(vec61));
     Println;
 
-    Printf("/* Operator: dot(const CdtVector3& v) */\n");
+    Printf("/* Operator: dot(const dtVector3& v) */\n");
     Printf("vec = [1,1,1]T, vec3 = [1,1,1]T\n");
     Printf("vec dot vec3 = %f\n", vec31.dot(vec3));
     Println;
 
-    Printf("/* Operator: dot(const CdtVector4& v) */\n");
+    Printf("/* Operator: dot(const dtVector4& v) */\n");
     Printf("vec = [1,1,1,1]T, vec4 = [1,1,1,1]T\n");
     Printf("vec dot vec4 = %f\n", vec41.dot(vec4));
     Println;
 
-    Printf("/* Operator: dot(const CdtVector6& v) */\n");
+    Printf("/* Operator: dot(const dtVector6& v) */\n");
     Printf("vec = [1,1,1,1,1,1]T, vec6 = [1,1,1,1,1,1]T\n");
     Printf("vec dot vec6 = %f\n", vec61.dot(vec6));
     Println;
 
-    Printf("/* Operator: dot(const CdtMatrix<m_row, 1, m_type>& v) */\n");
+    Printf("/* Operator: dot(const dtMatrix<m_row, 1, m_type>& v) */\n");
     Printf("vec = [1,1,1,1,1,1]T, mat61 = [1,1,1,1,1,1]T\n");
     Printf("vec dot mat61 = %f\n", vec61.dot(mat61));
     Println;
@@ -392,14 +399,14 @@ void VecArithmeticProduct()
 
 void VecComparisonOperator()
 {
-    CdtVector<6> vec61;
-    CdtVector<3> vec31;
-    CdtVector<4> vec41;
-    CdtVector3<> vec3;
-    CdtVector4<> vec4;
-    CdtVector6<> vec6;
-    CdtMatrix<6, 1> mat61;
-    float mat[6] = { 1,2,3,4,5,6 };
+    dtVector<6> vec61;
+    dtVector<3> vec31;
+    dtVector<4> vec41;
+    dtVector3<> vec3;
+    dtVector4<> vec4;
+    dtVector6<> vec6;
+    dtMatrix<6, 1> mat61;
+    float mat[6] = {1, 2, 3, 4, 5, 6};
 
     vec61 << 1., 2., 3., 4., 5., 6.;
     vec31 << 1., 2., 3.;
@@ -410,7 +417,7 @@ void VecComparisonOperator()
     mat61.SetElement(mat, sizeof(mat));
 
     PrintHeading("Vector Comparison operators ");
-    Printf("/* Operator: ==(CdtVector &v) and !=(CdtVector &v) */\n");
+    Printf("/* Operator: ==(dtVector &v) and !=(dtVector &v) */\n");
 
     Printf("vec61 == vec61? -> ");
     if (vec61 == vec61) Printf("true");
@@ -422,7 +429,7 @@ void VecComparisonOperator()
     else Printf("true");
     Println;
 
-    Printf("/* Operator: ==(CdtVector3 &v) and !=(CdtVector3 &v) */\n");
+    Printf("/* Operator: ==(dtVector3 &v) and !=(dtVector3 &v) */\n");
 
     Printf("vec31 = vec3\n");
     Printf("vec31 == vec3? -> ");
@@ -435,8 +442,8 @@ void VecComparisonOperator()
     else Printf("true");
     Println;
 
-    Printf("/* Operator: ==(CdtVector4 &v) and !=(CdtVector4 &v) */\n");
-    
+    Printf("/* Operator: ==(dtVector4 &v) and !=(dtVector4 &v) */\n");
+
     Printf("vec41 = vec4\n");
     Printf("vec41 == vec4? -> ");
     if (vec41 == vec4) Printf("true");
@@ -448,8 +455,8 @@ void VecComparisonOperator()
     else Printf("true");
     Println;
 
-    Printf("/* Operator: ==(CdtVector6 &v) and !=(CdtVector6 &v) */\n");
-    
+    Printf("/* Operator: ==(dtVector6 &v) and !=(dtVector6 &v) */\n");
+
     Printf("vec61 = vec6\n");
     Printf("vec61 == vec6? -> ");
     if (vec61 == vec6) Printf("true");
@@ -461,8 +468,8 @@ void VecComparisonOperator()
     else Printf("true");
     Println;
 
-    Printf("/* Operator: ==(CdtMatrix &v) and !=(CdtMatrix &v) */\n");
-    
+    Printf("/* Operator: ==(dtMatrix &v) and !=(dtMatrix &v) */\n");
+
     Printf("vec61 = mat61\n");
     Printf("vec61 == mat61? -> ");
     if (vec61 == mat61) Printf("true");

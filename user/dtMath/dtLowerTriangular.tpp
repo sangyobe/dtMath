@@ -1,8 +1,27 @@
+/*!
+\file       dtLowerTriangular.h
+\brief      dtMath, Lower triangular matrix solver class
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
+\author     Who is next author?
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLowerTriangular<m_row, m_col, m_type>::Solve(CdtMatrix<m_row, m_col, m_type>& L, CdtVector<m_row, m_type>& b, CdtVector<m_col, m_type>& x)
+#ifndef DTMATH_DTLOWER_TRIANGULAR_TPP_
+#define DTMATH_DTLOWER_TRIANGULAR_TPP_
+
+#include "dtLowerTriangular.h"
+
+namespace dtMath
 {
-    if (m_row != m_col) return -1;
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLowerTriangular<m_row, m_col, m_type>::Solve(dtMatrix<m_row, m_col, m_type> &L, dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x)
+{
+    if (m_row != m_col)
+        return -1;
 
     m_type *pMi = L.m_elem;
 
@@ -24,16 +43,19 @@ inline int8_t CdtLowerTriangular<m_row, m_col, m_type>::Solve(CdtMatrix<m_row, m
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>::Solve(CdtMatrix<m_row, m_col, m_type>& L, CdtVector<m_row, m_type>& b, int8_t *isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtLowerTriangular<m_row, m_col, m_type>::Solve(dtMatrix<m_row, m_col, m_type> &L, dtVector<m_row, m_type> &b, int8_t *isOk)
 {
     if (m_row != m_col)
     {
-        if (isOk) *isOk = 0;
-        return CdtVector<m_col, m_type>();
+        if (isOk)
+            *isOk = 0;
+        return dtVector<m_col, m_type>();
     }
 
-    m_type x[m_col] = { 0, };
+    m_type x[m_col] = {
+        0,
+    };
     m_type *pMi = L.m_elem;
 
     /* Solve Lx = b */
@@ -42,8 +64,9 @@ inline CdtVector<m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>::Solve(
     {
         if (std::abs(*(pMi + i)) <= std::numeric_limits<m_type>::epsilon())
         {
-            if (isOk) *isOk = 0; // singular;
-            return CdtVector<m_col, m_type>();
+            if (isOk)
+                *isOk = 0; // singular;
+            return dtVector<m_col, m_type>();
         }
 
         x[i] = b.m_elem[i];
@@ -54,25 +77,29 @@ inline CdtVector<m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>::Solve(
         x[i] /= *(pMi + i);
     }
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
-    return CdtVector<m_col, m_type>(x);
+    return dtVector<m_col, m_type>(x);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLowerTriangular<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, m_type> L, CdtMatrix<m_row, m_col, m_type>& invL)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLowerTriangular<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_type> L, dtMatrix<m_row, m_col, m_type> &invL)
 {
     int i, j, k;
     m_type *pMi, *pMj, *pMk;
     m_type sum;
 
-    if (m_row != m_col) return -1;
+    if (m_row != m_col)
+        return -1;
 
     /* Invert the diagonal elements */
     for (k = 0, pMk = L.m_elem; k < m_row; pMk += (m_col + 1), k++)
     {
-        if (std::abs(*pMk) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        else *pMk = 1 / *pMk;
+        if (std::abs(*pMk) <= std::numeric_limits<m_type>::epsilon())
+            return -1;
+        else
+            *pMk = 1 / *pMk;
     }
 
     /* Invert the remaining matrix L, for row i */
@@ -92,8 +119,8 @@ inline int8_t CdtLowerTriangular<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row,
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, m_type> L, int8_t *isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtLowerTriangular<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_type> L, int8_t *isOk)
 {
     int i, j, k;
     m_type *pMi, *pMj, *pMk;
@@ -101,8 +128,9 @@ inline CdtMatrix<m_row, m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>:
 
     if (m_row != m_col)
     {
-        if (isOk) *isOk = 0;
-        return CdtMatrix<m_row, m_col, m_type>();
+        if (isOk)
+            *isOk = 0;
+        return dtMatrix<m_row, m_col, m_type>();
     }
 
     /* Invert the diagonal elements */
@@ -110,10 +138,12 @@ inline CdtMatrix<m_row, m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>:
     {
         if (*pMk == 0) // To do dhl
         {
-            if (isOk) *isOk = 0;
-            return CdtMatrix<m_row, m_col, m_type>();
+            if (isOk)
+                *isOk = 0;
+            return dtMatrix<m_row, m_col, m_type>();
         }
-        else *pMk = 1 / *pMk;
+        else
+            *pMk = 1 / *pMk;
     }
 
     /* Invert the remaining matrix L, for row i */
@@ -128,15 +158,17 @@ inline CdtMatrix<m_row, m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>:
         }
     }
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     return L;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLowerTriangular<m_row, m_col, m_type>::SolveUnit(CdtMatrix<m_row, m_col, m_type>& L, CdtVector<m_row, m_type>& b, CdtVector<m_col, m_type>& x)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLowerTriangular<m_row, m_col, m_type>::SolveUnit(dtMatrix<m_row, m_col, m_type> &L, dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x)
 {
-    if (m_row != m_col) return -1;
+    if (m_row != m_col)
+        return -1;
 
     int i, k;
     m_type *pL = L.m_elem;
@@ -154,17 +186,20 @@ inline int8_t CdtLowerTriangular<m_row, m_col, m_type>::SolveUnit(CdtMatrix<m_ro
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>::SolveUnit(CdtMatrix<m_row, m_col, m_type>& L, CdtVector<m_row, m_type>& b, int8_t *isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtLowerTriangular<m_row, m_col, m_type>::SolveUnit(dtMatrix<m_row, m_col, m_type> &L, dtVector<m_row, m_type> &b, int8_t *isOk)
 {
     if (m_row != m_col)
     {
-        if (isOk) *isOk = 0;
-        return CdtVector<m_col, m_type>();
+        if (isOk)
+            *isOk = 0;
+        return dtVector<m_col, m_type>();
     }
 
     int i, k;
-    m_type x[m_col] = { 0, };
+    m_type x[m_col] = {
+        0,
+    };
     m_type *pL = L.m_elem;
 
     /* Solve Lx = b */
@@ -177,13 +212,14 @@ inline CdtVector<m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>::SolveU
             x[k] -= x[i] * *(pL + i);
     }
 
-    return CdtVector<m_col, m_type>(x);
+    return dtVector<m_col, m_type>(x);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLowerTriangular<m_row, m_col, m_type>::InverseUnit(CdtMatrix<m_row, m_col, m_type> L, CdtMatrix<m_row, m_col, m_type>& invL)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLowerTriangular<m_row, m_col, m_type>::InverseUnit(dtMatrix<m_row, m_col, m_type> L, dtMatrix<m_row, m_col, m_type> &invL)
 {
-    if (m_row != m_col) return -1;
+    if (m_row != m_col)
+        return -1;
 
     int i, j, k;
     m_type *pMi, *pMj, *pMk;
@@ -206,8 +242,8 @@ inline int8_t CdtLowerTriangular<m_row, m_col, m_type>::InverseUnit(CdtMatrix<m_
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>::InverseUnit(CdtMatrix<m_row, m_col, m_type> L, int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtLowerTriangular<m_row, m_col, m_type>::InverseUnit(dtMatrix<m_row, m_col, m_type> L, int8_t *isOk)
 {
     int i, j, k;
     m_type *pMi, *pMj, *pMk;
@@ -225,7 +261,12 @@ inline CdtMatrix<m_row, m_col, m_type> CdtLowerTriangular<m_row, m_col, m_type>:
         }
     }
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     return L;
 }
+
+} // namespace dtMath
+
+#endif // DTMATH_DTLOWER_TRIANGULAR_TPP_

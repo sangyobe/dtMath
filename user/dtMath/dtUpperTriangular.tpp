@@ -1,8 +1,27 @@
+/*!
+\file       dtUpperTriangular.h
+\brief      dtMath, Upper triangular matrix solver class
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
+\author     Who is next author?
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtUpperTriangular<m_row, m_col, m_type>::Solve(CdtMatrix<m_row, m_col, m_type>& U, CdtVector<m_row, m_type>& b, CdtVector<m_col, m_type>& x)
+#ifndef DTMATH_DTUPPER_TRIANGULAR_TPP_
+#define DTMATH_DTUPPER_TRIANGULAR_TPP_
+
+#include "dtUpperTriangular.h"
+
+namespace dtMath
 {
-    if (m_row != m_col) return -1;
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtUpperTriangular<m_row, m_col, m_type>::Solve(dtMatrix<m_row, m_col, m_type> &U, dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x)
+{
+    if (m_row != m_col)
+        return -1;
 
     int k, i;
     m_type *pU = U.m_elem;
@@ -11,7 +30,8 @@ inline int8_t CdtUpperTriangular<m_row, m_col, m_type>::Solve(CdtMatrix<m_row, m
     // by backward-substitution, where U is a upper triangular matrix.
     for (k = m_col - 1, pU += m_row * (m_col - 1); k >= 0; pU -= m_col, k--)
     {
-        if (std::abs(*(pU + k)) <= std::numeric_limits<m_type>::epsilon()) return -1; // The matrix U is singular
+        if (std::abs(*(pU + k)) <= std::numeric_limits<m_type>::epsilon())
+            return -1; // The matrix U is singular
 
         x.m_elem[k] = b.m_elem[k];
 
@@ -24,17 +44,20 @@ inline int8_t CdtUpperTriangular<m_row, m_col, m_type>::Solve(CdtMatrix<m_row, m
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>::Solve(CdtMatrix<m_row, m_col, m_type>& U, CdtVector<m_row, m_type>& b, int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtUpperTriangular<m_row, m_col, m_type>::Solve(dtMatrix<m_row, m_col, m_type> &U, dtVector<m_row, m_type> &b, int8_t *isOk)
 {
     if (m_row != m_col)
     {
-        if (isOk) *isOk = 0;
-        return CdtVector<m_col, m_type>();
+        if (isOk)
+            *isOk = 0;
+        return dtVector<m_col, m_type>();
     }
 
     int k, i;
-    m_type x[m_col] = { 0, };
+    m_type x[m_col] = {
+        0,
+    };
     m_type *pU = U.m_elem;
 
     /* Solve Ux = b */
@@ -44,8 +67,9 @@ inline CdtVector<m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>::Solve(
         if (std::abs(*(pU + k)) <= std::numeric_limits<m_type>::epsilon())
         {
             // The matrix U is singular
-            if (isOk) *isOk = 0;
-            return CdtVector<m_col, m_type>();
+            if (isOk)
+                *isOk = 0;
+            return dtVector<m_col, m_type>();
         }
 
         x[k] = b.m_elem[k];
@@ -56,25 +80,29 @@ inline CdtVector<m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>::Solve(
         x[k] /= *(pU + k);
     }
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
-    return CdtVector<m_col, m_type>(x);
+    return dtVector<m_col, m_type>(x);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtUpperTriangular<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, m_type> U, CdtMatrix<m_row, m_col, m_type>& invU)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtUpperTriangular<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_type> U, dtMatrix<m_row, m_col, m_type> &invU)
 {
     int i, j, k;
     m_type *pMi, *pMk;
     m_type sum;
 
-    if (m_row != m_col) return -1;
+    if (m_row != m_col)
+        return -1;
 
     /* Invert the diagonal elements */
     for (k = 0, pMk = U.m_elem; k < m_row; pMk += (m_col + 1), k++)
     {
-        if (std::abs(*pMk) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        else *pMk = 1 / *pMk;
+        if (std::abs(*pMk) <= std::numeric_limits<m_type>::epsilon())
+            return -1;
+        else
+            *pMk = 1 / *pMk;
     }
 
     /* Invert the remaining matrix U, for row i */
@@ -96,8 +124,8 @@ inline int8_t CdtUpperTriangular<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row,
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, m_type> U, int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtUpperTriangular<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_type> U, int8_t *isOk)
 {
     int i, j, k;
     m_type *pMi, *pMk;
@@ -105,8 +133,9 @@ inline CdtMatrix<m_row, m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>:
 
     if (m_row != m_col)
     {
-        if (isOk) *isOk = 0;
-        return CdtMatrix<m_row, m_col, m_type>();
+        if (isOk)
+            *isOk = 0;
+        return dtMatrix<m_row, m_col, m_type>();
     }
 
     /* Invert the diagonal elements */
@@ -114,10 +143,12 @@ inline CdtMatrix<m_row, m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>:
     {
         if (std::abs(*pMk) <= std::numeric_limits<m_type>::epsilon())
         {
-            if (isOk) *isOk = 0;
-            return CdtMatrix<m_row, m_col, m_type>();
+            if (isOk)
+                *isOk = 0;
+            return dtMatrix<m_row, m_col, m_type>();
         }
-        else *pMk = 1 / *pMk;
+        else
+            *pMk = 1 / *pMk;
     }
 
     /* Invert the remaining matrix L, for row i */
@@ -134,15 +165,17 @@ inline CdtMatrix<m_row, m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>:
         }
     }
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     return U;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtUpperTriangular<m_row, m_col, m_type>::SolveUnit(CdtMatrix<m_row, m_col, m_type>& U, CdtVector<m_row, m_type>& b, CdtVector<m_col, m_type>& x)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtUpperTriangular<m_row, m_col, m_type>::SolveUnit(dtMatrix<m_row, m_col, m_type> &U, dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x)
 {
-    if (m_row != m_col) return -1;
+    if (m_row != m_col)
+        return -1;
 
     int k, i;
     m_type *pU = U.m_elem;
@@ -160,17 +193,20 @@ inline int8_t CdtUpperTriangular<m_row, m_col, m_type>::SolveUnit(CdtMatrix<m_ro
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>::SolveUnit(CdtMatrix<m_row, m_col, m_type>& U, CdtVector<m_row, m_type>& b, int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtUpperTriangular<m_row, m_col, m_type>::SolveUnit(dtMatrix<m_row, m_col, m_type> &U, dtVector<m_row, m_type> &b, int8_t *isOk)
 {
     if (m_row != m_col)
     {
-        if (isOk) *isOk = 0;
-        return CdtVector<m_col, m_type>();
+        if (isOk)
+            *isOk = 0;
+        return dtVector<m_col, m_type>();
     }
 
     int k, i;
-    m_type x[m_col] = { 0, };
+    m_type x[m_col] = {
+        0,
+    };
     m_type *pU = U.m_elem;
 
     /* Solve Ux = b */
@@ -183,15 +219,17 @@ inline CdtVector<m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>::SolveU
             x[k] -= x[i] * *(pU + i);
     }
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
-    return CdtVector<m_col, m_type>(x);
+    return dtVector<m_col, m_type>(x);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtUpperTriangular<m_row, m_col, m_type>::InverseUnit(CdtMatrix<m_row, m_col, m_type> U, CdtMatrix<m_row, m_col, m_type>& invU)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtUpperTriangular<m_row, m_col, m_type>::InverseUnit(dtMatrix<m_row, m_col, m_type> U, dtMatrix<m_row, m_col, m_type> &invU)
 {
-    if (m_row != m_col) return -1;
+    if (m_row != m_col)
+        return -1;
 
     int i, j, k;
     m_type *pMi, *pMk;
@@ -213,13 +251,14 @@ inline int8_t CdtUpperTriangular<m_row, m_col, m_type>::InverseUnit(CdtMatrix<m_
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>::InverseUnit(CdtMatrix<m_row, m_col, m_type> U, int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtUpperTriangular<m_row, m_col, m_type>::InverseUnit(dtMatrix<m_row, m_col, m_type> U, int8_t *isOk)
 {
     if (m_row != m_col)
     {
-        if (isOk) *isOk = 0;
-        return CdtMatrix<m_row, m_col, m_type>();
+        if (isOk)
+            *isOk = 0;
+        return dtMatrix<m_row, m_col, m_type>();
     }
 
     int i, j, k;
@@ -237,7 +276,12 @@ inline CdtMatrix<m_row, m_col, m_type> CdtUpperTriangular<m_row, m_col, m_type>:
         }
     }
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     return U;
 }
+
+} // namespace dtMath
+
+#endif // DTMATH_DTUPPER_TRIANGULAR_TPP_

@@ -1,8 +1,13 @@
-#include "testPrint.h"
 #include "testMatrixInverse.h"
+#include "testPrint.h"
 
 #include <dtMath/dtMath.h>
 
+using dtMath::dtMatrix;
+using dtMath::dtMatrix3;
+using dtMath::dtRotation;
+using dtMath::dtTransform;
+using dtMath::dtVector3;
 
 void Test_MatrixInverse()
 {
@@ -16,29 +21,29 @@ void Test_MatrixInverse()
 void MatrixInverse()
 {
     PrintHeading("Inverse of tMatrix ");
-    
+
     int8_t isOk = 0;
-    double M5[5*5] = { 13,11,7,16,5, 3,37,9,7,8, 12,14,31,17,3, 6,19,12,21,15, 7,10,11,13,33 }; // rank 5 (full rank)
-    double M4[5*5] = { 13,11,7,16,5, 3,37,9,7,8, 26,22,14,32,10, 6,19,12,21,15, 7,10,11,13,33 }; // rank 4
+    double M5[5 * 5] = {13, 11, 7, 16, 5, 3, 37, 9, 7, 8, 12, 14, 31, 17, 3, 6, 19, 12, 21, 15, 7, 10, 11, 13, 33};  // rank 5 (full rank)
+    double M4[5 * 5] = {13, 11, 7, 16, 5, 3, 37, 9, 7, 8, 26, 22, 14, 32, 10, 6, 19, 12, 21, 15, 7, 10, 11, 13, 33}; // rank 4
 
-    double VF[4*3] = { 8,1,3, 8,2,1, 9,4,7, 7,5,2 };    // full rank
-    double VC[4*3] = { 8,1,2, 8,2,4, 9,4,8, 7,5,10 };   // col rank 2
-    double VR[4*3] = { 8,1,3, 8,2,1,16,2,6, 16,4,2 };   // row rank 2
+    double VF[4 * 3] = {8, 1, 3, 8, 2, 1, 9, 4, 7, 7, 5, 2};   // full rank
+    double VC[4 * 3] = {8, 1, 2, 8, 2, 4, 9, 4, 8, 7, 5, 10};  // col rank 2
+    double VR[4 * 3] = {8, 1, 3, 8, 2, 1, 16, 2, 6, 16, 4, 2}; // row rank 2
 
-    double HF[3*4] = { 8,8,9,7, 1,2,4,5, 3,1,7,2 };     // full rank
-    double HR[3*4] = { 8,8,9,7, 1,2,4,5, 2,4,8,10 };    // row rank 2
-    double HC[3*4] = { 8,8,16,16, 1,2,2,4, 3,1,6,2 };    // col rank 2
+    double HF[3 * 4] = {8, 8, 9, 7, 1, 2, 4, 5, 3, 1, 7, 2};   // full rank
+    double HR[3 * 4] = {8, 8, 9, 7, 1, 2, 4, 5, 2, 4, 8, 10};  // row rank 2
+    double HC[3 * 4] = {8, 8, 16, 16, 1, 2, 2, 4, 3, 1, 6, 2}; // col rank 2
 
-    CdtMatrix<5, 5, double> matM5(M5, sizeof(M5));
-    CdtMatrix<5, 5, double> matM4(M4, sizeof(M4));
+    dtMatrix<5, 5, double> matM5(M5, sizeof(M5));
+    dtMatrix<5, 5, double> matM4(M4, sizeof(M4));
 
-    CdtMatrix<4, 3, double> matVF(VF, sizeof(VF));
-    CdtMatrix<4, 3, double> matVC(VC, sizeof(VC));
-    CdtMatrix<4, 3, double> matVR(VR, sizeof(VR));
+    dtMatrix<4, 3, double> matVF(VF, sizeof(VF));
+    dtMatrix<4, 3, double> matVC(VC, sizeof(VC));
+    dtMatrix<4, 3, double> matVR(VR, sizeof(VR));
 
-    CdtMatrix<3, 4, double> matHF(HF, sizeof(HF));
-    CdtMatrix<3, 4, double> matHC(HC, sizeof(HC));
-    CdtMatrix<3, 4, double> matHR(HR, sizeof(HR));
+    dtMatrix<3, 4, double> matHF(HF, sizeof(HF));
+    dtMatrix<3, 4, double> matHC(HC, sizeof(HC));
+    dtMatrix<3, 4, double> matHR(HR, sizeof(HR));
 
     Printf("/* Inverse of a full-rank square matrix(5x5) */\n");
     Printf("Target Matrix:\n");
@@ -49,7 +54,7 @@ void MatrixInverse()
     Printf("invM * M:\n");
     (matM5.Inv() * matM5).Print();
     Println;
-    
+
     Printf("/* Inverse of a rank4 square matrix(5x5) */\n");
     Printf("Target Matrix:\n");
     matM4.Print();
@@ -66,7 +71,7 @@ void MatrixInverse()
     Printf("PInvM * M:\n");
     (matM5.PInv() * matM5).Print();
     Println;
-    
+
     Printf("/* Pseudo Inverse of a rank4 square matrix(5x5) */\n");
     Printf("Target Matrix:\n");
     matM4.Print();
@@ -86,7 +91,7 @@ void MatrixInverse()
     Printf("PInvM * M:\n");
     (matVF.PInv() * matVF).Print();
     Println;
-    
+
     Printf("/* Pseudo Inverse of a row rank 2 rectangle matrix(4x3) */\n");
     Printf("Target Matrix:\n");
     matVR.Print();
@@ -143,11 +148,11 @@ void Matrix3Inverse()
     PrintHeading("Inverse of tMatrix3 ");
 
     int8_t isOk = 0;
-    double A3[3*3] = { 13,11,7, 3,37,9, 12,14,31 }; // rank 3
-    double A2[3*3] = { 13,11,7, 3,37,9, 26,22,14 }; // rank 2
+    double A3[3 * 3] = {13, 11, 7, 3, 37, 9, 12, 14, 31}; // rank 3
+    double A2[3 * 3] = {13, 11, 7, 3, 37, 9, 26, 22, 14}; // rank 2
 
-    CdtMatrix3<double> matA3(A3, sizeof(A3));
-    CdtMatrix3<double> matA2(A2, sizeof(A2));
+    dtMatrix3<double> matA3(A3, sizeof(A3));
+    dtMatrix3<double> matA2(A2, sizeof(A2));
 
     Printf("/* Inverse of a full-rank square matrix(3x3) */\n");
     Printf("Target Matrix:\n");
@@ -182,7 +187,7 @@ void RotationInverse()
 {
     PrintHeading("Inverse of a rotation matrix ");
     Printf("/* rot - euler zyx(10, 20, 30) */\n");
-    CdtRotation<double> rot(AXIS3(Z_AXIS, Y_AXIS, X_AXIS), 10 * DEG2RADd, 20 * DEG2RADd, 30 * DEG2RADd);
+    dtRotation<double> rot(AXIS3(Z_AXIS, Y_AXIS, X_AXIS), 10 * DEG2RADd, 20 * DEG2RADd, 30 * DEG2RADd);
     rot.Print();
     Printf("rot.Inv()\n");
     rot.Inv().Print();
@@ -193,9 +198,9 @@ void TransformInverse()
 {
     PrintHeading("Inverse of Transformation matrix ");
     Printf("/* Transform matrix(rot - euler zyx(10, 20, 30), pos - 1, 2, 3) */\n");
-    CdtRotation<double> rot(AXIS3(Z_AXIS, Y_AXIS, X_AXIS), 10 * DEG2RADd, 20 * DEG2RADd, 30 * DEG2RADd);
-    CdtVector3<double> p(1, 2, 3);
-    CdtTransform<double> tf(rot, p);
+    dtRotation<double> rot(AXIS3(Z_AXIS, Y_AXIS, X_AXIS), 10 * DEG2RADd, 20 * DEG2RADd, 30 * DEG2RADd);
+    dtVector3<double> p(1, 2, 3);
+    dtTransform<double> tf(rot, p);
     tf.Print();
     Printf("tf.Inv()\n");
     tf.Inv().Print();

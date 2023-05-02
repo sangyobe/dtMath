@@ -1,6 +1,24 @@
+/*!
+\file       dtCscMatrix.h
+\brief      dtMath, Compressed Sparse Column Matrix (m x n) class
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
+\author     Who is next author?
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_row, m_col, m_type>::CdtCscMatrix(const m_type * element, const int elemNum, const int *rowIdx, const int *colPtr)
+#ifndef DTMATH_DTCSC_MATRIX_TPP_
+#define DTMATH_DTCSC_MATRIX_TPP_
+
+#include "dtCscMatrix.h"
+
+namespace dtMath
+{
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type>::dtCscMatrix(const m_type *element, const int elemNum, const int *rowIdx, const int *colPtr)
 {
     m_elemNum = elemNum;
     memcpy(m_elem, element, sizeof(m_type) * m_elemNum);
@@ -8,8 +26,8 @@ inline CdtCscMatrix<m_row, m_col, m_type>::CdtCscMatrix(const m_type * element, 
     memcpy(m_colPtr, colPtr, sizeof(m_colPtr));
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_row, m_col, m_type>::CdtCscMatrix()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type>::dtCscMatrix()
 {
     m_elemNum = 0;
     memset(m_elem, 0, sizeof(m_elem));
@@ -17,8 +35,8 @@ inline CdtCscMatrix<m_row, m_col, m_type>::CdtCscMatrix()
     memset(m_colPtr, 0, sizeof(m_colPtr));
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_row, m_col, m_type>::CdtCscMatrix(const CdtMatrix<m_row, m_col, m_type>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type>::dtCscMatrix(const dtMatrix<m_row, m_col, m_type> &m)
 {
     uint16_t icol;
     uint16_t i = 0;
@@ -41,8 +59,8 @@ inline CdtCscMatrix<m_row, m_col, m_type>::CdtCscMatrix(const CdtMatrix<m_row, m
     m_elemNum = i;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_row, m_col, m_type>::CdtCscMatrix(const CdtCscMatrix & m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type>::dtCscMatrix(const dtCscMatrix &m)
 {
     m_elemNum = m.m_elemNum;
     memcpy(m_elem, m.m_elem, sizeof(m_elem));
@@ -50,65 +68,73 @@ inline CdtCscMatrix<m_row, m_col, m_type>::CdtCscMatrix(const CdtCscMatrix & m)
     memcpy(m_colPtr, m.m_colPtr, sizeof(m_colPtr));
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline const m_type * const CdtCscMatrix<m_row, m_col, m_type>::GetDataAddr() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline const m_type *const dtCscMatrix<m_row, m_col, m_type>::GetDataAddr() const
 {
     return m_elem;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline const int * const CdtCscMatrix<m_row, m_col, m_type>::GetRowIdx() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline const int *const dtCscMatrix<m_row, m_col, m_type>::GetRowIdx() const
 {
     return m_rowIdx;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline const int * const CdtCscMatrix<m_row, m_col, m_type>::GetColPtr() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline const int *const dtCscMatrix<m_row, m_col, m_type>::GetColPtr() const
 {
     return m_colPtr;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::GetRowVec(const uint16_t idxRow) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtCscMatrix<m_row, m_col, m_type>::GetRowVec(const uint16_t idxRow) const
 {
-    m_type vec[m_col] = { 0, };
+    m_type vec[m_col] = {
+        0,
+    };
 
-    if (m_elemNum == 0) return CdtVector<m_col, m_type>();
+    if (m_elemNum == 0)
+        return dtVector<m_col, m_type>();
 
     for (uint16_t j = 0; j < m_col; j++)
     {
         for (uint16_t i = m_colPtr[j]; i < m_colPtr[j + 1]; i++)
         {
-            if (m_rowIdx[i] == idxRow) vec[j] = m_elem[i];
+            if (m_rowIdx[i] == idxRow)
+                vec[j] = m_elem[i];
         }
     }
 
-    return CdtVector<m_col, m_type>(vec);
+    return dtVector<m_col, m_type>(vec);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_row, m_type> CdtCscMatrix<m_row, m_col, m_type>::GetColVec(const uint16_t idxCol) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_row, m_type> dtCscMatrix<m_row, m_col, m_type>::GetColVec(const uint16_t idxCol) const
 {
-    m_type vec[m_row] = { 0, };
+    m_type vec[m_row] = {
+        0,
+    };
 
-    if (m_elemNum == 0) return CdtVector<m_row, m_type>();
+    if (m_elemNum == 0)
+        return dtVector<m_row, m_type>();
 
     for (uint16_t i = m_colPtr[idxCol]; i < m_colPtr[idxCol + 1]; i++)
     {
         vec[m_rowIdx[i]] = m_elem[i];
     }
 
-    return CdtVector<m_row, m_type>(vec);
+    return dtVector<m_row, m_type>(vec);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtCscMatrix<m_row, m_col, m_type>::GetRowVec(const uint16_t idxRow, CdtVector<m_col, m_type>& v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtCscMatrix<m_row, m_col, m_type>::GetRowVec(const uint16_t idxRow, dtVector<m_col, m_type> &v) const
 {
     int8_t rtn = -1;
 
     memset(v.m_elem, 0, sizeof(m_type) * m_col);
 
-    if (m_elemNum == 0) return -1;
+    if (m_elemNum == 0)
+        return -1;
 
     for (uint16_t j = 0; j < m_col; j++)
     {
@@ -126,27 +152,29 @@ inline int8_t CdtCscMatrix<m_row, m_col, m_type>::GetRowVec(const uint16_t idxRo
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtCscMatrix<m_row, m_col, m_type>::GetColVec(const uint16_t idxCol, CdtVector<m_row, m_type>& v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtCscMatrix<m_row, m_col, m_type>::GetColVec(const uint16_t idxCol, dtVector<m_row, m_type> &v) const
 {
     uint16_t i;
 
     memset(v.m_elem, 0, sizeof(m_type) * m_row);
 
-    if (m_elemNum == 0) return -1;
+    if (m_elemNum == 0)
+        return -1;
 
     for (i = m_colPtr[idxCol]; i < m_colPtr[idxCol + 1]; i++)
     {
         v.m_elem[m_rowIdx[i]] = m_elem[i];
     }
 
-    if (m_colPtr[idxCol] == i) return -1;
+    if (m_colPtr[idxCol] == i)
+        return -1;
 
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::GetDenseMat() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtCscMatrix<m_row, m_col, m_type>::GetDenseMat() const
 {
     m_type mat[m_row * m_col];
 
@@ -160,20 +188,27 @@ inline CdtMatrix<m_row, m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::GetDe
         }
     }
 
-    return CdtMatrix<m_row, m_col, m_type>(mat);
+    return dtMatrix<m_row, m_col, m_type>(mat);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_col, m_row, m_type> CdtCscMatrix<m_row, m_col, m_type>::Transpose() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_col, m_row, m_type> dtCscMatrix<m_row, m_col, m_type>::Transpose() const
 {
     // Transpose ==  csc -> csr
 
     m_type elem[m_row * m_col];
-    int colIdx[m_row * m_col] = { 0, };
-    int rowPtr[m_row + 1] = { 0, }; // m_row + 1
-    int tmpPtr[m_row + 1] = { 0, };
+    int colIdx[m_row * m_col] = {
+        0,
+    };
+    int rowPtr[m_row + 1] = {
+        0,
+    }; // m_row + 1
+    int tmpPtr[m_row + 1] = {
+        0,
+    };
 
-    if (!m_elemNum) return CdtMatrix<m_col, m_row, m_type>();
+    if (!m_elemNum)
+        return dtMatrix<m_col, m_row, m_type>();
 
     // compute number of non-zero entries per row
     for (uint16_t n = 0; n < m_elemNum; n++)
@@ -206,11 +241,11 @@ inline CdtCscMatrix<m_col, m_row, m_type> CdtCscMatrix<m_row, m_col, m_type>::Tr
         }
     }
 
-    return CdtCscMatrix<m_col, m_row, m_type>(elem, m_elemNum, colIdx, rowPtr);
+    return dtCscMatrix<m_col, m_row, m_type>(elem, m_elemNum, colIdx, rowPtr);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline m_type CdtCscMatrix<m_row, m_col, m_type>::GetNorm() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type dtCscMatrix<m_row, m_col, m_type>::GetNorm() const
 {
     m_type sqSum = 0;
 
@@ -220,8 +255,8 @@ inline m_type CdtCscMatrix<m_row, m_col, m_type>::GetNorm() const
     return std::sqrt(sqSum);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline m_type CdtCscMatrix<m_row, m_col, m_type>::GetSqNorm() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type dtCscMatrix<m_row, m_col, m_type>::GetSqNorm() const
 {
     m_type sqSum = 0;
 
@@ -232,8 +267,8 @@ inline m_type CdtCscMatrix<m_row, m_col, m_type>::GetSqNorm() const
 }
 
 /* Assignment operators */
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_row, m_col, m_type>& CdtCscMatrix<m_row, m_col, m_type>::operator=(const CdtCscMatrix & m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type> &dtCscMatrix<m_row, m_col, m_type>::operator=(const dtCscMatrix &m)
 {
     m_elemNum = m.m_elem;
     memcpy(m_elem, m.m_elem, sizeof(m_elem));
@@ -243,8 +278,8 @@ inline CdtCscMatrix<m_row, m_col, m_type>& CdtCscMatrix<m_row, m_col, m_type>::o
     return (*this);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_row, m_col, m_type>& CdtCscMatrix<m_row, m_col, m_type>::operator*=(const m_type s)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type> &dtCscMatrix<m_row, m_col, m_type>::operator*=(const m_type s)
 {
     uint16_t cnt, i = 0;
 
@@ -264,15 +299,17 @@ inline CdtCscMatrix<m_row, m_col, m_type>& CdtCscMatrix<m_row, m_col, m_type>::o
     return (*this);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_row, m_col, m_type>& CdtCscMatrix<m_row, m_col, m_type>::operator/=(const m_type s)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type> &dtCscMatrix<m_row, m_col, m_type>::operator/=(const m_type s)
 {
     m_type scalar = s;
 
     if (std::abs(scalar) < std::numeric_limits<m_type>::epsilon())
     {
-        if (scalar < 0) scalar = -std::numeric_limits<m_type>::epsilon();
-        else scalar = std::numeric_limits<m_type>::epsilon();
+        if (scalar < 0)
+            scalar = -std::numeric_limits<m_type>::epsilon();
+        else
+            scalar = std::numeric_limits<m_type>::epsilon();
     }
 
     uint16_t cnt, i = 0;
@@ -293,8 +330,8 @@ inline CdtCscMatrix<m_row, m_col, m_type>& CdtCscMatrix<m_row, m_col, m_type>::o
     return (*this);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_row, m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::operator *(const m_type s) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type> dtCscMatrix<m_row, m_col, m_type>::operator*(const m_type s) const
 {
     m_type elem[m_elemNum];
     uint16_t cnt, i = 0;
@@ -312,11 +349,11 @@ inline CdtCscMatrix<m_row, m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::op
         elem[i] = m_elem[i] * s;
     }
 
-    return CdtCscMatrix(elem, m_elemNum, m_rowIdx, m_colPtr);
+    return dtCscMatrix(elem, m_elemNum, m_rowIdx, m_colPtr);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtCscMatrix<m_row, m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::operator /(const m_type s) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type> dtCscMatrix<m_row, m_col, m_type>::operator/(const m_type s) const
 {
     m_type elem[m_elemNum];
     uint16_t cnt, i = 0;
@@ -324,8 +361,10 @@ inline CdtCscMatrix<m_row, m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::op
 
     if (std::abs(scalar) < std::numeric_limits<m_type>::epsilon())
     {
-        if (scalar < 0) scalar = -std::numeric_limits<m_type>::epsilon();
-        else scalar = std::numeric_limits<m_type>::epsilon();
+        if (scalar < 0)
+            scalar = -std::numeric_limits<m_type>::epsilon();
+        else
+            scalar = std::numeric_limits<m_type>::epsilon();
     }
 
     for (cnt = m_elemNum >> 2u; cnt > 0u; cnt--, i += 4)
@@ -341,15 +380,18 @@ inline CdtCscMatrix<m_row, m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::op
         elem[i] = m_elem[i] / scalar;
     }
 
-    return CdtCscMatrix(elem, m_elemNum, m_rowIdx, m_colPtr);
+    return dtCscMatrix(elem, m_elemNum, m_rowIdx, m_colPtr);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_row, m_type> CdtCscMatrix<m_row, m_col, m_type>::operator *(const CdtVector<m_col, m_type>& v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_row, m_type> dtCscMatrix<m_row, m_col, m_type>::operator*(const dtVector<m_col, m_type> &v) const
 {
-    m_type vec[m_row] = { 0, };
+    m_type vec[m_row] = {
+        0,
+    };
 
-    if (!m_elemNum) return CdtVector<m_row, m_type>();
+    if (!m_elemNum)
+        return dtVector<m_row, m_type>();
 
     for (uint16_t j = 0; j < m_col; j++)
     {
@@ -359,15 +401,18 @@ inline CdtVector<m_row, m_type> CdtCscMatrix<m_row, m_col, m_type>::operator *(c
         }
     }
 
-    return CdtVector<m_row, m_type>(vec);
+    return dtVector<m_row, m_type>(vec);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::TposeVec(const CdtVector<m_row, m_type>& v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtCscMatrix<m_row, m_col, m_type>::TposeVec(const dtVector<m_row, m_type> &v) const
 {
-    m_type vec[m_col] = { 0, };
+    m_type vec[m_col] = {
+        0,
+    };
 
-    if (!m_elemNum) return CdtVector<m_col, m_type>();
+    if (!m_elemNum)
+        return dtVector<m_col, m_type>();
 
     for (uint16_t j = 0; j < m_col; j++)
     {
@@ -377,11 +422,11 @@ inline CdtVector<m_col, m_type> CdtCscMatrix<m_row, m_col, m_type>::TposeVec(con
         }
     }
 
-    return CdtVector<m_col, m_type>(vec);
+    return dtVector<m_col, m_type>(vec);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline void CdtCscMatrix<m_row, m_col, m_type>::Print(const char endChar)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtCscMatrix<m_row, m_col, m_type>::Print(const char endChar)
 {
     printf("dat vec =");
     for (uint16_t i = 0; i < m_elemNum; i++)
@@ -404,3 +449,7 @@ inline void CdtCscMatrix<m_row, m_col, m_type>::Print(const char endChar)
     }
     printf("\n%c", endChar);
 }
+
+} // namespace dtMath
+
+#endif // DTMATH_DTCSC_MATRIX_TPP_

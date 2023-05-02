@@ -4,14 +4,14 @@
 
 void Test_GnuPlot()
 {
-    CdtGnuPlot<> plot1;
-    CdtGnuPlot<> plot2;
+    dtGnuPlot<> plot1;
+    dtGnuPlot<> plot2;
 
     const int dataLen = 500;
     float time = 0;
     float dataT[dataLen];
     float data1[dataLen];
-    CdtVector<dataLen> data2;
+    dtVector<dataLen> data2;
 
     for (int i = 0; i < dataLen; i++)
     {

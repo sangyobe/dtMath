@@ -1,9 +1,13 @@
-#include "testPrint.h"
 #include "testCompareClass.h"
+#include "testPrint.h"
 
 #include <dtMath/dtMath.h>
 
 #include <utility/dhTimeCheck.h>
+
+using dtMath::dtMat3;
+using dtMath::dtMatrix;
+using dtMath::dtVector;
 
 void MatAdd();
 void MatScalar();
@@ -41,16 +45,16 @@ void Test_CompareClass()
 
 void MatAdd()
 {
-    float a[9] = { 1,2,3,4,5,6,7,8,9 };
-    float b[9] = { 9,8,7,6,5,4,3,2,1 };
+    float a[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    float b[9] = {9, 8, 7, 6, 5, 4, 3, 2, 1};
 
-    CdtMatrix<3, 3, float> matA(a, sizeof(a));
-    CdtMatrix<3, 3, float> matB(b, sizeof(b));
-    CdtMatrix<3, 3, float> matC;
+    dtMatrix<3, 3, float> matA(a, sizeof(a));
+    dtMatrix<3, 3, float> matB(b, sizeof(b));
+    dtMatrix<3, 3, float> matC;
 
-    CdtMat3 mat3A(a, sizeof(a));
-    CdtMat3 mat3B(b, sizeof(b));
-    CdtMat3 mat3C;
+    dtMat3 mat3A(a, sizeof(a));
+    dtMat3 mat3B(b, sizeof(b));
+    dtMat3 mat3C;
 
     CdhTimeCheck elapseTime;
 
@@ -58,7 +62,7 @@ void MatAdd()
     for (int i = 0; i < 1000000; i++)
         matC = matA + matB;
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix Mat + Mat\n");
+    Printf("// dtMath dtMatrix Mat + Mat\n");
     Printf("matA =\n");
     matA.Print();
     Printf("matB =\n");
@@ -77,7 +81,7 @@ void MatAdd()
     for (int i = 0; i < 1000000; i++)
         mat3C = mat3A + mat3B;
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix3 Mat + Mat\n");
+    Printf("// dtMath dtMatrix3 Mat + Mat\n");
     Printf("mat3A =\n");
     mat3A.Print();
     Printf("mat3B =\n");
@@ -95,13 +99,13 @@ void MatAdd()
 
 void MatScalar()
 {
-    float a[9] = { 1,2,3,4,5,6,7,8,9 };
+    float a[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-    CdtMatrix<3, 3, float> matA(a, sizeof(a));
-    CdtMatrix<3, 3, float> matC;
+    dtMatrix<3, 3, float> matA(a, sizeof(a));
+    dtMatrix<3, 3, float> matC;
 
-    CdtMat3 mat3A(a, sizeof(a));
-    CdtMat3 mat3C;
+    dtMat3 mat3A(a, sizeof(a));
+    dtMat3 mat3C;
 
     CdhTimeCheck elapseTime;
 
@@ -109,7 +113,7 @@ void MatScalar()
     for (int i = 0; i < 1000000; i++)
         matC = matA * 100.0f;
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix Mat x Scalar\n");
+    Printf("// dtMath dtMatrix Mat x Scalar\n");
     Printf("matA =\n");
     matA.Print();
     Printf("Result matA * 100 is\n");
@@ -126,7 +130,7 @@ void MatScalar()
     for (int i = 0; i < 1000000; i++)
         mat3C = mat3A * 100.0f;
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix3 Mat x Scalar\n");
+    Printf("// dtMath dtMatrix3 Mat x Scalar\n");
     Printf("mat3A =\n");
     mat3A.Print();
     Printf("Result mat3A * 100 is\n");
@@ -142,16 +146,16 @@ void MatScalar()
 
 void MatMat()
 {
-    float a[9] = { 1,2,3,4,5,6,7,8,9 };
-    float b[9] = { 9,8,7,6,5,4,3,2,1 };
+    float a[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    float b[9] = {9, 8, 7, 6, 5, 4, 3, 2, 1};
 
-    CdtMatrix<3, 3, float> matA(a, sizeof(a));
-    CdtMatrix<3, 3, float> matB(b, sizeof(b));
-    CdtMatrix<3, 3, float> matC;
+    dtMatrix<3, 3, float> matA(a, sizeof(a));
+    dtMatrix<3, 3, float> matB(b, sizeof(b));
+    dtMatrix<3, 3, float> matC;
 
-    CdtMat3 mat3A(a, sizeof(a));
-    CdtMat3 mat3B(b, sizeof(b));
-    CdtMat3 mat3C;
+    dtMat3 mat3A(a, sizeof(a));
+    dtMat3 mat3B(b, sizeof(b));
+    dtMat3 mat3C;
 
     CdhTimeCheck elapseTime;
 
@@ -159,7 +163,7 @@ void MatMat()
     for (int i = 0; i < 100000; i++)
         matC = matA * matB;
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix Mat x Mat\n");
+    Printf("// dtMath dtMatrix Mat x Mat\n");
     Printf("matA =\n");
     matA.Print();
     Printf("matB =\n");
@@ -178,7 +182,7 @@ void MatMat()
     for (int i = 0; i < 100000; i++)
         mat3C = mat3A * mat3B;
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix3 Mat x Mat\n");
+    Printf("// dtMath dtMatrix3 Mat x Mat\n");
     Printf("mat3A =\n");
     mat3A.Print();
     Printf("mat3B =\n");
@@ -196,14 +200,14 @@ void MatMat()
 
 void MatVec()
 {
-    float a[9] = { 1,2,3,4,5,6,7,8,9 };
+    float a[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-    CdtMatrix<3, 3, float> matA(a, sizeof(a));
-    CdtMat3 mat3A(a, sizeof(a));
-    CdtVector<3, float> vecA;
-    CdtVector<3, float> vecB;
+    dtMatrix<3, 3, float> matA(a, sizeof(a));
+    dtMat3 mat3A(a, sizeof(a));
+    dtVector<3, float> vecA;
+    dtVector<3, float> vecB;
 
-    vecA << 1,2,3;
+    vecA << 1, 2, 3;
 
     CdhTimeCheck elapseTime;
 
@@ -211,7 +215,7 @@ void MatVec()
     for (int i = 0; i < 100000; i++)
         vecB = matA * vecA;
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix Mat x Vec\n");
+    Printf("// dtMath dtMatrix Mat x Vec\n");
     Printf("matA =\n");
     matA.Print();
     Printf("vecA =\n");
@@ -230,7 +234,7 @@ void MatVec()
     for (int i = 0; i < 100000; i++)
         vecB = mat3A * vecA;
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix3 Mat x Vec\n");
+    Printf("// dtMath dtMatrix3 Mat x Vec\n");
     Printf("mat3A =\n");
     mat3A.Print();
     Printf("vecA =\n");
@@ -248,13 +252,13 @@ void MatVec()
 
 void MatTranspose()
 {
-    float a[9] = { 1,2,3,4,5,6,7,8,9 };
+    float a[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-    CdtMatrix<3, 3, float> matA(a, sizeof(a));
-    CdtMatrix<3, 3, float> matC;
+    dtMatrix<3, 3, float> matA(a, sizeof(a));
+    dtMatrix<3, 3, float> matC;
 
-    CdtMat3 mat3A(a, sizeof(a));
-    CdtMat3 mat3C;
+    dtMat3 mat3A(a, sizeof(a));
+    dtMat3 mat3C;
 
     CdhTimeCheck elapseTime;
 
@@ -262,7 +266,7 @@ void MatTranspose()
     for (int i = 0; i < 100000; i++)
         matC = matA.Transpose();
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix Mat Transpose\n");
+    Printf("// dtMath dtMatrix Mat Transpose\n");
     Printf("Result matA.Transpose is \n");
     matC.Print();
 #if defined(_WIN32) || defined(__linux__)
@@ -277,7 +281,7 @@ void MatTranspose()
     for (int i = 0; i < 100000; i++)
         mat3C = mat3A.Transpose();
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix3 Mat Transpose\n");
+    Printf("// dtMath dtMatrix3 Mat Transpose\n");
     Printf("Result mat3A.Transpose is \n");
     mat3C.Print();
 #if defined(_WIN32) || defined(__linux__)
@@ -291,13 +295,13 @@ void MatTranspose()
 
 void MatInv()
 {
-    float a[9] = { 3,2,1,1,6,5,2,3,9 }; // full rank
+    float a[9] = {3, 2, 1, 1, 6, 5, 2, 3, 9}; // full rank
 
-    CdtMatrix<3, 3, float> matA(a, sizeof(a));
-    CdtMatrix<3, 3, float> matC;
+    dtMatrix<3, 3, float> matA(a, sizeof(a));
+    dtMatrix<3, 3, float> matC;
 
-    CdtMat3 mat3A(a, sizeof(a));
-    CdtMat3 mat3C;
+    dtMat3 mat3A(a, sizeof(a));
+    dtMat3 mat3C;
 
     CdhTimeCheck elapseTime;
 
@@ -305,7 +309,7 @@ void MatInv()
     for (int i = 0; i < 100000; i++)
         matC = matA.Inv();
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix Mat Inverse\n");
+    Printf("// dtMath dtMatrix Mat Inverse\n");
     Printf("matA =\n");
     matA.Print();
     Printf("Result is \n");
@@ -322,7 +326,7 @@ void MatInv()
     for (int i = 0; i < 100000; i++)
         mat3C = mat3A.Inv();
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix3 Mat Inverse\n");
+    Printf("// dtMath dtMatrix3 Mat Inverse\n");
     Printf("mat3A =\n");
     mat3A.Print();
     Printf("Result is\n");
@@ -338,13 +342,13 @@ void MatInv()
 
 void MatPInv()
 {
-    float a[9] = { 3,2,1,1,6,5,2,12,10 }; // rank2
+    float a[9] = {3, 2, 1, 1, 6, 5, 2, 12, 10}; // rank2
 
-    CdtMatrix<3, 3, float> matA(a, sizeof(a));
-    CdtMatrix<3, 3, float> matC;
+    dtMatrix<3, 3, float> matA(a, sizeof(a));
+    dtMatrix<3, 3, float> matC;
 
-    CdtMat3 mat3A(a, sizeof(a));
-    CdtMat3 mat3C;
+    dtMat3 mat3A(a, sizeof(a));
+    dtMat3 mat3C;
 
     CdhTimeCheck elapseTime;
 
@@ -352,7 +356,7 @@ void MatPInv()
     for (int i = 0; i < 100000; i++)
         matC = matA.PInv();
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix Mat Pseudo Inverse\n");
+    Printf("// dtMath dtMatrix Mat Pseudo Inverse\n");
     Printf("matA =\n");
     matA.Print();
     Printf("Result is \n");
@@ -369,7 +373,7 @@ void MatPInv()
     for (int i = 0; i < 100000; i++)
         mat3C = mat3A.PInv();
     elapseTime.Stop();
-    Printf("// dtMath CdtMatrix3 Mat Pseudo Inverse\n");
+    Printf("// dtMath dtMatrix3 Mat Pseudo Inverse\n");
     Printf("mat3A =\n");
     mat3A.Print();
     Printf("Result is \n");

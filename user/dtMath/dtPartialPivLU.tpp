@@ -1,15 +1,34 @@
+/*!
+\file       dtPartialPivLU.h
+\brief      dtMath, LU Decomposition with partial pivoting(Doolittle form) class
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
+\author     Who is next author?
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtPartialPivLU<m_row, m_col, m_type>::CdtPartialPivLU()
+#ifndef DTMATH_DTPARTIAL_PIV_LU_TPP_
+#define DTMATH_DTPARTIAL_PIV_LU_TPP_
+
+#include "dtPartialPivLU.h"
+
+namespace dtMath
+{
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtPartialPivLU<m_row, m_col, m_type>::dtPartialPivLU()
 {
     memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
     m_isOk = 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtPartialPivLU<m_row, m_col, m_type>::CdtPartialPivLU(const m_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtPartialPivLU<m_row, m_col, m_type>::dtPartialPivLU(const m_type *element, const size_t n_byte)
 {
-    if ((sizeof(m_type) * m_row * m_col) != n_byte) m_isOk = 0;
+    if ((sizeof(m_type) * m_row * m_col) != n_byte)
+        m_isOk = 0;
     else
     {
         memset(m_elem, element, n_byte);
@@ -17,22 +36,22 @@ inline CdtPartialPivLU<m_row, m_col, m_type>::CdtPartialPivLU(const m_type *elem
     }
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtPartialPivLU<m_row, m_col, m_type>::CdtPartialPivLU(const CdtMatrix<m_row, m_col, m_type>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtPartialPivLU<m_row, m_col, m_type>::dtPartialPivLU(const dtMatrix<m_row, m_col, m_type> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtPartialPivLU<m_row, m_col, m_type>::CdtPartialPivLU(const CdtMatrix3<m_type, m_row, m_col>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtPartialPivLU<m_row, m_col, m_type>::dtPartialPivLU(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Compute()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtPartialPivLU<m_row, m_col, m_type>::Compute()
 {
     if (m_row != m_col)
     {
@@ -64,9 +83,9 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Compute()
         // interchange the two rows.
         if (m_pivot[i] != i)
         {
-            memcpy(pivotRow, p_pivotRow, sizeof(m_type)*m_col);
-            memcpy(p_pivotRow, pMi, sizeof(m_type)*m_col);
-            memcpy(pMi, pivotRow, sizeof(m_type)*m_col);
+            memcpy(pivotRow, p_pivotRow, sizeof(m_type) * m_col);
+            memcpy(p_pivotRow, pMi, sizeof(m_type) * m_col);
+            memcpy(pMi, pivotRow, sizeof(m_type) * m_col);
         }
 
         // matrix is singular, return error
@@ -92,8 +111,8 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Compute()
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtPartialPivLU<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
 {
     if ((sizeof(m_type) * m_row * m_col) != n_byte)
     {
@@ -105,24 +124,25 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Compute(const m_type *eleme
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Compute(const CdtMatrix<m_row, m_col, m_type>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtPartialPivLU<m_row, m_col, m_type>::Compute(const dtMatrix<m_row, m_col, m_type> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Compute(const CdtMatrix3<m_type, m_row, m_col>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtPartialPivLU<m_row, m_col, m_type>::Compute(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline m_type CdtPartialPivLU<m_row, m_col, m_type>::Determinant()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type dtPartialPivLU<m_row, m_col, m_type>::Determinant()
 {
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
     uint16_t offset = m_row + 1;
     m_type det = 1;
 
@@ -132,17 +152,19 @@ inline m_type CdtPartialPivLU<m_row, m_col, m_type>::Determinant()
     return det;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::GetMatrix() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtPartialPivLU<m_row, m_col, m_type>::GetMatrix() const
 {
-    return CdtMatrix<m_row, m_col, m_type>(m_elem);
+    return dtMatrix<m_row, m_col, m_type>(m_elem);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::GetMatrixL() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtPartialPivLU<m_row, m_col, m_type>::GetMatrixL() const
 {
     int i, j;
-    m_type L[m_row * m_col] = { 0, };
+    m_type L[m_row * m_col] = {
+        0,
+    };
 
     /* Set diagonal elements as 1 */
     for (i = 0; i < m_row; i++)
@@ -153,49 +175,55 @@ inline CdtMatrix<m_row, m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::Ge
     /* Update remaining matrix from m_elem to L*/
     for (i = 1; i < m_row; i++)
         for (j = 0; j < i; j++)
-            L[i*m_col + j] = m_elem[i*m_col + j];
+            L[i * m_col + j] = m_elem[i * m_col + j];
 
-    return CdtMatrix<m_row, m_col, m_type>(L);
+    return dtMatrix<m_row, m_col, m_type>(L);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::GetMatrixU() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtPartialPivLU<m_row, m_col, m_type>::GetMatrixU() const
 {
     int i, j;
-    m_type U[m_row * m_col] = { 0, };
+    m_type U[m_row * m_col] = {
+        0,
+    };
 
     for (i = 0; i < m_row; i++)
         for (j = i; j < m_col; j++)
-            U[i*m_col + j] = m_elem[i*m_col + j];
+            U[i * m_col + j] = m_elem[i * m_col + j];
 
-    return CdtMatrix<m_row, m_col, m_type>(U);
+    return dtMatrix<m_row, m_col, m_type>(U);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::GetMatrixP() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtPartialPivLU<m_row, m_col, m_type>::GetMatrixP() const
 {
     int i;
-    m_type P[m_row*m_col] = { 0, };
-    m_type row[m_col] = { 0, };
+    m_type P[m_row * m_col] = {
+        0,
+    };
+    m_type row[m_col] = {
+        0,
+    };
 
     for (i = 0; i < m_row; i++)
-        P[i*(m_col + 1)] = 1;
+        P[i * (m_col + 1)] = 1;
 
     for (i = 0; i < m_row; i++)
     {
         if (m_pivot[i] != i)
         {
-            memcpy(row, &P[i*m_col], sizeof(m_type)*m_col);
-            memcpy(&P[i*m_col], &P[m_pivot[i] * m_col], sizeof(m_type)*m_col);
-            memcpy(&P[m_pivot[i] * m_col], row, sizeof(m_type)*m_col);
+            memcpy(row, &P[i * m_col], sizeof(m_type) * m_col);
+            memcpy(&P[i * m_col], &P[m_pivot[i] * m_col], sizeof(m_type) * m_col);
+            memcpy(&P[m_pivot[i] * m_col], row, sizeof(m_type) * m_col);
         }
     }
 
-    return CdtMatrix<m_row, m_col, m_type>(P);
+    return dtMatrix<m_row, m_col, m_type>(P);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_type>& b, CdtVector<m_col, m_type>& x)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtPartialPivLU<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x)
 {
     // Solve, Ax = LUx = b
     // where L is a lower triangular matrix with an all diagonal element is 1
@@ -211,7 +239,8 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row
 
     memcpy(vb, b.m_elem, sizeof(vb));
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     /* Solve Ly = b */
     // interchange the row of vector b with the pivot order
@@ -235,17 +264,17 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row
     // Solve the upper triangular (backward substitution)
     for (i = m_row - 1, pMi = m_elem + (m_row - 1) * m_col; i >= 0; i--, pMi -= m_col)
     {
-        //if (m_pivot[i] != i)
+        // if (m_pivot[i] != i)
         //{
-        //    tmp = b.m_elem[i];
-        //    b.m_elem[i] = b.m_elem[m_pivot[i]];
-        //    b.m_elem[m_pivot[i]] = tmp;
-        //}
+        //     tmp = b.m_elem[i];
+        //     b.m_elem[i] = b.m_elem[m_pivot[i]];
+        //     b.m_elem[m_pivot[i]] = tmp;
+        // }
 
         for (k = i + 1; k < m_col; k++)
             x.m_elem[i] -= *(pMi + k) * x.m_elem[k];
 
-        //if (std::abs(*(pMi + i)) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // if (std::abs(*(pMi + i)) <= std::numeric_limits<m_type>::epsilon()) return -1;
 
         x.m_elem[i] /= *(pMi + i);
     }
@@ -253,8 +282,8 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_type>& b, int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtPartialPivLU<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, int8_t *isOk)
 {
     // Solve, Ax = LUx = b
     // where L is a lower triangular matrix with an all diagonal element is 1
@@ -265,18 +294,21 @@ inline CdtVector<m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::Solve(con
 
     int i, k;
     m_type *pMi;
-    m_type x[m_col] = { 0, };
+    m_type x[m_col] = {
+        0,
+    };
     m_type tmp;
     m_type vb[m_row];
 
     memcpy(vb, b.m_elem, sizeof(vb));
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return CdtVector<m_col, m_type>();
+        return dtVector<m_col, m_type>();
     }
 
     /* Solve Ly =b */
@@ -301,36 +333,41 @@ inline CdtVector<m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::Solve(con
     // Solve the upper triangular (backward substitution)
     for (i = m_row - 1, pMi = m_elem + (m_row - 1) * m_col; i >= 0; i--, pMi -= m_col)
     {
-        //if (m_pivot[i] != i)
+        // if (m_pivot[i] != i)
         //{
-        //    tmp = b.m_elem[i];
-        //    b.m_elem[i] = b.m_elem[m_pivot[i]];
-        //    b.m_elem[m_pivot[i]] = tmp;
-        //}
+        //     tmp = b.m_elem[i];
+        //     b.m_elem[i] = b.m_elem[m_pivot[i]];
+        //     b.m_elem[m_pivot[i]] = tmp;
+        // }
 
         for (k = i + 1; k < m_col; k++)
             x[i] -= *(pMi + k) * x[k];
 
-        //if (std::abs(*(pMi + i)) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // if (std::abs(*(pMi + i)) <= std::numeric_limits<m_type>::epsilon()) return -1;
 
         x[i] /= *(pMi + i);
     }
 
-    return CdtVector<m_col, m_type>(x);
+    return dtVector<m_col, m_type>(x);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, m_type>& inv)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtPartialPivLU<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_type> &inv)
 {
     int i, j, k;
     int colIdx[m_col]; // column index for interchange the current col with the pivot col
     m_type *p_Mi;
     m_type *p_invMi, *p_invMj, *p_invMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
@@ -367,8 +404,8 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_
     p_invMk = invU;
     for (k = 0; k < m_row; k++, p_Mi += (m_col + 1), p_invMk += (m_col + 1))
     {
-        //if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *p_invMk = 1 / *p_Mi;
+        // if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *p_invMk = 1 / *p_Mi;
         *p_invMk = 1 / *p_Mi;
     }
 
@@ -410,18 +447,23 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix3<m_type, m_row, m_col>& inv)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtPartialPivLU<m_row, m_col, m_type>::Inverse(dtMatrix3<m_type, m_row, m_col> &inv)
 {
     int i, j, k;
     int colIdx[m_col]; // column index for interchange the current col with the pivot col
     m_type *p_Mi;
     m_type *p_invMi, *p_invMj, *p_invMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
@@ -458,8 +500,8 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix3<m_type, 
     p_invMk = invU;
     for (k = 0; k < m_row; k++, p_Mi += (m_col + 1), p_invMk += (m_col + 1))
     {
-        //if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *p_invMk = 1 / *p_Mi;
+        // if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *p_invMk = 1 / *p_Mi;
         *p_invMk = 1 / *p_Mi;
     }
 
@@ -501,23 +543,28 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix3<m_type, 
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::Inverse(int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtPartialPivLU<m_row, m_col, m_type>::Inverse(int8_t *isOk)
 {
     int i, j, k;
     int colIdx[m_col]; // column index for interchange the current col with the pivot col
     m_type *p_Mi;
     m_type *p_invMi, *p_invMj, *p_invMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return CdtMatrix<m_row, m_col, m_type>();
+        return dtMatrix<m_row, m_col, m_type>();
     }
 
     /* Initialization */
@@ -555,8 +602,8 @@ inline CdtMatrix<m_row, m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::In
     p_invMk = invU;
     for (k = 0; k < m_row; k++, p_Mi += (m_col + 1), p_invMk += (m_col + 1))
     {
-        //if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *p_invMk = 1 / *p_Mi;
+        // if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *p_invMk = 1 / *p_Mi;
         *p_invMk = 1 / *p_Mi;
     }
 
@@ -596,21 +643,26 @@ inline CdtMatrix<m_row, m_col, m_type> CdtPartialPivLU<m_row, m_col, m_type>::In
         }
     }
 
-    return CdtMatrix<m_row, m_col, m_type>(m_inv);
+    return dtMatrix<m_row, m_col, m_type>(m_inv);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::InverseArray(m_type * inv)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtPartialPivLU<m_row, m_col, m_type>::InverseArray(m_type *inv)
 {
     int i, j, k;
     int colIdx[m_col]; // column index for interchange the current col with the pivot col
     m_type *p_Mi;
     m_type *p_invMi, *p_invMj, *p_invMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
@@ -647,8 +699,8 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::InverseArray(m_type * inv)
     p_invMk = invU;
     for (k = 0; k < m_row; k++, p_Mi += (m_col + 1), p_invMk += (m_col + 1))
     {
-        //if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *p_invMk = 1 / *p_Mi;
+        // if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *p_invMk = 1 / *p_Mi;
         *p_invMk = 1 / *p_Mi;
     }
 
@@ -690,19 +742,24 @@ inline int8_t CdtPartialPivLU<m_row, m_col, m_type>::InverseArray(m_type * inv)
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline m_type * CdtPartialPivLU<m_row, m_col, m_type>::InverseArray(int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type *dtPartialPivLU<m_row, m_col, m_type>::InverseArray(int8_t *isOk)
 {
     int i, j, k;
     int colIdx[m_col]; // column index for interchange the current col with the pivot col
     m_type *p_Mi;
     m_type *p_invMi, *p_invMj, *p_invMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
     memset(m_inv, 0, sizeof(m_type) * m_row * m_col);
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
@@ -745,8 +802,8 @@ inline m_type * CdtPartialPivLU<m_row, m_col, m_type>::InverseArray(int8_t * isO
     p_invMk = invU;
     for (k = 0; k < m_row; k++, p_Mi += (m_col + 1), p_invMk += (m_col + 1))
     {
-        //if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *p_invMk = 1 / *p_Mi;
+        // if (std::abs(*p_Mi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *p_invMk = 1 / *p_Mi;
         *p_invMk = 1 / *p_Mi;
     }
 
@@ -787,3 +844,7 @@ inline m_type * CdtPartialPivLU<m_row, m_col, m_type>::InverseArray(int8_t * isO
 
     return m_inv;
 }
+
+} // namespace dtMath
+
+#endif // DTMATH_DTPARTIAL_PIV_LU_TPP_

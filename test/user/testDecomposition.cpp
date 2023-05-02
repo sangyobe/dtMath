@@ -1,9 +1,16 @@
-#include "testPrint.h"
 #include "testDecomposition.h"
+#include "testPrint.h"
 
 #include <dtMath/dtMath.h>
 
 #include <utility/dhTimeCheck.h>
+
+using dtMath::dtLowerTriangular;
+using dtMath::dtMatrix;
+using dtMath::dtMatrix3;
+using dtMath::dtQR;
+using dtMath::dtUpperTriangular;
+using dtMath::dtVector;
 
 void Test_Decomposition()
 {
@@ -25,20 +32,20 @@ void Test_Decomposition()
 void LowerTriangular()
 {
     PrintHeading("Lower Triangular Matrix ");
-    double b[4] = { 1, 2, 7, 3 };
-    CdtVector<4, double> vecB(b, sizeof(b));
-    CdtVector<4, double> vecX;
+    double b[4] = {1, 2, 7, 3};
+    dtVector<4, double> vecB(b, sizeof(b));
+    dtVector<4, double> vecX;
 
     /* Lower Triangular Matrix Test */
-    double L[16] = { 9, 0, 0, 0, 1, 8, 0, 0, 2, 1, 7, 0, 1, 1, 4, 5 };
-    CdtMatrix<4, 4, double> matL(L, sizeof(L));
-    CdtMatrix<4, 4, double> invMatL;
+    double L[16] = {9, 0, 0, 0, 1, 8, 0, 0, 2, 1, 7, 0, 1, 1, 4, 5};
+    dtMatrix<4, 4, double> matL(L, sizeof(L));
+    dtMatrix<4, 4, double> invMatL;
 
     Printf("Target Matrix A:\n");
     matL.Print();
 
     Printf("\nSolve1\n");
-    CdtLowerTriangular<4, 4, double>::Solve(matL, vecB, vecX);
+    dtLowerTriangular<4, 4, double>::Solve(matL, vecB, vecX);
     Printf("b:\n");
     vecB.Print();
     Printf("x:\n");
@@ -48,14 +55,14 @@ void LowerTriangular()
     Printf("b:\n");
     vecB.Print();
     Printf("x:\n");
-    CdtLowerTriangular<4, 4, double>::Solve(matL, vecB).Print();
+    dtLowerTriangular<4, 4, double>::Solve(matL, vecB).Print();
 
     Printf("\nInverse1:\n");
-    CdtLowerTriangular<4, 4, double>::Inverse(matL, invMatL);
+    dtLowerTriangular<4, 4, double>::Inverse(matL, invMatL);
     invMatL.Print();
 
     Printf("\nInverse2:\n");
-    invMatL = CdtLowerTriangular<4, 4, double>::Inverse(matL);
+    invMatL = dtLowerTriangular<4, 4, double>::Inverse(matL);
     invMatL.Print();
 
     Println;
@@ -64,38 +71,38 @@ void LowerTriangular()
 void UnitLowerTriangular()
 {
     PrintHeading("Unit Lower Triangular Matrix ");
-    double b[4] = { 1, 2, 7, 3 };
-    CdtVector<4, double> vecB(b, sizeof(b));
-    CdtVector<4, double> vecX;
+    double b[4] = {1, 2, 7, 3};
+    dtVector<4, double> vecB(b, sizeof(b));
+    dtVector<4, double> vecX;
 
     /* Unit Lower Triangular Matrix Test */
-    double uintL[16] = { 1, 0, 0, 0, 3, 1, 0, 0, 2, 7, 1, 0, 9, 5, 4, 1 };
-    CdtMatrix<4, 4, double> matUintL(uintL, sizeof(uintL));
-    CdtMatrix<4, 4, double> invMatUnitL;
+    double uintL[16] = {1, 0, 0, 0, 3, 1, 0, 0, 2, 7, 1, 0, 9, 5, 4, 1};
+    dtMatrix<4, 4, double> matUintL(uintL, sizeof(uintL));
+    dtMatrix<4, 4, double> invMatUnitL;
 
     Printf("Target Matrix A:\n");
     matUintL.Print();
 
     Printf("\nSolve1\n");
-    CdtLowerTriangular<4, 4, double>::Solve(matUintL, vecB, vecX);
+    dtLowerTriangular<4, 4, double>::Solve(matUintL, vecB, vecX);
     Printf("b:\n");
     vecB.Print();
     Printf("x:\n");
     vecX.Print();
 
     Printf("\nSolve2\n");
-    vecX = CdtLowerTriangular<4, 4, double>::Solve(matUintL, vecB);
+    vecX = dtLowerTriangular<4, 4, double>::Solve(matUintL, vecB);
     Printf("b:\n");
     vecB.Print();
     Printf("x:\n");
     vecX.Print();
 
     Printf("\nInverse1:\n");
-    CdtLowerTriangular<4, 4, double>::InverseUnit(matUintL, invMatUnitL);
+    dtLowerTriangular<4, 4, double>::InverseUnit(matUintL, invMatUnitL);
     invMatUnitL.Print();
 
     Printf("\nInverse2:\n");
-    invMatUnitL = CdtLowerTriangular<4, 4, double>::InverseUnit(matUintL);
+    invMatUnitL = dtLowerTriangular<4, 4, double>::InverseUnit(matUintL);
     invMatUnitL.Print();
 
     Println;
@@ -104,21 +111,21 @@ void UnitLowerTriangular()
 void UpperTriangular()
 {
     PrintHeading("Upper Triangular Matrix ");
-    double b[4] = { 1, 2, 7, 3 };
-    CdtVector<4, double> vecB(b, sizeof(b));
-    CdtVector<4, double> vecX;
+    double b[4] = {1, 2, 7, 3};
+    dtVector<4, double> vecB(b, sizeof(b));
+    dtVector<4, double> vecX;
 
     /* Upper Triangular Matrix Test */
-    double U[16] = { 9, 1, 4, 5, 0, 8, 1, 3, 0, 0, 7, 2, 0, 0, 0, 5 };
-    CdtMatrix<4, 4, double> matU(U, sizeof(U));
-    CdtMatrix<4, 4, double> invMatU;
+    double U[16] = {9, 1, 4, 5, 0, 8, 1, 3, 0, 0, 7, 2, 0, 0, 0, 5};
+    dtMatrix<4, 4, double> matU(U, sizeof(U));
+    dtMatrix<4, 4, double> invMatU;
     vecX.SetFill(0);
 
     Printf("Target Matrix A:\n");
     matU.Print();
 
     Printf("\nSolve1\n");
-    CdtUpperTriangular<4, 4, double>::Solve(matU, vecB, vecX);
+    dtUpperTriangular<4, 4, double>::Solve(matU, vecB, vecX);
     Printf("b:\n");
     vecB.Print();
     Printf("x:\n");
@@ -128,14 +135,14 @@ void UpperTriangular()
     Printf("b:\n");
     vecB.Print();
     Printf("x:\n");
-    CdtUpperTriangular<4, 4, double>::Solve(matU, vecB).Print();
+    dtUpperTriangular<4, 4, double>::Solve(matU, vecB).Print();
 
     Printf("\nInverse1:\n");
-    CdtUpperTriangular<4, 4, double>::Inverse(matU, invMatU);
+    dtUpperTriangular<4, 4, double>::Inverse(matU, invMatU);
     invMatU.Print();
 
     Printf("\nInverse2:\n");
-    invMatU = CdtUpperTriangular<4, 4, double>::Inverse(matU);
+    invMatU = dtUpperTriangular<4, 4, double>::Inverse(matU);
     invMatU.Print();
 
     Println;
@@ -145,38 +152,38 @@ void UnitUpperTriangular()
 {
     PrintHeading("Unit Upper Triangular Matrix ");
 
-    double b[4] = { 1, 2, 7, 3 };
-    CdtVector<4, double> vecB(b, sizeof(b));
-    CdtVector<4, double> vecX;
+    double b[4] = {1, 2, 7, 3};
+    dtVector<4, double> vecB(b, sizeof(b));
+    dtVector<4, double> vecX;
 
     /* Unit Upper Triangular Matrix Test */
-    double unitU[16] = { 1, 3, 4, 5, 0, 1, 7, 3, 0, 0, 1, 9, 0, 0, 0, 1 };
-    CdtMatrix<4, 4, double> matUnitU(unitU, sizeof(unitU));
-    CdtMatrix<4, 4, double> invMatUnitU;
+    double unitU[16] = {1, 3, 4, 5, 0, 1, 7, 3, 0, 0, 1, 9, 0, 0, 0, 1};
+    dtMatrix<4, 4, double> matUnitU(unitU, sizeof(unitU));
+    dtMatrix<4, 4, double> invMatUnitU;
 
     Printf("Target Matrix A:\n");
     matUnitU.Print();
 
     Printf("\nSolve1\n");
-    CdtUpperTriangular<4, 4, double>::Solve(matUnitU, vecB, vecX);
+    dtUpperTriangular<4, 4, double>::Solve(matUnitU, vecB, vecX);
     Printf("b:\n");
     vecB.Print();
     Printf("x:\n");
     vecX.Print();
 
     Printf("\nSolve2\n");
-    vecX = CdtUpperTriangular<4, 4, double>::Solve(matUnitU, vecB);
+    vecX = dtUpperTriangular<4, 4, double>::Solve(matUnitU, vecB);
     Printf("b:\n");
     vecB.Print();
     Printf("x:\n");
     vecX.Print();
 
     Printf("\nInverse1:\n");
-    CdtUpperTriangular<4, 4, double>::InverseUnit(matUnitU, invMatUnitU);
+    dtUpperTriangular<4, 4, double>::InverseUnit(matUnitU, invMatUnitU);
     invMatUnitU.Print();
 
     Printf("\nInverse2:\n");
-    invMatUnitU = CdtUpperTriangular<4, 4, double>::InverseUnit(matUnitU);
+    invMatUnitU = dtUpperTriangular<4, 4, double>::InverseUnit(matUnitU);
     invMatUnitU.Print();
 
     Println;
@@ -186,14 +193,14 @@ void NoPivotLU()
 {
     PrintHeading("No Pivoting LU Decomposition ");
     /* No Pivoting LU Decomposition Test */
-    double A[16] = { 9,1,2,4,1,8,2,3,2,1,7,3,1,3,5,19 };
-    double b[4] = { 1, 2, 7, 3 };
-    
-    CdtMatrix<4, 4, double> matA(A, sizeof(A));
-    CdtMatrix<4, 4, double> matLU;
-    CdtMatrix<4, 4, double> invLU;
-    CdtVector<4, double> vecB(b, sizeof(b));
-    CdtVector<4, double> vecX;
+    double A[16] = {9, 1, 2, 4, 1, 8, 2, 3, 2, 1, 7, 3, 1, 3, 5, 19};
+    double b[4] = {1, 2, 7, 3};
+
+    dtMatrix<4, 4, double> matA(A, sizeof(A));
+    dtMatrix<4, 4, double> matLU;
+    dtMatrix<4, 4, double> invLU;
+    dtVector<4, double> vecB(b, sizeof(b));
+    dtVector<4, double> vecX;
 
     Printf("Target Matrix A:\n");
     matA.Print();
@@ -234,14 +241,14 @@ void NoPivotLUMat3()
 {
     PrintHeading("No Pivoting LU Decomposition ");
     /* No Pivoting LU Decomposition Test */
-    double A[9] = { 9,1,2, 1,8,2, 2,1,7 };
-    double b[4] = { 1, 2, 7 };
+    double A[9] = {9, 1, 2, 1, 8, 2, 2, 1, 7};
+    double b[4] = {1, 2, 7};
 
-    CdtMatrix3<double> matA(A, sizeof(A));
-    CdtMatrix3<double> matLU;
-    CdtMatrix3<double> invLU;
-    CdtVector<3, double> vecB(b, sizeof(b));
-    CdtVector<3, double> vecX;
+    dtMatrix3<double> matA(A, sizeof(A));
+    dtMatrix3<double> matLU;
+    dtMatrix3<double> invLU;
+    dtVector<3, double> vecB(b, sizeof(b));
+    dtVector<3, double> vecX;
 
     Printf("Target Matrix A:\n");
     matA.Print();
@@ -284,16 +291,16 @@ void PartialPivotLU()
     PrintHeading("Partial Pivoting LU Decomposition ");
     /* Partial Pivoting LU Decomposition Test */
     double A[16] = {
-        19, 1,21, 4,
-         1, 9, 2, 3,
+        19, 1, 21, 4,
+        1, 9, 2, 3,
         22, 1, 7, 3,
-         1,31, 5, 3 };
-    double b[4] = { 1, 2, 7, 3 };
-    
-    CdtMatrix<4, 4, double> matA(A, sizeof(A));
-    CdtMatrix<4, 4, double> invA;
-    CdtVector<4, double> vecB(b, sizeof(b));
-    CdtVector<4, double> vecX;
+        1, 31, 5, 3};
+    double b[4] = {1, 2, 7, 3};
+
+    dtMatrix<4, 4, double> matA(A, sizeof(A));
+    dtMatrix<4, 4, double> invA;
+    dtVector<4, double> vecB(b, sizeof(b));
+    dtVector<4, double> vecX;
 
     Printf("Target Matrix A:\n");
     matA.Print();
@@ -338,16 +345,16 @@ void CholeskyLLT()
     PrintHeading("Cholesky Decomposition LLT ");
     /* Cholesky Decomposition A */
     double A[16] = {
-        81, 9,18, 9,
-         9,65,10, 9,
-        18,10,54,31,
-         9, 9,31,43 };
-    double b[4] = { 1, 2, 7, 3 };
+        81, 9, 18, 9,
+        9, 65, 10, 9,
+        18, 10, 54, 31,
+        9, 9, 31, 43};
+    double b[4] = {1, 2, 7, 3};
 
-    CdtMatrix<4, 4, double> matA(A, sizeof(A));
-    CdtMatrix<4, 4, double> invA;
-    CdtVector<4, double> vecB(b, sizeof(b));
-    CdtVector<4, double> vecX;
+    dtMatrix<4, 4, double> matA(A, sizeof(A));
+    dtMatrix<4, 4, double> invA;
+    dtVector<4, double> vecB(b, sizeof(b));
+    dtVector<4, double> vecX;
 
     Printf("Target Matrix A:\n");
     matA.Print();
@@ -389,16 +396,16 @@ void CholeskyLDLT()
     PrintHeading("Cholesky Decomposition LDLT ");
 
     double A[16] = {
-        81, 9,18, 9,
-         9,65,10, 9,
-        18,10,54,31,
-         9, 9,31,43 };
-    double b[4] = { 1, 2, 7, 3 };
+        81, 9, 18, 9,
+        9, 65, 10, 9,
+        18, 10, 54, 31,
+        9, 9, 31, 43};
+    double b[4] = {1, 2, 7, 3};
 
-    CdtMatrix<4, 4, double> matA(A, sizeof(A));
-    CdtMatrix<4, 4, double> invA;
-    CdtVector<4, double> vecB(b, sizeof(b));
-    CdtVector<4, double> vecX;
+    dtMatrix<4, 4, double> matA(A, sizeof(A));
+    dtMatrix<4, 4, double> invA;
+    dtVector<4, double> vecB(b, sizeof(b));
+    dtVector<4, double> vecX;
 
     Printf("Target Matrix A:\n");
     matA.Print();
@@ -441,23 +448,23 @@ void CholeskyLDLT()
 void HouseholderQR()
 {
     PrintHeading("Householder QR Decomposition of Matrix ");
-    double A43[4 * 3] = { -1, -1, 1, 4, 3, 2, -1, -1, 5, 1, 3, 7 };
-    double A34[3 * 4] = { -1, -1, 1, 4, 3, 2, -1, -1, 5, 1, 3, 7 };
+    double A43[4 * 3] = {-1, -1, 1, 4, 3, 2, -1, -1, 5, 1, 3, 7};
+    double A34[3 * 4] = {-1, -1, 1, 4, 3, 2, -1, -1, 5, 1, 3, 7};
 
-    CdtMatrix<4, 3, double> matA43(A43, sizeof(A43));
-    CdtMatrix<3, 4, double> matA34(A34, sizeof(A34));
-    CdtQR<4, 3, double> QR43(matA43);
-    CdtQR<3, 4, double> QR34(matA34);
+    dtMatrix<4, 3, double> matA43(A43, sizeof(A43));
+    dtMatrix<3, 4, double> matA34(A34, sizeof(A34));
+    dtQR<4, 3, double> QR43(matA43);
+    dtQR<3, 4, double> QR34(matA34);
 
     Printf("/* Skinny Matrix A (4 x 3) - Rank 3 */\n");
     Printf("Target Matrix:\n");
     matA43.Print();
 
     Printf("\nQR Q:\n");
-    //matA43.QR().GetMatrixQ().Print();
+    // matA43.QR().GetMatrixQ().Print();
     QR43.GetMatrixQ().Print();
     Printf("\nQR R:\n");
-    //matA43.QR().GetMatrixR().Print();
+    // matA43.QR().GetMatrixR().Print();
     QR43.GetMatrixR().Print();
     Printf("\nQ*R:\n");
     (QR43.GetMatrixQ() * QR43.GetMatrixR()).Print();
@@ -468,10 +475,10 @@ void HouseholderQR()
     matA34.Print();
 
     Printf("\nQR Q:\n");
-    //matA34.QR().GetMatrixQ().Print();
+    // matA34.QR().GetMatrixQ().Print();
     QR34.GetMatrixQ().Print();
     Printf("\nQR R:\n");
-    //matA34.QR().GetMatrixR().Print();
+    // matA34.QR().GetMatrixR().Print();
     QR34.GetMatrixR().Print();
     Printf("\nQ*R:\n");
     (QR34.GetMatrixQ() * QR34.GetMatrixR()).Print();
@@ -483,25 +490,25 @@ void SingularValue()
 {
     PrintHeading("Singular Value Decomposition of Matrix ");
 
-    double A43[4 * 3] = { 8,1,3,8,2,1,9,4,7,7,5,2 };  // rank 3
-    double B43[4 * 3] = { 8,1,2,8,2,4,9,4,8,7,5,10 }; // rank 2
-    double x4[4] = { 1, 2, 7, 3 };
-    double x3[3] = { 1, 2, 7 };
+    double A43[4 * 3] = {8, 1, 3, 8, 2, 1, 9, 4, 7, 7, 5, 2};  // rank 3
+    double B43[4 * 3] = {8, 1, 2, 8, 2, 4, 9, 4, 8, 7, 5, 10}; // rank 2
+    double x4[4] = {1, 2, 7, 3};
+    double x3[3] = {1, 2, 7};
 
-    CdtMatrix<4, 3, double> matA43(A43, sizeof(A43));
-    CdtMatrix<4, 3, double> matB43(B43, sizeof(B43));
-    CdtMatrix<3, 4, double> invA43;
-    CdtMatrix<3, 4, double> invB43;
-    CdtVector<4, double> vecB4;
-    CdtVector<3, double> vecX3(x3, sizeof(x3));
+    dtMatrix<4, 3, double> matA43(A43, sizeof(A43));
+    dtMatrix<4, 3, double> matB43(B43, sizeof(B43));
+    dtMatrix<3, 4, double> invA43;
+    dtMatrix<3, 4, double> invB43;
+    dtVector<4, double> vecB4;
+    dtVector<3, double> vecX3(x3, sizeof(x3));
 
-    CdtMatrix<3, 4, double> matA34(matA43.Transpose());
-    CdtMatrix<3, 4, double> matB34(matB43.Transpose());
-    CdtMatrix<4, 3, double> invA34;
-    CdtMatrix<4, 3, double> invB34;
-    CdtVector<3, double> vecB3;
-    CdtVector<4, double> vecX4(x4, sizeof(x4));
-    
+    dtMatrix<3, 4, double> matA34(matA43.Transpose());
+    dtMatrix<3, 4, double> matB34(matB43.Transpose());
+    dtMatrix<4, 3, double> invA34;
+    dtMatrix<4, 3, double> invB34;
+    dtVector<3, double> vecB3;
+    dtVector<4, double> vecX4(x4, sizeof(x4));
+
     Printf("/* Skinny Matrix A (4 x 3) - Rank 3 */\n");
     Printf("Target Matrix:\n");
     matA43.Print();
@@ -653,19 +660,19 @@ void SingularValueMat3()
 {
     PrintHeading("Singular Value Decomposition of Matrix3 ");
 
-    double A[3 * 3] = { 1, 12, 7, 3, 8, 9, 12, 3, 19 }; // rank 3
-    double B[3 * 3] = { 1, 12, 7, 3, 8, 9, 6, 16, 18 }; // rank 2
-    double C[3 * 3] = { 1, 12, 2, 3, 8, 6, 12, 3, 24 }; // rank 2
-    double x[3] = { 1, 5, 2 };
+    double A[3 * 3] = {1, 12, 7, 3, 8, 9, 12, 3, 19}; // rank 3
+    double B[3 * 3] = {1, 12, 7, 3, 8, 9, 6, 16, 18}; // rank 2
+    double C[3 * 3] = {1, 12, 2, 3, 8, 6, 12, 3, 24}; // rank 2
+    double x[3] = {1, 5, 2};
 
-    CdtMatrix3<double> matA(A, sizeof(A));
-    CdtMatrix3<double> matB(B, sizeof(B));
-    CdtMatrix3<double> matC(C, sizeof(C));
-    CdtMatrix3<double> invA;
-    CdtMatrix3<double> invB;
-    CdtMatrix3<double> invC;
-    CdtVector<3, double> vecB;
-    CdtVector<3, double> vecX(x, sizeof(x));
+    dtMatrix3<double> matA(A, sizeof(A));
+    dtMatrix3<double> matB(B, sizeof(B));
+    dtMatrix3<double> matC(C, sizeof(C));
+    dtMatrix3<double> invA;
+    dtMatrix3<double> invB;
+    dtMatrix3<double> invC;
+    dtVector<3, double> vecB;
+    dtVector<3, double> vecX(x, sizeof(x));
 
     Printf("/* Matrix(3 x 3) - Rank 3*/\n");
     Printf("Target Matrix A:\n");

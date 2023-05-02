@@ -1,18 +1,36 @@
+/*!
+\file       dtVector.h
+\brief      dtMath, General Vector(m x 1) class
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
+\author     Who is next author?
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
+
+#ifndef DTMATH_DTVECTOR_TPP_
+#define DTMATH_DTVECTOR_TPP_
+
+#include "dtVector.h"
+
+namespace dtMath
+{
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>::CdtVector()
+inline dtVector<m_row, m_type>::dtVector()
 {
     memset(m_elem, 0, sizeof(m_type) * m_row);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>::CdtVector(const m_type* element)
+inline dtVector<m_row, m_type>::dtVector(const m_type *element)
 {
     memcpy(m_elem, element, sizeof(m_type) * m_row);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>::CdtVector(const m_type* element, const size_t n_byte)
+inline dtVector<m_row, m_type>::dtVector(const m_type *element, const size_t n_byte)
 {
     size_t vecSz = sizeof(m_type) * m_row;
 
@@ -21,29 +39,30 @@ inline CdtVector<m_row, m_type>::CdtVector(const m_type* element, const size_t n
         memset(m_elem, 0, sizeof(m_type) * m_row);
         memcpy(m_elem, element, n_byte);
     }
-    else memcpy(m_elem, element, vecSz);
+    else
+        memcpy(m_elem, element, vecSz);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>::CdtVector(const CdtVector& v)
-{
-    memcpy(m_elem, v.m_elem, sizeof(m_type) * m_row);
-}
-
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>::CdtVector(const CdtMatrix<m_row, 1, m_type>& v)
+inline dtVector<m_row, m_type>::dtVector(const dtVector &v)
 {
     memcpy(m_elem, v.m_elem, sizeof(m_type) * m_row);
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetZero()
+inline dtVector<m_row, m_type>::dtVector(const dtMatrix<m_row, 1, m_type> &v)
+{
+    memcpy(m_elem, v.m_elem, sizeof(m_type) * m_row);
+}
+
+template <uint16_t m_row, typename m_type>
+inline void dtVector<m_row, m_type>::SetZero()
 {
     memset(m_elem, 0, sizeof(m_type) * m_row);
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetFill(const m_type value)
+inline void dtVector<m_row, m_type>::SetFill(const m_type value)
 {
     uint16_t cnt;
     uint16_t irow = 0;
@@ -61,70 +80,77 @@ inline void CdtVector<m_row, m_type>::SetFill(const m_type value)
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetElement(const m_type* element, const size_t n_byte)
+inline void dtVector<m_row, m_type>::SetElement(const m_type *element, const size_t n_byte)
 {
     size_t vecSz = sizeof(m_type) * m_row;
 
-    if (vecSz > n_byte) memcpy(m_elem, element, n_byte);
-    else memcpy(m_elem, element, vecSz);
+    if (vecSz > n_byte)
+        memcpy(m_elem, element, n_byte);
+    else
+        memcpy(m_elem, element, vecSz);
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetElement(const CdtVector& v)
+inline void dtVector<m_row, m_type>::SetElement(const dtVector &v)
 {
     memcpy(m_elem, v.m_elem, sizeof(m_type) * m_row);
 }
 
-template<uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetElement(const CdtMatrix<m_row, 1, m_type>& v)
+template <uint16_t m_row, typename m_type>
+inline void dtVector<m_row, m_type>::SetElement(const dtMatrix<m_row, 1, m_type> &v)
 {
     memcpy(m_elem, v.m_elem, sizeof(m_type) * m_row);
 }
 
-//template<uint16_t m_row, typename m_type>
-//inline void CdtVector<m_row, m_type>::SetElement(const m_type elem0, ...)
+// template<uint16_t m_row, typename m_type>
+// inline void dtVector<m_row, m_type>::SetElement(const m_type elem0, ...)
 //{
-//    va_list ap;
-//    va_start(ap, elem0);
+//     va_list ap;
+//     va_start(ap, elem0);
 //
-//    m_elem[0] = elem0;
+//     m_elem[0] = elem0;
 //
-//    for (uint16_t irow = 1; irow < m_row; ++irow)
-//    {
-//        m_elem[irow] = (m_type)(va_arg(ap, double));
-//    }
+//     for (uint16_t irow = 1; irow < m_row; ++irow)
+//     {
+//         m_elem[irow] = (m_type)(va_arg(ap, double));
+//     }
 //
-//    va_end(ap);
-//}
+//     va_end(ap);
+// }
 
 template <uint16_t m_row, typename m_type>
 template <uint16_t row>
-inline void CdtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const CdtVector<row, m_type>& v)
+inline void dtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const dtVector<row, m_type> &v)
 {
-    if (idxRow >= m_row) return;
+    if (idxRow >= m_row)
+        return;
 
     uint16_t rowSz = m_row - idxRow;
-    if (rowSz > row) rowSz = row;
+    if (rowSz > row)
+        rowSz = row;
 
     memcpy(&m_elem[idxRow], v.m_elem, sizeof(m_type) * rowSz);
 }
 
-template<uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const m_type * v, const size_t n_byte)
+template <uint16_t m_row, typename m_type>
+inline void dtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const m_type *v, const size_t n_byte)
 {
-    if (idxRow >= m_row) return;
+    if (idxRow >= m_row)
+        return;
 
     uint16_t rowSz = m_row - idxRow;
     uint16_t row = (uint16_t)(n_byte / sizeof(m_type));
-    if (rowSz > row) rowSz = row;
+    if (rowSz > row)
+        rowSz = row;
 
     memcpy(&m_elem[idxRow], v, sizeof(m_type) * rowSz);
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const CdtVector3<m_type, 3>& v)
+inline void dtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const dtVector3<m_type, 3> &v)
 {
-    if (idxRow >= m_row) return;
+    if (idxRow >= m_row)
+        return;
 
     switch (m_row - idxRow)
     {
@@ -144,9 +170,10 @@ inline void CdtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const CdtV
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const CdtVector4<m_type, 4>& v)
+inline void dtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const dtVector4<m_type, 4> &v)
 {
-    if (idxRow >= m_row) return;
+    if (idxRow >= m_row)
+        return;
 
     switch (m_row - idxRow)
     {
@@ -172,9 +199,10 @@ inline void CdtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const CdtV
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const CdtVector6<m_type, 6>& v)
+inline void dtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const dtVector6<m_type, 6> &v)
 {
-    if (idxRow >= m_row) return;
+    if (idxRow >= m_row)
+        return;
 
     switch (m_row - idxRow)
     {
@@ -216,18 +244,20 @@ inline void CdtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const CdtV
 
 template <uint16_t m_row, typename m_type>
 template <uint16_t row>
-inline void CdtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const CdtMatrix<row, 1, m_type>& v)
+inline void dtVector<m_row, m_type>::SetBlock(const uint16_t idxRow, const dtMatrix<row, 1, m_type> &v)
 {
-    if (idxRow >= m_row) return;
+    if (idxRow >= m_row)
+        return;
 
     uint16_t rowSz = m_row - idxRow;
-    if (rowSz > row) rowSz = row;
+    if (rowSz > row)
+        rowSz = row;
 
     memcpy(&m_elem[idxRow], v.m_elem, sizeof(m_type) * rowSz);
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetSwap(const uint16_t i, const uint16_t j)
+inline void dtVector<m_row, m_type>::SetSwap(const uint16_t i, const uint16_t j)
 {
     m_type elem = m_elem[i];
     m_elem[i] = m_elem[j];
@@ -235,7 +265,7 @@ inline void CdtVector<m_row, m_type>::SetSwap(const uint16_t i, const uint16_t j
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::SetNormalize()
+inline void dtVector<m_row, m_type>::SetNormalize()
 {
     uint16_t cnt = 0;
     uint16_t irow = 0;
@@ -272,32 +302,39 @@ inline void CdtVector<m_row, m_type>::SetNormalize()
 }
 
 template <uint16_t m_row, typename m_type>
-inline const m_type* const CdtVector<m_row, m_type>::GetElementsAddr() const
+inline const m_type *const dtVector<m_row, m_type>::GetElementsAddr() const
 {
     return m_elem;
 }
 
-template<uint16_t m_row, typename m_type>
-template<uint16_t row>
-inline CdtVector<row, m_type> CdtVector<m_row, m_type>::GetBlock(const uint16_t idx)
+template <uint16_t m_row, typename m_type>
+template <uint16_t row>
+inline dtVector<row, m_type> dtVector<m_row, m_type>::GetBlock(const uint16_t idx)
 {
-    m_type elem[row] = { 0, };
+    m_type elem[row] = {
+        0,
+    };
     uint16_t rowSize = m_row - idx;
 
-    if (idx >= m_row) return CdtVector<row, m_type>(elem);
-    if (rowSize > row) rowSize = row;
+    if (idx >= m_row)
+        return dtVector<row, m_type>(elem);
+    if (rowSize > row)
+        rowSize = row;
 
     memcpy(elem, &m_elem[idx], sizeof(m_type) * rowSize);
 
-    return CdtVector<row, m_type>(elem);
+    return dtVector<row, m_type>(elem);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector3<m_type, 3> CdtVector<m_row, m_type>::GetBlockVec3(const uint16_t idx)
+template <uint16_t m_row, typename m_type>
+inline dtVector3<m_type, 3> dtVector<m_row, m_type>::GetBlockVec3(const uint16_t idx)
 {
-    m_type elem[3] = { 0, };
+    m_type elem[3] = {
+        0,
+    };
 
-    if (idx >= m_row) return CdtVector3<m_type, 3>(elem);
+    if (idx >= m_row)
+        return dtVector3<m_type, 3>(elem);
 
     switch (m_row - idx)
     {
@@ -314,15 +351,18 @@ inline CdtVector3<m_type, 3> CdtVector<m_row, m_type>::GetBlockVec3(const uint16
         elem[2] = m_elem[idx + 2];
     };
 
-    return CdtVector3<m_type, 3>(elem);
+    return dtVector3<m_type, 3>(elem);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector4<m_type, 4> CdtVector<m_row, m_type>::GetBlockVec4(const uint16_t idx)
+template <uint16_t m_row, typename m_type>
+inline dtVector4<m_type, 4> dtVector<m_row, m_type>::GetBlockVec4(const uint16_t idx)
 {
-    m_type elem[4] = { 0, };
+    m_type elem[4] = {
+        0,
+    };
 
-    if (idx >= m_row) return CdtVector4<m_type, 4>(elem);
+    if (idx >= m_row)
+        return dtVector4<m_type, 4>(elem);
 
     switch (m_row - idx)
     {
@@ -345,15 +385,18 @@ inline CdtVector4<m_type, 4> CdtVector<m_row, m_type>::GetBlockVec4(const uint16
         elem[3] = m_elem[idx + 3];
     };
 
-    return CdtVector4<m_type, 4>(elem);
+    return dtVector4<m_type, 4>(elem);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector6<m_type, 6> CdtVector<m_row, m_type>::GetBlockVec6(const uint16_t idx)
+template <uint16_t m_row, typename m_type>
+inline dtVector6<m_type, 6> dtVector<m_row, m_type>::GetBlockVec6(const uint16_t idx)
 {
-    m_type elem[6] = { 0, };
+    m_type elem[6] = {
+        0,
+    };
 
-    if (idx >= m_row) return CdtVector6<m_type, 6>(elem);
+    if (idx >= m_row)
+        return dtVector6<m_type, 6>(elem);
 
     switch (m_row - idx)
     {
@@ -391,17 +434,19 @@ inline CdtVector6<m_type, 6> CdtVector<m_row, m_type>::GetBlockVec6(const uint16
         elem[5] = m_elem[idx + 5];
     };
 
-    return CdtVector6<m_type, 6>(elem);
+    return dtVector6<m_type, 6>(elem);
 }
 
 template <uint16_t m_row, typename m_type>
 template <uint16_t row>
-inline int8_t CdtVector<m_row, m_type>::GetBlock(const uint16_t idx, CdtVector<row, m_type> &v)
+inline int8_t dtVector<m_row, m_type>::GetBlock(const uint16_t idx, dtVector<row, m_type> &v)
 {
     uint16_t rowSize = m_row - idx;
 
-    if (idx >= m_row) return -1;
-    if (rowSize > row) rowSize = row;
+    if (idx >= m_row)
+        return -1;
+    if (rowSize > row)
+        rowSize = row;
 
     memcpy(v.m_elem, &m_elem[idx], sizeof(m_type) * rowSize);
 
@@ -409,9 +454,10 @@ inline int8_t CdtVector<m_row, m_type>::GetBlock(const uint16_t idx, CdtVector<r
 }
 
 template <uint16_t m_row, typename m_type>
-inline int8_t CdtVector<m_row, m_type>::GetBlockVec3(const uint16_t idx, CdtVector3<m_type, 3> &v)
+inline int8_t dtVector<m_row, m_type>::GetBlockVec3(const uint16_t idx, dtVector3<m_type, 3> &v)
 {
-    if (idx >= m_row) return -1;
+    if (idx >= m_row)
+        return -1;
 
     switch (m_row - idx)
     {
@@ -432,9 +478,10 @@ inline int8_t CdtVector<m_row, m_type>::GetBlockVec3(const uint16_t idx, CdtVect
 }
 
 template <uint16_t m_row, typename m_type>
-inline int8_t CdtVector<m_row, m_type>::GetBlockVec4(const uint16_t idx, CdtVector4<m_type, 4> &v)
+inline int8_t dtVector<m_row, m_type>::GetBlockVec4(const uint16_t idx, dtVector4<m_type, 4> &v)
 {
-    if (idx >= m_row) return -1;
+    if (idx >= m_row)
+        return -1;
 
     switch (m_row - idx)
     {
@@ -461,9 +508,10 @@ inline int8_t CdtVector<m_row, m_type>::GetBlockVec4(const uint16_t idx, CdtVect
 }
 
 template <uint16_t m_row, typename m_type>
-inline int8_t CdtVector<m_row, m_type>::GetBlockVec6(const uint16_t idx, CdtVector6<m_type, 6> &v)
+inline int8_t dtVector<m_row, m_type>::GetBlockVec6(const uint16_t idx, dtVector6<m_type, 6> &v)
 {
-    if (idx >= m_row) return -1;
+    if (idx >= m_row)
+        return -1;
 
     switch (m_row - idx)
     {
@@ -505,7 +553,7 @@ inline int8_t CdtVector<m_row, m_type>::GetBlockVec6(const uint16_t idx, CdtVect
 }
 
 template <uint16_t m_row, typename m_type>
-inline m_type CdtVector<m_row, m_type>::GetNorm() const
+inline m_type dtVector<m_row, m_type>::GetNorm() const
 {
     m_type rtn = 0;
     uint16_t cnt;
@@ -528,7 +576,7 @@ inline m_type CdtVector<m_row, m_type>::GetNorm() const
 }
 
 template <uint16_t m_row, typename m_type>
-inline m_type CdtVector<m_row, m_type>::GetSqNorm() const
+inline m_type dtVector<m_row, m_type>::GetSqNorm() const
 {
     m_type rtn = 0;
     uint16_t cnt;
@@ -551,7 +599,7 @@ inline m_type CdtVector<m_row, m_type>::GetSqNorm() const
 }
 
 template <uint16_t m_row, typename m_type>
-inline m_type CdtVector<m_row, m_type>::GetSum() const
+inline m_type dtVector<m_row, m_type>::GetSum() const
 {
     m_type rtn = 0;
     uint16_t cnt;
@@ -574,7 +622,7 @@ inline m_type CdtVector<m_row, m_type>::GetSum() const
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::GetNormalized() const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::GetNormalized() const
 {
     m_type vec[m_row];
     uint16_t cnt = 0;
@@ -610,29 +658,29 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::GetNormalized() const
     for (cnt = m_row % 4u; cnt > 0u; cnt--, irow++)
         vec[irow] = m_elem[irow] / norm;
 
-    return CdtVector<m_row, m_type>(vec);
+    return dtVector<m_row, m_type>(vec);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtMatrix<3, 3, m_type> CdtVector<m_row, m_type>::GetSkew() const
+template <uint16_t m_row, typename m_type>
+inline dtMatrix<3, 3, m_type> dtVector<m_row, m_type>::GetSkew() const
 {
     static_assert(m_row == 3, "This method is only for 3 x 1 vector");
 
-    return CdtMatrix<3, 3, m_type>(
+    return dtMatrix<3, 3, m_type>(
         0, -m_elem[2], m_elem[1],
         m_elem[2], 0, -m_elem[0],
         -m_elem[1], m_elem[0], 0);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtMatrix<1, m_row, m_type> CdtVector<m_row, m_type>::Transpose() const
+inline dtMatrix<1, m_row, m_type> dtVector<m_row, m_type>::Transpose() const
 {
-    return CdtMatrix<1, m_row, m_type>(m_elem);
+    return dtMatrix<1, m_row, m_type>(m_elem);
 }
 
 /* Assignment operators */
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator =(const CdtVector& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator=(const dtVector &v)
 {
     memcpy(m_elem, v.m_elem, sizeof(m_type) * m_row);
 
@@ -640,7 +688,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator =(const CdtV
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const CdtVector& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator+=(const dtVector &v)
 {
     uint16_t cnt, irow = 0;
 
@@ -661,7 +709,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const CdtVector& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator-=(const dtVector &v)
 {
     uint16_t cnt, irow = 0;
 
@@ -682,7 +730,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const CdtVector& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator*=(const dtVector &v)
 {
     uint16_t cnt, irow = 0;
 
@@ -703,7 +751,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const CdtVector& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator/=(const dtVector &v)
 {
     uint16_t cnt, irow = 0;
     m_type den[m_row];
@@ -713,23 +761,31 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const Cdt
     {
         if (std::abs(den[irow]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 1]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 1] < 0) den[irow + 1] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 1] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 1] < 0)
+                den[irow + 1] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 1] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 2]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 2] < 0) den[irow + 2] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 2] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 2] < 0)
+                den[irow + 2] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 2] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 3]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 3] < 0) den[irow + 3] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 3] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 3] < 0)
+                den[irow + 3] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 3] = std::numeric_limits<m_type>::epsilon();
         }
         m_elem[irow] /= den[irow];
         m_elem[irow + 1] /= den[irow + 1];
@@ -741,8 +797,10 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const Cdt
     {
         if (std::abs(den[irow]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<m_type>::epsilon();
         }
         m_elem[irow] /= den[irow];
     }
@@ -751,7 +809,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator =(const CdtVector3<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator=(const dtVector3<m_type, m_row> &v)
 {
     m_elem[0] = v.m_elem[0];
     m_elem[1] = v.m_elem[1];
@@ -761,7 +819,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator =(const CdtV
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const CdtVector3<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator+=(const dtVector3<m_type, m_row> &v)
 {
     m_elem[0] += v.m_elem[0];
     m_elem[1] += v.m_elem[1];
@@ -771,7 +829,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const CdtVector3<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator-=(const dtVector3<m_type, m_row> &v)
 {
     m_elem[0] -= v.m_elem[0];
     m_elem[1] -= v.m_elem[1];
@@ -781,7 +839,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const CdtVector3<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator*=(const dtVector3<m_type, m_row> &v)
 {
     m_elem[0] *= v.m_elem[0];
     m_elem[1] *= v.m_elem[1];
@@ -791,31 +849,37 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const CdtVector3<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator/=(const dtVector3<m_type, m_row> &v)
 {
     m_type den;
 
     den = v.m_elem[0];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[0] /= den;
 
     den = v.m_elem[1];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[1] /= den;
 
     den = v.m_elem[2];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[2] /= den;
 
@@ -823,7 +887,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator =(const CdtVector4<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator=(const dtVector4<m_type, m_row> &v)
 {
     m_elem[0] = v.m_elem[0];
     m_elem[1] = v.m_elem[1];
@@ -834,7 +898,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator =(const CdtV
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const CdtVector4<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator+=(const dtVector4<m_type, m_row> &v)
 {
     m_elem[0] += v.m_elem[0];
     m_elem[1] += v.m_elem[1];
@@ -845,7 +909,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const CdtVector4<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator-=(const dtVector4<m_type, m_row> &v)
 {
     m_elem[0] -= v.m_elem[0];
     m_elem[1] -= v.m_elem[1];
@@ -856,7 +920,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const CdtVector4<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator*=(const dtVector4<m_type, m_row> &v)
 {
     m_elem[0] *= v.m_elem[0];
     m_elem[1] *= v.m_elem[1];
@@ -867,39 +931,47 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const CdtVector4<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator/=(const dtVector4<m_type, m_row> &v)
 {
     m_type den;
 
     den = v.m_elem[0];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[0] /= den;
 
     den = v.m_elem[1];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[1] /= den;
 
     den = v.m_elem[2];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[2] /= den;
 
     den = v.m_elem[3];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[3] /= den;
 
@@ -907,7 +979,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator =(const CdtVector6<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator=(const dtVector6<m_type, m_row> &v)
 {
     m_elem[0] = v.m_elem[0];
     m_elem[1] = v.m_elem[1];
@@ -920,7 +992,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator =(const CdtV
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const CdtVector6<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator+=(const dtVector6<m_type, m_row> &v)
 {
     m_elem[0] += v.m_elem[0];
     m_elem[1] += v.m_elem[1];
@@ -933,7 +1005,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const CdtVector6<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator-=(const dtVector6<m_type, m_row> &v)
 {
     m_elem[0] -= v.m_elem[0];
     m_elem[1] -= v.m_elem[1];
@@ -946,7 +1018,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const CdtVector6<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator*=(const dtVector6<m_type, m_row> &v)
 {
     m_elem[0] *= v.m_elem[0];
     m_elem[1] *= v.m_elem[1];
@@ -959,71 +1031,83 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const Cdt
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const CdtVector6<m_type, m_row>& v)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator/=(const dtVector6<m_type, m_row> &v)
 {
     m_type den;
 
     den = v.m_elem[0];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[0] /= den;
 
     den = v.m_elem[1];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[1] /= den;
 
     den = v.m_elem[2];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[2] /= den;
 
     den = v.m_elem[3];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[3] /= den;
 
     den = v.m_elem[4];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[4] /= den;
 
     den = v.m_elem[5];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     m_elem[5] /= den;
 
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator =(const CdtMatrix<m_row, 1, m_type>& v)
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator=(const dtMatrix<m_row, 1, m_type> &v)
 {
     memcpy(m_elem, v.m_elem, sizeof(m_type) * m_row);
 
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const CdtMatrix<m_row, 1, m_type>& v)
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator+=(const dtMatrix<m_row, 1, m_type> &v)
 {
     uint16_t cnt, irow = 0;
 
@@ -1043,8 +1127,8 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const Cdt
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const CdtMatrix<m_row, 1, m_type>& v)
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator-=(const dtMatrix<m_row, 1, m_type> &v)
 {
     uint16_t cnt, irow = 0;
 
@@ -1064,8 +1148,8 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const Cdt
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const CdtMatrix<m_row, 1, m_type>& v)
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator*=(const dtMatrix<m_row, 1, m_type> &v)
 {
     uint16_t cnt, irow = 0;
 
@@ -1085,8 +1169,8 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const Cdt
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const CdtMatrix<m_row, 1, m_type>& v)
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator/=(const dtMatrix<m_row, 1, m_type> &v)
 {
     uint16_t cnt, irow = 0;
     m_type den[m_row];
@@ -1096,23 +1180,31 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const Cdt
     {
         if (std::abs(den[irow]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 1]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 1] < 0) den[irow + 1] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 1] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 1] < 0)
+                den[irow + 1] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 1] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 2]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 2] < 0) den[irow + 2] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 2] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 2] < 0)
+                den[irow + 2] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 2] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 3]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 3] < 0) den[irow + 3] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 3] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 3] < 0)
+                den[irow + 3] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 3] = std::numeric_limits<m_type>::epsilon();
         }
         m_elem[irow] /= den[irow];
         m_elem[irow + 1] /= den[irow + 1];
@@ -1124,8 +1216,10 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const Cdt
     {
         if (std::abs(den[irow]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<m_type>::epsilon();
         }
         m_elem[irow] /= den[irow];
     }
@@ -1133,8 +1227,8 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const Cdt
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator=(const m_type s)
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator=(const m_type s)
 {
     uint16_t cnt, irow = 0;
 
@@ -1155,7 +1249,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator=(const m_typ
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const m_type s)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator+=(const m_type s)
 {
     uint16_t cnt, irow = 0;
 
@@ -1176,7 +1270,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator +=(const m_t
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const m_type s)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator-=(const m_type s)
 {
     uint16_t cnt, irow = 0;
 
@@ -1197,7 +1291,7 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator -=(const m_t
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const m_type s)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator*=(const m_type s)
 {
     uint16_t cnt, irow = 0;
 
@@ -1218,15 +1312,17 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator *=(const m_t
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const m_type s)
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator/=(const m_type s)
 {
     m_type scalar = s;
     uint16_t cnt, irow = 0;
 
     if (std::abs(scalar) < std::numeric_limits<m_type>::epsilon())
     {
-        if (scalar < 0) scalar = -std::numeric_limits<m_type>::epsilon();
-        else scalar = std::numeric_limits<m_type>::epsilon();
+        if (scalar < 0)
+            scalar = -std::numeric_limits<m_type>::epsilon();
+        else
+            scalar = std::numeric_limits<m_type>::epsilon();
     }
 
     for (cnt = m_row >> 2u; cnt > 0u; cnt--, irow += 4)
@@ -1245,40 +1341,40 @@ inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator /=(const m_t
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator &=(const CdtVector3<m_type, m_row>& v)
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator&=(const dtVector3<m_type, m_row> &v)
 {
     CrossProduct(v.m_elem);
 
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator&=(const CdtVector<m_row, m_type>& v)
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator&=(const dtVector<m_row, m_type> &v)
 {
     CrossProduct(v.m_elem);
 
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type>& CdtVector<m_row, m_type>::operator&=(const CdtMatrix<m_row, 1, m_type>& v)
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> &dtVector<m_row, m_type>::operator&=(const dtMatrix<m_row, 1, m_type> &v)
 {
     CrossProduct(v.m_elem);
 
     return (*this);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtCommaInit<m_row, m_type> CdtVector<m_row, m_type>::operator<<(const m_type s)
+template <uint16_t m_row, typename m_type>
+inline dtCommaInit<m_row, m_type> dtVector<m_row, m_type>::operator<<(const m_type s)
 {
     m_elem[0] = s;
-    return CdtCommaInit<m_row, m_type>(m_elem);
+    return dtCommaInit<m_row, m_type>(m_elem);
 }
 
 /* Arithmetic operators */
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -() const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator-() const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1296,11 +1392,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -() const
         vec[irow] = -m_elem[irow];
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtVector& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator+(const dtVector &v) const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1318,11 +1414,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtVe
         vec[irow] = m_elem[irow] + v.m_elem[irow];
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtVector& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator-(const dtVector &v) const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1340,11 +1436,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtVe
         vec[irow] = m_elem[irow] - v.m_elem[irow];
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtVector& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator*(const dtVector &v) const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1362,11 +1458,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtVe
         vec[irow] = m_elem[irow] * v.m_elem[irow];
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtVector& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator/(const dtVector &v) const
 {
     m_type vec[m_row];
     m_type den[m_row];
@@ -1377,23 +1473,31 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtVe
     {
         if (std::abs(den[irow]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 1]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 1] < 0) den[irow + 1] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 1] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 1] < 0)
+                den[irow + 1] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 1] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 2]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 2] < 0) den[irow + 2] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 2] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 2] < 0)
+                den[irow + 2] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 2] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 3]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 3] < 0) den[irow + 3] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 3] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 3] < 0)
+                den[irow + 3] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 3] = std::numeric_limits<m_type>::epsilon();
         }
         vec[irow] = m_elem[irow] / den[irow];
         vec[irow + 1] = m_elem[irow + 1] / den[irow + 1];
@@ -1405,17 +1509,19 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtVe
     {
         if (std::abs(den[irow]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<m_type>::epsilon();
         }
         vec[irow] = m_elem[irow] / den[irow];
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtVector3<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator+(const dtVector3<m_type, m_row> &v) const
 {
     m_type vec[m_row];
 
@@ -1423,11 +1529,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtVe
     vec[1] = m_elem[1] + v.m_elem[1];
     vec[2] = m_elem[2] + v.m_elem[2];
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtVector3<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator-(const dtVector3<m_type, m_row> &v) const
 {
     m_type vec[m_row];
 
@@ -1435,11 +1541,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtVe
     vec[1] = m_elem[1] - v.m_elem[1];
     vec[2] = m_elem[2] - v.m_elem[2];
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtVector3<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator*(const dtVector3<m_type, m_row> &v) const
 {
     m_type vec[m_row];
 
@@ -1447,11 +1553,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtVe
     vec[1] = m_elem[1] * v.m_elem[1];
     vec[2] = m_elem[2] * v.m_elem[2];
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtVector3<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator/(const dtVector3<m_type, m_row> &v) const
 {
     m_type vec[m_row];
     m_type den;
@@ -1459,32 +1565,38 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtVe
     den = v.m_elem[0];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[0] = m_elem[0] / den;
 
     den = v.m_elem[1];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[1] = m_elem[1] / den;
 
     den = v.m_elem[2];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[2] = m_elem[2] / den;
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtVector4<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator+(const dtVector4<m_type, m_row> &v) const
 {
     m_type vec[m_row];
 
@@ -1493,11 +1605,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtVe
     vec[2] = m_elem[2] + v.m_elem[2];
     vec[3] = m_elem[3] + v.m_elem[3];
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtVector4<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator-(const dtVector4<m_type, m_row> &v) const
 {
     m_type vec[m_row];
 
@@ -1506,11 +1618,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtVe
     vec[2] = m_elem[2] - v.m_elem[2];
     vec[3] = m_elem[3] - v.m_elem[3];
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtVector4<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator*(const dtVector4<m_type, m_row> &v) const
 {
     m_type vec[m_row];
 
@@ -1519,11 +1631,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtVe
     vec[2] = m_elem[2] * v.m_elem[2];
     vec[3] = m_elem[3] * v.m_elem[3];
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtVector4<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator/(const dtVector4<m_type, m_row> &v) const
 {
     m_type vec[m_row];
     m_type den;
@@ -1531,40 +1643,48 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtVe
     den = v.m_elem[0];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[0] = m_elem[0] / den;
 
     den = v.m_elem[1];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[1] = m_elem[1] / den;
 
     den = v.m_elem[2];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[2] = m_elem[2] / den;
 
     den = v.m_elem[3];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[3] = m_elem[3] / den;
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtVector6<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator+(const dtVector6<m_type, m_row> &v) const
 {
     m_type vec[m_row];
 
@@ -1575,11 +1695,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtVe
     vec[4] = m_elem[4] + v.m_elem[4];
     vec[5] = m_elem[5] + v.m_elem[5];
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtVector6<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator-(const dtVector6<m_type, m_row> &v) const
 {
     m_type vec[m_row];
 
@@ -1590,11 +1710,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtVe
     vec[4] = m_elem[4] - v.m_elem[4];
     vec[5] = m_elem[5] - v.m_elem[5];
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtVector6<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator*(const dtVector6<m_type, m_row> &v) const
 {
     m_type vec[m_row];
 
@@ -1605,11 +1725,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtVe
     vec[4] = m_elem[4] * v.m_elem[4];
     vec[5] = m_elem[5] * v.m_elem[5];
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtVector6<m_type, m_row>& v) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator/(const dtVector6<m_type, m_row> &v) const
 {
     m_type vec[m_row];
     m_type den;
@@ -1617,56 +1737,68 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtVe
     den = v.m_elem[0];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[0] = m_elem[0] / den;
 
     den = v.m_elem[1];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[1] = m_elem[1] / den;
 
     den = v.m_elem[2];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[2] = m_elem[2] / den;
 
     den = v.m_elem[3];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[3] = m_elem[3] / den;
 
     den = v.m_elem[4];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[4] = m_elem[4] / den;
 
     den = v.m_elem[5];
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
     vec[5] = m_elem[5] / den;
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtMatrix<m_row, 1, m_type>& v) const
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator+(const dtMatrix<m_row, 1, m_type> &v) const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1684,11 +1816,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const CdtMa
         vec[irow] = m_elem[irow] + v.m_elem[irow];
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtMatrix<m_row, 1, m_type>& v) const
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator-(const dtMatrix<m_row, 1, m_type> &v) const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1706,11 +1838,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const CdtMa
         vec[irow] = m_elem[irow] - v.m_elem[irow];
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtMatrix<m_row, 1, m_type>& v) const
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator*(const dtMatrix<m_row, 1, m_type> &v) const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1728,11 +1860,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const CdtMa
         vec[irow] = m_elem[irow] * v.m_elem[irow];
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtMatrix<m_row, 1, m_type>& v) const
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator/(const dtMatrix<m_row, 1, m_type> &v) const
 {
     m_type vec[m_row];
     m_type den[m_row];
@@ -1743,23 +1875,31 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtMa
     {
         if (std::abs(den[irow]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 1]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 1] < 0) den[irow + 1] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 1] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 1] < 0)
+                den[irow + 1] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 1] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 2]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 2] < 0) den[irow + 2] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 2] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 2] < 0)
+                den[irow + 2] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 2] = std::numeric_limits<m_type>::epsilon();
         }
         if (std::abs(den[irow + 3]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow + 3] < 0) den[irow + 3] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow + 3] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow + 3] < 0)
+                den[irow + 3] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow + 3] = std::numeric_limits<m_type>::epsilon();
         }
         vec[irow] = m_elem[irow] / den[irow];
         vec[irow + 1] = m_elem[irow + 1] / den[irow + 1];
@@ -1771,17 +1911,19 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const CdtMa
     {
         if (std::abs(den[irow]) < std::numeric_limits<m_type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<m_type>::epsilon();
-            else den[irow] = std::numeric_limits<m_type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<m_type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<m_type>::epsilon();
         }
         vec[irow] = m_elem[irow] / den[irow];
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const m_type s) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator+(const m_type s) const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1799,11 +1941,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator +(const m_typ
         vec[irow] = m_elem[irow] + s;
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const m_type s) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator-(const m_type s) const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1821,11 +1963,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator -(const m_typ
         vec[irow] = m_elem[irow] - s;
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const m_type s) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator*(const m_type s) const
 {
     m_type vec[m_row];
     uint16_t cnt, irow = 0;
@@ -1843,11 +1985,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator *(const m_typ
         vec[irow] = m_elem[irow] * s;
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
 template <uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const m_type s) const
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator/(const m_type s) const
 {
     m_type den = s;
     m_type vec[m_row];
@@ -1855,8 +1997,10 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const m_typ
 
     if (std::abs(den) < std::numeric_limits<m_type>::epsilon())
     {
-        if (den < 0) den = -std::numeric_limits<m_type>::epsilon();
-        else den = std::numeric_limits<m_type>::epsilon();
+        if (den < 0)
+            den = -std::numeric_limits<m_type>::epsilon();
+        else
+            den = std::numeric_limits<m_type>::epsilon();
     }
 
     for (cnt = m_row >> 2u; cnt > 0u; cnt--, irow += 4)
@@ -1872,11 +2016,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator /(const m_typ
         vec[irow] = m_elem[irow] / den;
     }
 
-    return CdtVector(vec);
+    return dtVector(vec);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator&(const CdtVector3<m_type, m_row>& v) const
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator&(const dtVector3<m_type, m_row> &v) const
 {
     static_assert(m_row == 3, "This method is only for 3 x 1 vector");
 
@@ -1886,11 +2030,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator&(const CdtVec
     elem[1] = m_elem[2] * v.m_elem[0] - m_elem[0] * v.m_elem[2];
     elem[2] = m_elem[0] * v.m_elem[1] - m_elem[1] * v.m_elem[0];
 
-    return CdtVector<m_row, m_type>(elem);
+    return dtVector<m_row, m_type>(elem);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator&(const CdtVector<m_row, m_type>& v) const
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator&(const dtVector<m_row, m_type> &v) const
 {
     static_assert(m_row == 3, "This method is only for 3 x 1 vector");
 
@@ -1900,11 +2044,11 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator&(const CdtVec
     elem[1] = m_elem[2] * v.m_elem[0] - m_elem[0] * v.m_elem[2];
     elem[2] = m_elem[0] * v.m_elem[1] - m_elem[1] * v.m_elem[0];
 
-    return CdtVector<m_row, m_type>(elem);
+    return dtVector<m_row, m_type>(elem);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator&(const CdtMatrix<m_row, 1, m_type>& v) const
+template <uint16_t m_row, typename m_type>
+inline dtVector<m_row, m_type> dtVector<m_row, m_type>::operator&(const dtMatrix<m_row, 1, m_type> &v) const
 {
     static_assert(m_row == 3, "This method is only for 3 x 1 vector");
 
@@ -1914,22 +2058,22 @@ inline CdtVector<m_row, m_type> CdtVector<m_row, m_type>::operator&(const CdtMat
     elem[1] = m_elem[2] * v.m_elem[0] - m_elem[0] * v.m_elem[2];
     elem[2] = m_elem[0] * v.m_elem[1] - m_elem[1] * v.m_elem[0];
 
-    return CdtVector<m_row, m_type>(elem);
+    return dtVector<m_row, m_type>(elem);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtMatrix3<m_type, m_row, m_row> CdtVector<m_row, m_type>::operator &(const CdtMatrix3<m_type, m_row, m_row> &m) const
+template <uint16_t m_row, typename m_type>
+inline dtMatrix3<m_type, m_row, m_row> dtVector<m_row, m_type>::operator&(const dtMatrix3<m_type, m_row, m_row> &m) const
 { // [v]x * Mat3, []x is skew-symmetric matrix
-    return CdtMatrix3<m_type, m_row, m_row>(
+    return dtMatrix3<m_type, m_row, m_row>(
         m.m_elem[6] * m_elem[1] - m.m_elem[3] * m_elem[2], m.m_elem[7] * m_elem[1] - m.m_elem[4] * m_elem[2], m.m_elem[8] * m_elem[1] - m.m_elem[5] * m_elem[2],
         m.m_elem[0] * m_elem[2] - m.m_elem[6] * m_elem[0], m.m_elem[1] * m_elem[2] - m.m_elem[7] * m_elem[0], m.m_elem[2] * m_elem[2] - m.m_elem[8] * m_elem[0],
         m.m_elem[3] * m_elem[0] - m.m_elem[0] * m_elem[1], m.m_elem[4] * m_elem[0] - m.m_elem[1] * m_elem[1], m.m_elem[5] * m_elem[0] - m.m_elem[2] * m_elem[1]);
 }
 
-template<uint16_t m_row, typename m_type>
-inline CdtRotation<m_type, m_row, m_row> CdtVector<m_row, m_type>::operator &(const CdtRotation<m_type, m_row, m_row> &m) const
-{// [v]x * RotMat, []x is skew-symmetric matrix
-    return CdtMatrix3<m_type, m_row, m_row>(
+template <uint16_t m_row, typename m_type>
+inline dtRotation<m_type, m_row, m_row> dtVector<m_row, m_type>::operator&(const dtRotation<m_type, m_row, m_row> &m) const
+{ // [v]x * RotMat, []x is skew-symmetric matrix
+    return dtMatrix3<m_type, m_row, m_row>(
         m.m_elem[6] * m_elem[1] - m.m_elem[3] * m_elem[2], m.m_elem[7] * m_elem[1] - m.m_elem[4] * m_elem[2], m.m_elem[8] * m_elem[1] - m.m_elem[5] * m_elem[2],
         m.m_elem[0] * m_elem[2] - m.m_elem[6] * m_elem[0], m.m_elem[1] * m_elem[2] - m.m_elem[7] * m_elem[0], m.m_elem[2] * m_elem[2] - m.m_elem[8] * m_elem[0],
         m.m_elem[3] * m_elem[0] - m.m_elem[0] * m_elem[1], m.m_elem[4] * m_elem[0] - m.m_elem[1] * m_elem[1], m.m_elem[5] * m_elem[0] - m.m_elem[2] * m_elem[1]);
@@ -1937,7 +2081,7 @@ inline CdtRotation<m_type, m_row, m_row> CdtVector<m_row, m_type>::operator &(co
 
 template <uint16_t m_row, typename m_type>
 template <uint16_t col>
-inline CdtMatrix<m_row, col, m_type> CdtVector<m_row, m_type>::operator *(const CdtMatrix<1, col, m_type>& m) const
+inline dtMatrix<m_row, col, m_type> dtVector<m_row, m_type>::operator*(const dtMatrix<1, col, m_type> &m) const
 {
     m_type mat[m_row * col];
     uint16_t cnt;
@@ -1957,11 +2101,11 @@ inline CdtMatrix<m_row, col, m_type> CdtVector<m_row, m_type>::operator *(const 
             mat[irow * col + icol] = m_elem[irow] * m.m_elem[icol];
     }
 
-    return CdtMatrix<m_row, col, m_type>(mat);
+    return dtMatrix<m_row, col, m_type>(mat);
 }
 
 template <uint16_t m_row, typename m_type>
-inline m_type CdtVector<m_row, m_type>::dot(const CdtVector& v) const
+inline m_type dtVector<m_row, m_type>::dot(const dtVector &v) const
 {
     m_type result = 0;
     uint16_t cnt, irow = 0;
@@ -1983,7 +2127,7 @@ inline m_type CdtVector<m_row, m_type>::dot(const CdtVector& v) const
 }
 
 template <uint16_t m_row, typename m_type>
-inline m_type CdtVector<m_row, m_type>::dot(const CdtVector3<m_type, m_row>& v) const
+inline m_type dtVector<m_row, m_type>::dot(const dtVector3<m_type, m_row> &v) const
 {
     return (
         m_elem[0] * v.m_elem[0] +
@@ -1992,7 +2136,7 @@ inline m_type CdtVector<m_row, m_type>::dot(const CdtVector3<m_type, m_row>& v) 
 }
 
 template <uint16_t m_row, typename m_type>
-inline m_type CdtVector<m_row, m_type>::dot(const CdtVector4<m_type, m_row>& v) const
+inline m_type dtVector<m_row, m_type>::dot(const dtVector4<m_type, m_row> &v) const
 {
     return (
         m_elem[0] * v.m_elem[0] +
@@ -2002,7 +2146,7 @@ inline m_type CdtVector<m_row, m_type>::dot(const CdtVector4<m_type, m_row>& v) 
 }
 
 template <uint16_t m_row, typename m_type>
-inline m_type CdtVector<m_row, m_type>::dot(const CdtVector6<m_type, m_row>& v) const
+inline m_type dtVector<m_row, m_type>::dot(const dtVector6<m_type, m_row> &v) const
 {
     return (
         m_elem[0] * v.m_elem[0] +
@@ -2013,8 +2157,8 @@ inline m_type CdtVector<m_row, m_type>::dot(const CdtVector6<m_type, m_row>& v) 
         m_elem[5] * v.m_elem[5]);
 }
 
-template<uint16_t m_row, typename m_type>
-inline m_type CdtVector<m_row, m_type>::dot(const CdtMatrix<m_row, 1, m_type>& v) const
+template <uint16_t m_row, typename m_type>
+inline m_type dtVector<m_row, m_type>::dot(const dtMatrix<m_row, 1, m_type> &v) const
 {
     m_type result = 0;
     uint16_t cnt, irow = 0;
@@ -2037,159 +2181,205 @@ inline m_type CdtVector<m_row, m_type>::dot(const CdtMatrix<m_row, 1, m_type>& v
 
 /* Comparison operators */
 template <uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator ==(const CdtVector& v) const
+inline bool dtVector<m_row, m_type>::operator==(const dtVector &v) const
 {
     uint16_t cnt, i = 0;
 
     for (cnt = m_row >> 2u; cnt > 0u; cnt--, i += 4)
     {
-        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 1] - v.m_elem[i + 1]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 2] - v.m_elem[i + 2]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 3] - v.m_elem[i + 3]) > m_tolerance) return false;
+        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 1] - v.m_elem[i + 1]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 2] - v.m_elem[i + 2]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 3] - v.m_elem[i + 3]) > m_tolerance)
+            return false;
     }
 
     for (cnt = m_row % 4u; cnt > 0u; cnt--, i++)
     {
-        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance) return false;
+        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance)
+            return false;
     }
 
     return true;
 }
 
 template <uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator !=(const CdtVector& v) const
+inline bool dtVector<m_row, m_type>::operator!=(const dtVector &v) const
 {
     uint16_t cnt, i = 0;
 
     for (cnt = m_row >> 2u; cnt > 0u; cnt--, i += 4)
     {
-        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 1] - v.m_elem[i + 1]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 2] - v.m_elem[i + 2]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 3] - v.m_elem[i + 3]) > m_tolerance) return true;
+        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 1] - v.m_elem[i + 1]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 2] - v.m_elem[i + 2]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 3] - v.m_elem[i + 3]) > m_tolerance)
+            return true;
     }
 
     for (cnt = m_row % 4u; cnt > 0u; cnt--, i++)
     {
-        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance) return true;
+        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance)
+            return true;
     }
 
     return false;
 }
 
 template <uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator ==(const CdtVector3<m_type, m_row>& v) const
+inline bool dtVector<m_row, m_type>::operator==(const dtVector3<m_type, m_row> &v) const
 {
-    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance) return false;
-    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance) return false;
-    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance) return false;
+    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance)
+        return false;
 
     return true;
 }
 
 template <uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator !=(const CdtVector3<m_type, m_row>& v) const
+inline bool dtVector<m_row, m_type>::operator!=(const dtVector3<m_type, m_row> &v) const
 {
-    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance) return true;
-    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance) return true;
-    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance) return true;
+    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance)
+        return true;
 
     return false;
 }
 
 template <uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator ==(const CdtVector4<m_type, m_row>& v) const
+inline bool dtVector<m_row, m_type>::operator==(const dtVector4<m_type, m_row> &v) const
 {
-    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance) return false;
-    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance) return false;
-    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance) return false;
-    if (std::abs(m_elem[3] - v.m_elem[3]) > m_tolerance) return false;
+    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[3] - v.m_elem[3]) > m_tolerance)
+        return false;
 
     return true;
 }
 
 template <uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator !=(const CdtVector4<m_type, m_row>& v) const
+inline bool dtVector<m_row, m_type>::operator!=(const dtVector4<m_type, m_row> &v) const
 {
-    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance) return true;
-    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance) return true;
-    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance) return true;
-    if (std::abs(m_elem[3] - v.m_elem[3]) > m_tolerance) return true;
+    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[3] - v.m_elem[3]) > m_tolerance)
+        return true;
 
     return false;
 }
 
 template <uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator ==(const CdtVector6<m_type, m_row>& v) const
+inline bool dtVector<m_row, m_type>::operator==(const dtVector6<m_type, m_row> &v) const
 {
-    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance) return false;
-    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance) return false;
-    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance) return false;
-    if (std::abs(m_elem[3] - v.m_elem[3]) > m_tolerance) return false;
-    if (std::abs(m_elem[4] - v.m_elem[4]) > m_tolerance) return false;
-    if (std::abs(m_elem[5] - v.m_elem[5]) > m_tolerance) return false;
+    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[3] - v.m_elem[3]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[4] - v.m_elem[4]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[5] - v.m_elem[5]) > m_tolerance)
+        return false;
 
     return true;
 }
 
 template <uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator !=(const CdtVector6<m_type, m_row>& v) const
+inline bool dtVector<m_row, m_type>::operator!=(const dtVector6<m_type, m_row> &v) const
 {
-    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance) return true;
-    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance) return true;
-    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance) return true;
-    if (std::abs(m_elem[3] - v.m_elem[3]) > m_tolerance) return true;
-    if (std::abs(m_elem[4] - v.m_elem[4]) > m_tolerance) return true;
-    if (std::abs(m_elem[5] - v.m_elem[5]) > m_tolerance) return true;
+    if (std::abs(m_elem[0] - v.m_elem[0]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[1] - v.m_elem[1]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[2] - v.m_elem[2]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[3] - v.m_elem[3]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[4] - v.m_elem[4]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[5] - v.m_elem[5]) > m_tolerance)
+        return true;
 
     return false;
 }
 
-template<uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator ==(const CdtMatrix<m_row, 1, m_type>& v) const
+template <uint16_t m_row, typename m_type>
+inline bool dtVector<m_row, m_type>::operator==(const dtMatrix<m_row, 1, m_type> &v) const
 {
     uint16_t cnt, i = 0;
 
     for (cnt = m_row >> 2u; cnt > 0u; cnt--, i += 4)
     {
-        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 1] - v.m_elem[i + 1]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 2] - v.m_elem[i + 2]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 3] - v.m_elem[i + 3]) > m_tolerance) return false;
+        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 1] - v.m_elem[i + 1]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 2] - v.m_elem[i + 2]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 3] - v.m_elem[i + 3]) > m_tolerance)
+            return false;
     }
 
     for (cnt = m_row % 4u; cnt > 0u; cnt--, i++)
     {
-        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance) return false;
+        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance)
+            return false;
     }
 
     return true;
 }
 
-template<uint16_t m_row, typename m_type>
-inline bool CdtVector<m_row, m_type>::operator !=(const CdtMatrix<m_row, 1, m_type>& v) const
+template <uint16_t m_row, typename m_type>
+inline bool dtVector<m_row, m_type>::operator!=(const dtMatrix<m_row, 1, m_type> &v) const
 {
     uint16_t cnt, i = 0;
 
     for (cnt = m_row >> 2u; cnt > 0u; cnt--, i += 4)
     {
-        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 1] - v.m_elem[i + 1]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 2] - v.m_elem[i + 2]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 3] - v.m_elem[i + 3]) > m_tolerance) return true;
+        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 1] - v.m_elem[i + 1]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 2] - v.m_elem[i + 2]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 3] - v.m_elem[i + 3]) > m_tolerance)
+            return true;
     }
 
     for (cnt = m_row % 4u; cnt > 0u; cnt--, i++)
     {
-        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance) return true;
+        if (std::abs(m_elem[i] - v.m_elem[i]) > m_tolerance)
+            return true;
     }
 
     return false;
 }
 
 template <uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::Print(const char endChar)
+inline void dtVector<m_row, m_type>::Print(const char endChar)
 {
 #if defined(ARDUINO)
     for (uint16_t irow = 0; irow < m_row; irow++)
@@ -2207,8 +2397,8 @@ inline void CdtVector<m_row, m_type>::Print(const char endChar)
 }
 
 //-- Private Member Function ------------------------------------------------//
-template<uint16_t m_row, typename m_type>
-inline void CdtVector<m_row, m_type>::CrossProduct(const m_type * v)
+template <uint16_t m_row, typename m_type>
+inline void dtVector<m_row, m_type>::CrossProduct(const m_type *v)
 {
     static_assert(m_row == 3, "This method is only for 3 x 1 vector");
 
@@ -2226,7 +2416,7 @@ inline void CdtVector<m_row, m_type>::CrossProduct(const m_type * v)
 //-- Template Function ------------------------------------------------------//
 // scalar + vector
 template <uint16_t row, typename type>
-inline CdtVector<row, type> operator +(const type s, const CdtVector<row, type>& v)
+inline dtVector<row, type> operator+(const type s, const dtVector<row, type> &v)
 {
     type vec[row];
     uint16_t cnt, irow = 0;
@@ -2244,12 +2434,12 @@ inline CdtVector<row, type> operator +(const type s, const CdtVector<row, type>&
         vec[irow] = v.m_elem[irow] + s;
     }
 
-    return CdtVector<row, type>(vec);
+    return dtVector<row, type>(vec);
 }
 
 // scalar - vector
 template <uint16_t row, typename type>
-inline CdtVector<row, type> operator -(const type s, const CdtVector<row, type>& v)
+inline dtVector<row, type> operator-(const type s, const dtVector<row, type> &v)
 {
     type vec[row];
     uint16_t cnt, irow = 0;
@@ -2267,12 +2457,12 @@ inline CdtVector<row, type> operator -(const type s, const CdtVector<row, type>&
         vec[irow] = s - v.m_elem[irow];
     }
 
-    return CdtVector<row, type>(vec);
+    return dtVector<row, type>(vec);
 }
 
 // scalar * vector
 template <uint16_t row, typename type>
-inline CdtVector<row, type> operator *(const type s, const CdtVector<row, type>& v)
+inline dtVector<row, type> operator*(const type s, const dtVector<row, type> &v)
 {
     type vec[row];
     uint16_t cnt, irow = 0;
@@ -2290,12 +2480,12 @@ inline CdtVector<row, type> operator *(const type s, const CdtVector<row, type>&
         vec[irow] = v.m_elem[irow] * s;
     }
 
-    return CdtVector<row, type>(vec);
+    return dtVector<row, type>(vec);
 }
 
 // scalar / vector
 template <uint16_t row, typename type>
-inline CdtVector<row, type> operator /(const type s, const CdtVector<row, type>& v)
+inline dtVector<row, type> operator/(const type s, const dtVector<row, type> &v)
 {
     type vec[row];
     type den[row];
@@ -2306,23 +2496,31 @@ inline CdtVector<row, type> operator /(const type s, const CdtVector<row, type>&
     {
         if (std::abs(den[irow]) < std::numeric_limits<type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<type>::epsilon();
-            else den[irow] = std::numeric_limits<type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<type>::epsilon();
         }
         if (std::abs(den[irow + 1]) < std::numeric_limits<type>::epsilon())
         {
-            if (den[irow + 1] < 0) den[irow + 1] = -std::numeric_limits<type>::epsilon();
-            else den[irow + 1] = std::numeric_limits<type>::epsilon();
+            if (den[irow + 1] < 0)
+                den[irow + 1] = -std::numeric_limits<type>::epsilon();
+            else
+                den[irow + 1] = std::numeric_limits<type>::epsilon();
         }
         if (std::abs(den[irow + 2]) < std::numeric_limits<type>::epsilon())
         {
-            if (den[irow + 2] < 0) den[irow + 2] = -std::numeric_limits<type>::epsilon();
-            else den[irow + 2] = std::numeric_limits<type>::epsilon();
+            if (den[irow + 2] < 0)
+                den[irow + 2] = -std::numeric_limits<type>::epsilon();
+            else
+                den[irow + 2] = std::numeric_limits<type>::epsilon();
         }
         if (std::abs(den[irow + 3]) < std::numeric_limits<type>::epsilon())
         {
-            if (den[irow + 3] < 0) den[irow + 3] = -std::numeric_limits<type>::epsilon();
-            else den[irow + 3] = std::numeric_limits<type>::epsilon();
+            if (den[irow + 3] < 0)
+                den[irow + 3] = -std::numeric_limits<type>::epsilon();
+            else
+                den[irow + 3] = std::numeric_limits<type>::epsilon();
         }
         vec[irow] = s / den[irow];
         vec[irow + 1] = s / den[irow + 1];
@@ -2334,11 +2532,17 @@ inline CdtVector<row, type> operator /(const type s, const CdtVector<row, type>&
     {
         if (std::abs(den[irow]) < std::numeric_limits<type>::epsilon())
         {
-            if (den[irow] < 0) den[irow] = -std::numeric_limits<type>::epsilon();
-            else den[irow] = std::numeric_limits<type>::epsilon();
+            if (den[irow] < 0)
+                den[irow] = -std::numeric_limits<type>::epsilon();
+            else
+                den[irow] = std::numeric_limits<type>::epsilon();
         }
         vec[irow] = s / den[irow];
     }
 
-    return CdtVector<row, type>(vec);
+    return dtVector<row, type>(vec);
 }
+
+} // namespace dtMath
+
+#endif // DTMATH_DTVECTOR_TPP_

@@ -1,15 +1,34 @@
+/*!
+\file       dtNoPivLU.h
+\brief      dtMath, LU Decomposition without pivoting(Doolittle form) class
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
+\author     Who is next author?
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
+
+#ifndef DTMATH_DTNO_PIV_LU_TPP_
+#define DTMATH_DTNO_PIV_LU_TPP_
+
+#include "dtNoPivLU.h"
+
+namespace dtMath
+{
 
 template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtNoPivLU<m_row, m_col, m_type>::CdtNoPivLU()
+inline dtNoPivLU<m_row, m_col, m_type>::dtNoPivLU()
 {
     memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
     m_isOk = 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtNoPivLU<m_row, m_col, m_type>::CdtNoPivLU(const m_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtNoPivLU<m_row, m_col, m_type>::dtNoPivLU(const m_type *element, const size_t n_byte)
 {
-    if ((sizeof(m_type) * m_row * m_col) != n_byte) m_isOk = 0;
+    if ((sizeof(m_type) * m_row * m_col) != n_byte)
+        m_isOk = 0;
     else
     {
         memset(m_elem, element, n_byte);
@@ -17,22 +36,22 @@ inline CdtNoPivLU<m_row, m_col, m_type>::CdtNoPivLU(const m_type *element, const
     }
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtNoPivLU<m_row, m_col, m_type>::CdtNoPivLU(const CdtMatrix<m_row, m_col, m_type>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtNoPivLU<m_row, m_col, m_type>::dtNoPivLU(const dtMatrix<m_row, m_col, m_type> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtNoPivLU<m_row, m_col, m_type>::CdtNoPivLU(const CdtMatrix3<m_type, m_row, m_col>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtNoPivLU<m_row, m_col, m_type>::dtNoPivLU(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Compute()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute()
 {
     if (m_row != m_col)
     {
@@ -73,8 +92,8 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Compute()
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
 {
     if ((sizeof(m_type) * m_row * m_col) != n_byte)
     {
@@ -86,31 +105,33 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Compute(const m_type *element, c
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Compute(const CdtMatrix<m_row, m_col, m_type>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute(const dtMatrix<m_row, m_col, m_type> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Compute(const CdtMatrix3<m_type, m_row, m_col>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::GetMatrix() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::GetMatrix() const
 {
-    return CdtMatrix<m_row, m_col, m_type>(m_elem);
+    return dtMatrix<m_row, m_col, m_type>(m_elem);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::GetMatrixL() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::GetMatrixL() const
 {
     int i, j;
-    m_type L[m_row * m_col] = { 0, };
+    m_type L[m_row * m_col] = {
+        0,
+    };
 
     /* Set diagonal elements as 1 */
     for (i = 0; i < m_row; i++)
@@ -121,26 +142,28 @@ inline CdtMatrix<m_row, m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::GetMatr
     /* Update remaining matrix from m_elem to L*/
     for (i = 1; i < m_row; i++)
         for (j = 0; j < i; j++)
-            L[i*m_col + j] = m_elem[i*m_col + j];
+            L[i * m_col + j] = m_elem[i * m_col + j];
 
-    return CdtMatrix<m_row, m_col, m_type>(L);
+    return dtMatrix<m_row, m_col, m_type>(L);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::GetMatrixU() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::GetMatrixU() const
 {
     int i, j;
-    m_type U[m_row * m_col] = { 0, };
+    m_type U[m_row * m_col] = {
+        0,
+    };
 
     for (i = 0; i < m_row; i++)
         for (j = i; j < m_col; j++)
-            U[i*m_col + j] = m_elem[i*m_col + j];
+            U[i * m_col + j] = m_elem[i * m_col + j];
 
-    return CdtMatrix<m_row, m_col, m_type>(U);
+    return dtMatrix<m_row, m_col, m_type>(U);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_type>& b, CdtVector<m_col, m_type>& x)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtNoPivLU<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x)
 {
     // Solve, Ax = LUx = b
     // where L is a lower triangular matrix with an all diagonal element is 1
@@ -152,7 +175,8 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_t
     int i, k;
     m_type *pMi;
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     /* Solve Ly = b */
     // Solve the unit lower triangular (forward substitution), here x is y
@@ -170,7 +194,7 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_t
         for (k = i + 1; k < m_col; k++)
             x.m_elem[i] -= *(pMi + k) * x.m_elem[k];
 
-        //if (std::abs(*(pMi + k)) <= std::numeric_limits<m_type>::epsilon()) return -1; // The matrix U is singular
+        // if (std::abs(*(pMi + k)) <= std::numeric_limits<m_type>::epsilon()) return -1; // The matrix U is singular
 
         x.m_elem[i] /= *(pMi + i);
     }
@@ -178,8 +202,8 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_t
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_type>& b, int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, int8_t *isOk)
 {
     // Solve, Ax = LUx = b
     // define Ux = y
@@ -188,14 +212,17 @@ inline CdtVector<m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::Solve(const Cd
 
     int i, k;
     m_type *pMi;
-    m_type x[m_col] = { 0, };
+    m_type x[m_col] = {
+        0,
+    };
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return CdtVector<m_col, m_type>();
+        return dtVector<m_col, m_type>();
     }
 
     /* Solve Ly = b */
@@ -214,25 +241,30 @@ inline CdtVector<m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::Solve(const Cd
         for (k = i + 1; k < m_col; k++)
             x[i] -= *(pMi + k) * x[k];
 
-        //if (std::abs(*(pU + k)) <= std::numeric_limits<m_type>::epsilon()) m_isOk = 0; // The matrix U is singular
+        // if (std::abs(*(pU + k)) <= std::numeric_limits<m_type>::epsilon()) m_isOk = 0; // The matrix U is singular
 
         x[i] /= *(pMi + i);
     }
 
-    return CdtVector<m_col, m_type>(x);
+    return dtVector<m_col, m_type>(x);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, m_type>& inv)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtNoPivLU<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_type> &inv)
 {
     int i, j, k;
     m_type *pMi;
     m_type *pInvMi, *pInvMj, *pInvMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
@@ -265,8 +297,8 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, 
     pInvMk = invU;
     for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
     {
-        //if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *pInvMk = 1 / *pMi;
+        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
@@ -296,17 +328,22 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, 
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix3<m_type, m_row, m_col>& inv)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtNoPivLU<m_row, m_col, m_type>::Inverse(dtMatrix3<m_type, m_row, m_col> &inv)
 {
     int i, j, k;
     m_type *pMi;
     m_type *pInvMi, *pInvMj, *pInvMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
@@ -339,8 +376,8 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix3<m_type, m_row
     pInvMk = invU;
     for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
     {
-        //if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *pInvMk = 1 / *pMi;
+        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
@@ -370,22 +407,27 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::Inverse(CdtMatrix3<m_type, m_row
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::Inverse(int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::Inverse(int8_t *isOk)
 {
     int i, j, k;
     m_type *pMi;
     m_type *pInvMi, *pInvMj, *pInvMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return CdtMatrix<m_row, m_col, m_type>();
+        return dtMatrix<m_row, m_col, m_type>();
     }
 
     /* Initialization */
@@ -419,8 +461,8 @@ inline CdtMatrix<m_row, m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::Inverse
     pInvMk = invU;
     for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
     {
-        //if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *pInvMk = 1 / *pMi;
+        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
@@ -448,20 +490,25 @@ inline CdtMatrix<m_row, m_col, m_type> CdtNoPivLU<m_row, m_col, m_type>::Inverse
             for (k = 0; k < m_col; k++)
                 m_inv[i * m_col + j] += invU[i * m_col + k] * invL[k * m_col + j];
 
-    return CdtMatrix<m_row, m_col, m_type>(m_inv);
+    return dtMatrix<m_row, m_col, m_type>(m_inv);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtNoPivLU<m_row, m_col, m_type>::InverseArray(m_type * inv)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtNoPivLU<m_row, m_col, m_type>::InverseArray(m_type *inv)
 {
     int i, j, k;
     m_type *pMi;
     m_type *pInvMi, *pInvMj, *pInvMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
@@ -494,8 +541,8 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::InverseArray(m_type * inv)
     pInvMk = invU;
     for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
     {
-        //if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *pInvMk = 1 / *pMi;
+        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
@@ -525,18 +572,23 @@ inline int8_t CdtNoPivLU<m_row, m_col, m_type>::InverseArray(m_type * inv)
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline m_type * CdtNoPivLU<m_row, m_col, m_type>::InverseArray(int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type *dtNoPivLU<m_row, m_col, m_type>::InverseArray(int8_t *isOk)
 {
     int i, j, k;
     m_type *pMi;
     m_type *pInvMi, *pInvMj, *pInvMk;
     m_type sum;
-    m_type invL[m_row * m_col] = { 0, };
-    m_type invU[m_row * m_col] = { 0, };
+    m_type invL[m_row * m_col] = {
+        0,
+    };
+    m_type invU[m_row * m_col] = {
+        0,
+    };
     memset(m_inv, 0, sizeof(m_type) * m_row * m_col);
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
@@ -575,8 +627,8 @@ inline m_type * CdtNoPivLU<m_row, m_col, m_type>::InverseArray(int8_t * isOk)
     pInvMk = invU;
     for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
     {
-        //if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
-        //else *pInvMk = 1 / *pMi;
+        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
@@ -605,3 +657,7 @@ inline m_type * CdtNoPivLU<m_row, m_col, m_type>::InverseArray(int8_t * isOk)
 
     return m_inv;
 }
+
+} // namespace dtMath
+
+#endif // DTMATH_DTNO_PIV_LU_TPP_

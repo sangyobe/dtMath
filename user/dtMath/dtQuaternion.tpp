@@ -1,6 +1,24 @@
+/*!
+\file       dtQuaternion.h
+\brief      dtMath, Quaternion class
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
+\author     Who is next author?
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
+
+#ifndef DTMATH_DTQUATERNION_TPP_
+#define DTMATH_DTQUATERNION_TPP_
+
+#include "dtQuaternion.h"
+
+namespace dtMath
+{
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(/* args */)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(/* args */)
 {
     m_elem[0] = 1;
     m_elem[1] = 0;
@@ -9,7 +27,7 @@ inline CdtQuaternion<m_type, m_row>::CdtQuaternion(/* args */)
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const m_type* element)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(const m_type *element)
 {
     m_elem[0] = element[0];
     m_elem[1] = element[1];
@@ -18,7 +36,7 @@ inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const m_type* element)
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const m_type w, const m_type x, const m_type y, const m_type z)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(const m_type w, const m_type x, const m_type y, const m_type z)
 {
     m_elem[0] = w;
     m_elem[1] = x;
@@ -27,7 +45,7 @@ inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const m_type w, const m_type 
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const uint16_t order, const m_type angle)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(const uint16_t order, const m_type angle)
 {
     switch (order)
     {
@@ -59,24 +77,24 @@ inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const uint16_t order, const m
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const uint16_t order, const m_type angle1, const m_type angle2)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(const uint16_t order, const m_type angle1, const m_type angle2)
 {
     SetElement(order & 0xF, angle1); // Q1
-    CdtQuaternion<m_type, m_row> Q2((order >> 4) & 0xF, angle2);
+    dtQuaternion<m_type, m_row> Q2((order >> 4) & 0xF, angle2);
     (*this) = (*this) * Q2;
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const uint16_t order, const m_type angle1, const m_type angle2, const m_type angle3)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(const uint16_t order, const m_type angle1, const m_type angle2, const m_type angle3)
 {
     SetElement(order & 0xF, angle1); // Q1
-    CdtQuaternion<m_type, m_row> Q2((order >> 4) & 0xF, angle2);
-    CdtQuaternion<m_type, m_row> Q3((order >> 8) & 0xF, angle3);
+    dtQuaternion<m_type, m_row> Q2((order >> 4) & 0xF, angle2);
+    dtQuaternion<m_type, m_row> Q3((order >> 8) & 0xF, angle3);
     (*this) = (*this) * Q2 * Q3;
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const CdtQuaternion& q)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(const dtQuaternion &q)
 {
     m_elem[0] = q.m_elem[0];
     m_elem[1] = q.m_elem[1];
@@ -85,25 +103,25 @@ inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const CdtQuaternion& q)
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const uint16_t order, const CdtVector3<m_type, 3>& e)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(const uint16_t order, const dtVector3<m_type, 3> &e)
 {
     Euler2Quat(order, e.m_elem);
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const uint16_t order, const CdtVector<3, m_type>& e)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(const uint16_t order, const dtVector<3, m_type> &e)
 {
     Euler2Quat(order, e.m_elem);
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>::CdtQuaternion(const CdtRotation<m_type, 3, 3>& rm)
+inline dtQuaternion<m_type, m_row>::dtQuaternion(const dtRotation<m_type, 3, 3> &rm)
 {
     RotMat2Quat(rm.m_elem);
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetZero()
+inline void dtQuaternion<m_type, m_row>::SetZero()
 {
     m_elem[0] = 1;
     m_elem[1] = 0;
@@ -112,7 +130,7 @@ inline void CdtQuaternion<m_type, m_row>::SetZero()
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetFill(const m_type value)
+inline void dtQuaternion<m_type, m_row>::SetFill(const m_type value)
 {
     m_elem[0] = value;
     m_elem[1] = value;
@@ -121,7 +139,7 @@ inline void CdtQuaternion<m_type, m_row>::SetFill(const m_type value)
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetElement(const m_type* element)
+inline void dtQuaternion<m_type, m_row>::SetElement(const m_type *element)
 {
     m_elem[0] = element[0];
     m_elem[1] = element[1];
@@ -130,7 +148,7 @@ inline void CdtQuaternion<m_type, m_row>::SetElement(const m_type* element)
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetElement(const m_type w, const m_type x, const m_type y, const m_type z)
+inline void dtQuaternion<m_type, m_row>::SetElement(const m_type w, const m_type x, const m_type y, const m_type z)
 {
     m_elem[0] = w;
     m_elem[1] = x;
@@ -139,7 +157,7 @@ inline void CdtQuaternion<m_type, m_row>::SetElement(const m_type w, const m_typ
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const m_type angle)
+inline void dtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const m_type angle)
 {
     switch (order)
     {
@@ -165,24 +183,24 @@ inline void CdtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const m_type angle1, const m_type angle2)
+inline void dtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const m_type angle1, const m_type angle2)
 {
     SetElement(order & 0xF, angle1); // Q1
-    CdtQuaternion<m_type, m_row> Q2((order >> 4) & 0xF, angle2);
+    dtQuaternion<m_type, m_row> Q2((order >> 4) & 0xF, angle2);
     (*this) = (*this) * Q2;
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const m_type angle1, const m_type angle2, const m_type angle3)
+inline void dtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const m_type angle1, const m_type angle2, const m_type angle3)
 {
     SetElement(order & 0xF, angle1); // Q1
-    CdtQuaternion<m_type, m_row> Q2((order >> 4) & 0xF, angle2);
-    CdtQuaternion<m_type, m_row> Q3((order >> 8) & 0xF, angle3);
+    dtQuaternion<m_type, m_row> Q2((order >> 4) & 0xF, angle2);
+    dtQuaternion<m_type, m_row> Q3((order >> 8) & 0xF, angle3);
     (*this) = (*this) * Q2 * Q3;
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetElement(const CdtQuaternion& q)
+inline void dtQuaternion<m_type, m_row>::SetElement(const dtQuaternion &q)
 {
     m_elem[0] = q.m_elem[0];
     m_elem[1] = q.m_elem[1];
@@ -191,25 +209,25 @@ inline void CdtQuaternion<m_type, m_row>::SetElement(const CdtQuaternion& q)
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const CdtVector3<m_type, 3>& e)
+inline void dtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const dtVector3<m_type, 3> &e)
 {
     Euler2Quat(order, e.m_elem);
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const CdtVector<3, m_type>& e)
+inline void dtQuaternion<m_type, m_row>::SetElement(const uint16_t order, const dtVector<3, m_type> &e)
 {
     Euler2Quat(order, e.m_elem);
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetElement(const CdtRotation<m_type, 3, 3>& rm)
+inline void dtQuaternion<m_type, m_row>::SetElement(const dtRotation<m_type, 3, 3> &rm)
 {
     RotMat2Quat(rm.m_elem);
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetSwap(const uint16_t i, const uint16_t j)
+inline void dtQuaternion<m_type, m_row>::SetSwap(const uint16_t i, const uint16_t j)
 {
     m_type elem = m_elem[i];
     m_elem[i] = m_elem[j];
@@ -217,7 +235,7 @@ inline void CdtQuaternion<m_type, m_row>::SetSwap(const uint16_t i, const uint16
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::SetNormalize()
+inline void dtQuaternion<m_type, m_row>::SetNormalize()
 {
     m_type norm = std::sqrt(
         m_elem[0] * m_elem[0] +
@@ -235,13 +253,13 @@ inline void CdtQuaternion<m_type, m_row>::SetNormalize()
 }
 
 template <typename m_type, uint16_t m_row>
-inline const m_type* const CdtQuaternion<m_type, m_row>::GetElementsAddr() const
+inline const m_type *const dtQuaternion<m_type, m_row>::GetElementsAddr() const
 {
     return m_elem;
 }
 
 template <typename m_type, uint16_t m_row>
-inline m_type CdtQuaternion<m_type, m_row>::GetNorm() const
+inline m_type dtQuaternion<m_type, m_row>::GetNorm() const
 {
     return std::sqrt(
         m_elem[0] * m_elem[0] +
@@ -251,7 +269,7 @@ inline m_type CdtQuaternion<m_type, m_row>::GetNorm() const
 }
 
 template <typename m_type, uint16_t m_row>
-inline m_type CdtQuaternion<m_type, m_row>::GetSqNorm() const
+inline m_type dtQuaternion<m_type, m_row>::GetSqNorm() const
 {
     return (
         m_elem[0] * m_elem[0] +
@@ -261,7 +279,7 @@ inline m_type CdtQuaternion<m_type, m_row>::GetSqNorm() const
 }
 
 template <typename m_type, uint16_t m_row>
-inline m_type CdtQuaternion<m_type, m_row>::GetSum() const
+inline m_type dtQuaternion<m_type, m_row>::GetSum() const
 {
     return (
         m_elem[0] +
@@ -271,7 +289,7 @@ inline m_type CdtQuaternion<m_type, m_row>::GetSum() const
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::GetNormalized() const
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::GetNormalized() const
 {
     m_type norm = std::sqrt(
         m_elem[0] * m_elem[0] +
@@ -282,7 +300,7 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::GetNormalized(
     if (norm < std::numeric_limits<m_type>::epsilon())
         norm = std::numeric_limits<m_type>::epsilon();
 
-    return CdtQuaternion(
+    return dtQuaternion(
         m_elem[0] / norm,
         m_elem[1] / norm,
         m_elem[2] / norm,
@@ -290,9 +308,9 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::GetNormalized(
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::GetConj() const
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::GetConj() const
 {
-    return CdtQuaternion(
+    return dtQuaternion(
         m_elem[0],
         -m_elem[1],
         -m_elem[2],
@@ -300,7 +318,7 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::GetConj() cons
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtVector3<m_type, 3> CdtQuaternion<m_type, m_row>::GetEulerAngles(const uint16_t order) const
+inline dtVector3<m_type, 3> dtQuaternion<m_type, m_row>::GetEulerAngles(const uint16_t order) const
 {
     /* Tait-Bryan angles */
     m_type vec[3];
@@ -333,11 +351,11 @@ inline CdtVector3<m_type, 3> CdtQuaternion<m_type, m_row>::GetEulerAngles(const 
             1 - 2 * (m_elem[o3] * m_elem[o3] + m_elem[o2] * m_elem[o2]));
     }
 
-    return CdtVector3<m_type, 3>(vec);
+    return dtVector3<m_type, 3>(vec);
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtVector3<m_type, 3> CdtQuaternion<m_type, m_row>::GetOriErr(const CdtQuaternion& q) const
+inline dtVector3<m_type, 3> dtQuaternion<m_type, m_row>::GetOriErr(const dtQuaternion &q) const
 {
     ////Ref: S.-K. Kim's "Concurrent control of position / orientation of a redundant manipulator based on virtual springdamper hypothesis"
     ///* Orientation error (X - Xd) in rotation matrix */
@@ -348,41 +366,41 @@ inline CdtVector3<m_type, 3> CdtQuaternion<m_type, m_row>::GetOriErr(const CdtQu
     ///* Step1. Get Orientation error in quaternion */
     //// qe = qd.Conj() * q
     //// desired q is this quaternion, current q is argument q
-    //m_type qe[m_row];
-    //qe[0] = m_elem[0] * q.m_elem[0] + m_elem[1] * q.m_elem[1] + m_elem[2] * q.m_elem[2] + m_elem[3] * q.m_elem[3];
-    //qe[1] = m_elem[0] * q.m_elem[1] - m_elem[1] * q.m_elem[0] - m_elem[2] * q.m_elem[3] + m_elem[3] * q.m_elem[2];
-    //qe[2] = m_elem[0] * q.m_elem[2] + m_elem[1] * q.m_elem[3] - m_elem[2] * q.m_elem[0] - m_elem[3] * q.m_elem[1];
-    //qe[3] = m_elem[0] * q.m_elem[3] - m_elem[1] * q.m_elem[2] + m_elem[2] * q.m_elem[1] - m_elem[3] * q.m_elem[0];
+    // m_type qe[m_row];
+    // qe[0] = m_elem[0] * q.m_elem[0] + m_elem[1] * q.m_elem[1] + m_elem[2] * q.m_elem[2] + m_elem[3] * q.m_elem[3];
+    // qe[1] = m_elem[0] * q.m_elem[1] - m_elem[1] * q.m_elem[0] - m_elem[2] * q.m_elem[3] + m_elem[3] * q.m_elem[2];
+    // qe[2] = m_elem[0] * q.m_elem[2] + m_elem[1] * q.m_elem[3] - m_elem[2] * q.m_elem[0] - m_elem[3] * q.m_elem[1];
+    // qe[3] = m_elem[0] * q.m_elem[3] - m_elem[1] * q.m_elem[2] + m_elem[2] * q.m_elem[1] - m_elem[3] * q.m_elem[0];
     //
     ///* Step2. Orientatin error for geometric jacobian from quaternion */
     //// qe = (1/2)*T.Transpose()*qe(1:3) or (1/2)*qe(0)*qe(0:3)
     //// T = qe(0)*I3 + qe(1:3).GetSkew() : qe(1:3) is vector that consist of qe(1), qe(2) and qe(3). I3 is identity matrix
     //// qe means 'orientation - desired orentation', so qe needed '-' operator to be 'desired orientatin - orientation'
-    //return CdtVector3<m_type, 3>(-0.5f * qe[0] * qe[1], -0.5f * qe[0] * qe[2], -0.5f * qe[0] * qe[3]);
+    // return dtVector3<m_type, 3>(-0.5f * qe[0] * qe[1], -0.5f * qe[0] * qe[2], -0.5f * qe[0] * qe[3]);
 
     /* Old version */
-    // CdtQuaternion<m_type> quatErr = (*this) / q;
-    CdtQuaternion<m_type, 4> quatErr; // desired q conjugate * q
+    // dtQuaternion<m_type> quatErr = (*this) / q;
+    dtQuaternion<m_type, 4> quatErr; // desired q conjugate * q
     quatErr.SetElement(
         m_elem[0] * q.m_elem[0] + m_elem[1] * q.m_elem[1] + m_elem[2] * q.m_elem[2] + m_elem[3] * q.m_elem[3],
         -m_elem[0] * q.m_elem[1] + m_elem[1] * q.m_elem[0] - m_elem[2] * q.m_elem[3] + m_elem[3] * q.m_elem[2],
         -m_elem[0] * q.m_elem[2] + m_elem[1] * q.m_elem[3] + m_elem[2] * q.m_elem[0] - m_elem[3] * q.m_elem[1],
         -m_elem[0] * q.m_elem[3] - m_elem[1] * q.m_elem[2] + m_elem[2] * q.m_elem[1] + m_elem[3] * q.m_elem[0]);
 
-    CdtMatrix3<m_type, 3, 3> quatErr0Mat(
+    dtMatrix3<m_type, 3, 3> quatErr0Mat(
         quatErr.m_elem[0], 0, 0,
         0, quatErr.m_elem[0], 0,
         0, 0, quatErr.m_elem[0]);
 
-    CdtVector3<m_type, 3> quatErrEps(quatErr.m_elem[1], quatErr.m_elem[2], quatErr.m_elem[3]);
+    dtVector3<m_type, 3> quatErrEps(quatErr.m_elem[1], quatErr.m_elem[2], quatErr.m_elem[3]);
 
-    CdtMatrix3<m_type, 3, 3> U = (quatErr0Mat + quatErrEps.GetSkew()) * 0.5;
+    dtMatrix3<m_type, 3, 3> U = (quatErr0Mat + quatErrEps.GetSkew()) * 0.5;
 
-    return CdtVector3<m_type>(U.Transpose()*quatErrEps);
+    return dtVector3<m_type>(U.Transpose() * quatErrEps);
 }
 
-template<typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::exp() const
+template <typename m_type, uint16_t m_row>
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::exp() const
 {
     /* Exponential of general quaternions */
     // e^(q) = e^(qw) * e^(qv) = e^(qw) * e^(u*th)
@@ -397,15 +415,15 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::exp() const
     m_type norm_qv = std::sqrt(m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
     m_type alpha = e_qw * sin(norm_qv) / norm_qv;
 
-    return CdtQuaternion(
+    return dtQuaternion(
         e_qw * std::cos(norm_qv),
         m_elem[1] * alpha,
         m_elem[2] * alpha,
         m_elem[3] * alpha);
 }
 
-template<typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::log() const
+template <typename m_type, uint16_t m_row>
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::log() const
 {
     /* Logarithm of general quaternions */
     // log(q) = ln(q) = [ln(|q|) th*qx/|qv| th*qy/|qv| th*qz/|qv|]T = [log(|q|) u*th]
@@ -416,104 +434,108 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::log() const
     m_type norm_qv = std::sqrt(m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
     m_type alpha;
 
-    if (norm_qv > std::numeric_limits<m_type>::epsilon()) alpha = std::atan2(norm_qv, m_elem[0]) / norm_qv; // th / norm_qv
-    else alpha = 0; // singular
+    if (norm_qv > std::numeric_limits<m_type>::epsilon())
+        alpha = std::atan2(norm_qv, m_elem[0]) / norm_qv; // th / norm_qv
+    else
+        alpha = 0; // singular
 
-    return CdtQuaternion(
+    return dtQuaternion(
         std::log(norm_q),
         m_elem[1] * alpha,
         m_elem[2] * alpha,
         m_elem[3] * alpha);
 }
 
-template<typename m_type, uint16_t m_row>
-inline CdtVector3<m_type, 3> CdtQuaternion<m_type, m_row>::Log() const
+template <typename m_type, uint16_t m_row>
+inline dtVector3<m_type, 3> dtQuaternion<m_type, m_row>::Log() const
 {
     /* Capitalized Logarithm of quaternions */
     // S3 -> R3
     // Log(q) = u*phi = u*2*th, when q is unit quternion
 
-    //m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
-    //m_type unit_q[4] = { m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q };
-    //m_type norm_qv = std::sqrt(unit_q[1] * unit_q[1] + unit_q[2] * unit_q[2] + unit_q[3] * unit_q[3]);
-    //m_type alpha = 2 * std::atan2(norm_qv, unit_q[0]) / norm_qv; // phi / norm_qv
-    //return CdtVector3<m_type, 3>(unit_q[1] * alpha, unit_q[2] * alpha, unit_q[3] * alpha);
+    // m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
+    // m_type unit_q[4] = { m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q };
+    // m_type norm_qv = std::sqrt(unit_q[1] * unit_q[1] + unit_q[2] * unit_q[2] + unit_q[3] * unit_q[3]);
+    // m_type alpha = 2 * std::atan2(norm_qv, unit_q[0]) / norm_qv; // phi / norm_qv
+    // return dtVector3<m_type, 3>(unit_q[1] * alpha, unit_q[2] * alpha, unit_q[3] * alpha);
 
     m_type norm_qv = std::sqrt(m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
     m_type alpha;
 
-    if (norm_qv > std::numeric_limits<m_type>::epsilon()) alpha = 2 * std::atan2(norm_qv, m_elem[0]) / norm_qv; // phi / norm_qv
-    else alpha = 0; // singular
+    if (norm_qv > std::numeric_limits<m_type>::epsilon())
+        alpha = 2 * std::atan2(norm_qv, m_elem[0]) / norm_qv; // phi / norm_qv
+    else
+        alpha = 0; // singular
 
-    return CdtVector3<m_type, 3>(m_elem[1] * alpha, m_elem[2] * alpha, m_elem[3] * alpha);
-}
-
-template<typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::ode(m_type wx, m_type wy, m_type wz) const
-{
-    /* Ordinary Differential Equation (ODE) */
-    // dq/dt = (q * Wl) / 2 = (Wg * q) / 2
-    // where Wl is local angular velocity, Wg is global angular velocity
-    m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
-    m_type unit_q[4] = { m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q };
-
-    return CdtQuaternion(
-        (-unit_q[1] * wx - unit_q[2] * wy - unit_q[3] * wz)*0.5,
-        (unit_q[0] * wx + unit_q[2] * wz - unit_q[3] * wy)*0.5,
-        (unit_q[0] * wy - unit_q[1] * wz + unit_q[3] * wx)*0.5,
-        (unit_q[0] * wz + unit_q[1] * wy - unit_q[2] * wx)*0.5);
-}
-
-template<typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::ode(m_type * w) const
-{
-    /* Ordinary Differential Equation (ODE) */
-    // dq/dt = (q * Wl) / 2 = (Wg * q) / 2
-    // where Wl is local angular velocity, Wg is global angular velocity
-    m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
-    m_type unit_q[4] = { m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q };
-
-    return CdtQuaternion(
-        (-unit_q[1] * w[0] - unit_q[2] * w[1] - unit_q[3] * w[2])*0.5,
-        (unit_q[0] * w[0] + unit_q[2] * w[2] - unit_q[3] * w[1])*0.5,
-        (unit_q[0] * w[1] - unit_q[1] * w[2] + unit_q[3] * w[0])*0.5,
-        (unit_q[0] * w[2] + unit_q[1] * w[1] - unit_q[2] * w[0])*0.5);
-}
-
-template<typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::ode(CdtVector3<m_type, 3> w) const
-{
-    /* Ordinary Differential Equation (ODE) */
-    // dq/dt = (q * Wl) / 2 = (Wg * q) / 2
-    // where Wl is local angular velocity, Wg is global angular velocity
-    m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
-    m_type unit_q[4] = { m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q };
-
-    return CdtQuaternion(
-        (-unit_q[1] * w.m_elem[0] - unit_q[2] * w.m_elem[1] - unit_q[3] * w.m_elem[2])*0.5,
-        (unit_q[0] * w.m_elem[0] + unit_q[2] * w.m_elem[2] - unit_q[3] * w.m_elem[1])*0.5,
-        (unit_q[0] * w.m_elem[1] - unit_q[1] * w.m_elem[2] + unit_q[3] * w.m_elem[0])*0.5,
-        (unit_q[0] * w.m_elem[2] + unit_q[1] * w.m_elem[1] - unit_q[2] * w.m_elem[0])*0.5);
-}
-
-template<typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::ode(CdtVector<3, m_type> w) const
-{
-    /* Ordinary Differential Equation (ODE) */
-    // dq/dt = (q * Wl) / 2 = (Wg * q) / 2
-    // where Wl is local angular velocity, Wg is global angular velocity
-    m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
-    m_type unit_q[4] = { m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q };
-
-    return CdtQuaternion(
-        (-unit_q[1] * w.m_elem[0] - unit_q[2] * w.m_elem[1] - unit_q[3] * w.m_elem[2])*0.5,
-        (unit_q[0] * w.m_elem[0] + unit_q[2] * w.m_elem[2] - unit_q[3] * w.m_elem[1])*0.5,
-        (unit_q[0] * w.m_elem[1] - unit_q[1] * w.m_elem[2] + unit_q[3] * w.m_elem[0])*0.5,
-        (unit_q[0] * w.m_elem[2] + unit_q[1] * w.m_elem[1] - unit_q[2] * w.m_elem[0])*0.5);
+    return dtVector3<m_type, 3>(m_elem[1] * alpha, m_elem[2] * alpha, m_elem[3] * alpha);
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::Inv() const
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::ode(m_type wx, m_type wy, m_type wz) const
+{
+    /* Ordinary Differential Equation (ODE) */
+    // dq/dt = (q * Wl) / 2 = (Wg * q) / 2
+    // where Wl is local angular velocity, Wg is global angular velocity
+    m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
+    m_type unit_q[4] = {m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q};
+
+    return dtQuaternion(
+        (-unit_q[1] * wx - unit_q[2] * wy - unit_q[3] * wz) * 0.5,
+        (unit_q[0] * wx + unit_q[2] * wz - unit_q[3] * wy) * 0.5,
+        (unit_q[0] * wy - unit_q[1] * wz + unit_q[3] * wx) * 0.5,
+        (unit_q[0] * wz + unit_q[1] * wy - unit_q[2] * wx) * 0.5);
+}
+
+template <typename m_type, uint16_t m_row>
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::ode(m_type *w) const
+{
+    /* Ordinary Differential Equation (ODE) */
+    // dq/dt = (q * Wl) / 2 = (Wg * q) / 2
+    // where Wl is local angular velocity, Wg is global angular velocity
+    m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
+    m_type unit_q[4] = {m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q};
+
+    return dtQuaternion(
+        (-unit_q[1] * w[0] - unit_q[2] * w[1] - unit_q[3] * w[2]) * 0.5,
+        (unit_q[0] * w[0] + unit_q[2] * w[2] - unit_q[3] * w[1]) * 0.5,
+        (unit_q[0] * w[1] - unit_q[1] * w[2] + unit_q[3] * w[0]) * 0.5,
+        (unit_q[0] * w[2] + unit_q[1] * w[1] - unit_q[2] * w[0]) * 0.5);
+}
+
+template <typename m_type, uint16_t m_row>
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::ode(dtVector3<m_type, 3> w) const
+{
+    /* Ordinary Differential Equation (ODE) */
+    // dq/dt = (q * Wl) / 2 = (Wg * q) / 2
+    // where Wl is local angular velocity, Wg is global angular velocity
+    m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
+    m_type unit_q[4] = {m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q};
+
+    return dtQuaternion(
+        (-unit_q[1] * w.m_elem[0] - unit_q[2] * w.m_elem[1] - unit_q[3] * w.m_elem[2]) * 0.5,
+        (unit_q[0] * w.m_elem[0] + unit_q[2] * w.m_elem[2] - unit_q[3] * w.m_elem[1]) * 0.5,
+        (unit_q[0] * w.m_elem[1] - unit_q[1] * w.m_elem[2] + unit_q[3] * w.m_elem[0]) * 0.5,
+        (unit_q[0] * w.m_elem[2] + unit_q[1] * w.m_elem[1] - unit_q[2] * w.m_elem[0]) * 0.5);
+}
+
+template <typename m_type, uint16_t m_row>
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::ode(dtVector<3, m_type> w) const
+{
+    /* Ordinary Differential Equation (ODE) */
+    // dq/dt = (q * Wl) / 2 = (Wg * q) / 2
+    // where Wl is local angular velocity, Wg is global angular velocity
+    m_type norm_q = std::sqrt(m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3]);
+    m_type unit_q[4] = {m_elem[0] / norm_q, m_elem[1] / norm_q, m_elem[2] / norm_q, m_elem[3] / norm_q};
+
+    return dtQuaternion(
+        (-unit_q[1] * w.m_elem[0] - unit_q[2] * w.m_elem[1] - unit_q[3] * w.m_elem[2]) * 0.5,
+        (unit_q[0] * w.m_elem[0] + unit_q[2] * w.m_elem[2] - unit_q[3] * w.m_elem[1]) * 0.5,
+        (unit_q[0] * w.m_elem[1] - unit_q[1] * w.m_elem[2] + unit_q[3] * w.m_elem[0]) * 0.5,
+        (unit_q[0] * w.m_elem[2] + unit_q[1] * w.m_elem[1] - unit_q[2] * w.m_elem[0]) * 0.5);
+}
+
+template <typename m_type, uint16_t m_row>
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::Inv() const
 {
     /* Inverse of quaternion */
     // q^(-1) = q.Conj() / (q.GetNorm())^2
@@ -521,7 +543,7 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::Inv() const
 
     m_type norm2 = m_elem[0] * m_elem[0] + m_elem[1] * m_elem[1] + m_elem[2] * m_elem[2] + m_elem[3] * m_elem[3];
 
-    return CdtQuaternion(
+    return dtQuaternion(
         m_elem[0] / norm2,
         -m_elem[1] / norm2,
         -m_elem[2] / norm2,
@@ -530,7 +552,7 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::Inv() const
 
 /* Assignment operators */
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator  =(const CdtQuaternion& q)
+inline dtQuaternion<m_type, m_row> &dtQuaternion<m_type, m_row>::operator=(const dtQuaternion &q)
 {
     m_elem[0] = q.m_elem[0];
     m_elem[1] = q.m_elem[1];
@@ -541,7 +563,7 @@ inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator  =(c
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator +=(const CdtQuaternion& q)
+inline dtQuaternion<m_type, m_row> &dtQuaternion<m_type, m_row>::operator+=(const dtQuaternion &q)
 {
     m_elem[0] += q.m_elem[0];
     m_elem[1] += q.m_elem[1];
@@ -552,7 +574,7 @@ inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator +=(c
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator -=(const CdtQuaternion& q)
+inline dtQuaternion<m_type, m_row> &dtQuaternion<m_type, m_row>::operator-=(const dtQuaternion &q)
 {
     m_elem[0] -= q.m_elem[0];
     m_elem[1] -= q.m_elem[1];
@@ -563,7 +585,7 @@ inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator -=(c
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator *=(const m_type s)
+inline dtQuaternion<m_type, m_row> &dtQuaternion<m_type, m_row>::operator*=(const m_type s)
 {
     m_elem[0] *= s;
     m_elem[1] *= s;
@@ -574,14 +596,16 @@ inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator *=(c
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator /=(const m_type s)
+inline dtQuaternion<m_type, m_row> &dtQuaternion<m_type, m_row>::operator/=(const m_type s)
 {
     m_type scalar = s;
 
     if (std::abs(scalar) < std::numeric_limits<m_type>::epsilon())
     {
-        if (scalar < 0) scalar = -std::numeric_limits<m_type>::epsilon();
-        else scalar = std::numeric_limits<m_type>::epsilon();
+        if (scalar < 0)
+            scalar = -std::numeric_limits<m_type>::epsilon();
+        else
+            scalar = std::numeric_limits<m_type>::epsilon();
     }
 
     m_elem[0] /= scalar;
@@ -592,18 +616,18 @@ inline CdtQuaternion<m_type, m_row>& CdtQuaternion<m_type, m_row>::operator /=(c
     return (*this);
 }
 
-template<typename m_type, uint16_t m_row>
-inline CdtCommaInit<m_row, m_type> CdtQuaternion<m_type, m_row>::operator<<(const m_type s)
+template <typename m_type, uint16_t m_row>
+inline dtCommaInit<m_row, m_type> dtQuaternion<m_type, m_row>::operator<<(const m_type s)
 {
     m_elem[0] = s;
-    return CdtCommaInit<m_row, m_type>(m_elem);
+    return dtCommaInit<m_row, m_type>(m_elem);
 }
 
 /* Arithmetic operators */
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator -() const
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::operator-() const
 {
-    return CdtQuaternion(
+    return dtQuaternion(
         -m_elem[0],
         -m_elem[1],
         -m_elem[2],
@@ -611,9 +635,9 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator -() c
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator +(const CdtQuaternion& q) const
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::operator+(const dtQuaternion &q) const
 {
-    return CdtQuaternion(
+    return dtQuaternion(
         m_elem[0] + q.m_elem[0],
         m_elem[1] + q.m_elem[1],
         m_elem[2] + q.m_elem[2],
@@ -621,9 +645,9 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator +(con
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator -(const CdtQuaternion& q) const
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::operator-(const dtQuaternion &q) const
 {
-    return CdtQuaternion(
+    return dtQuaternion(
         m_elem[0] - q.m_elem[0],
         m_elem[1] - q.m_elem[1],
         m_elem[2] - q.m_elem[2],
@@ -631,9 +655,9 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator -(con
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator *(const m_type s) const
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::operator*(const m_type s) const
 {
-    return CdtQuaternion(
+    return dtQuaternion(
         m_elem[0] * s,
         m_elem[1] * s,
         m_elem[2] * s,
@@ -641,17 +665,19 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator *(con
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator /(const m_type s) const
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::operator/(const m_type s) const
 {
     m_type scalar = s;
 
     if (std::abs(scalar) < std::numeric_limits<m_type>::epsilon())
     {
-        if (scalar < 0) scalar = -std::numeric_limits<m_type>::epsilon();
-        else scalar = std::numeric_limits<m_type>::epsilon();
+        if (scalar < 0)
+            scalar = -std::numeric_limits<m_type>::epsilon();
+        else
+            scalar = std::numeric_limits<m_type>::epsilon();
     }
 
-    return CdtQuaternion(
+    return dtQuaternion(
         m_elem[0] / scalar,
         m_elem[1] / scalar,
         m_elem[2] / scalar,
@@ -659,9 +685,9 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator /(con
 }
 
 template <typename m_type, uint16_t m_row>
-inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator *(const CdtQuaternion& q) const
+inline dtQuaternion<m_type, m_row> dtQuaternion<m_type, m_row>::operator*(const dtQuaternion &q) const
 {
-    return CdtQuaternion<m_type, m_row>(
+    return dtQuaternion<m_type, m_row>(
         m_elem[0] * q.m_elem[0] - m_elem[1] * q.m_elem[1] - m_elem[2] * q.m_elem[2] - m_elem[3] * q.m_elem[3],
         m_elem[0] * q.m_elem[1] + m_elem[1] * q.m_elem[0] + m_elem[2] * q.m_elem[3] - m_elem[3] * q.m_elem[2],
         m_elem[0] * q.m_elem[2] - m_elem[1] * q.m_elem[3] + m_elem[2] * q.m_elem[0] + m_elem[3] * q.m_elem[1],
@@ -670,51 +696,67 @@ inline CdtQuaternion<m_type, m_row> CdtQuaternion<m_type, m_row>::operator *(con
 
 /* Comparison operators */
 template <typename m_type, uint16_t m_row>
-inline bool CdtQuaternion<m_type, m_row>::operator ==(const CdtQuaternion& q) const
+inline bool dtQuaternion<m_type, m_row>::operator==(const dtQuaternion &q) const
 {
     // q and -q are same, because quaternion double covered
     if (SGN(m_elem[0]) == SGN(q.m_elem[0]))
     {
-        if (m_elem[0] - q.m_elem[0] > std::numeric_limits<m_type>::epsilon()) return false;
-        else if (m_elem[1] - q.m_elem[1] > std::numeric_limits<m_type>::epsilon()) return false;
-        else if (m_elem[2] - q.m_elem[2] > std::numeric_limits<m_type>::epsilon()) return false;
-        else if (m_elem[3] - q.m_elem[3] > std::numeric_limits<m_type>::epsilon()) return false;
+        if (m_elem[0] - q.m_elem[0] > std::numeric_limits<m_type>::epsilon())
+            return false;
+        else if (m_elem[1] - q.m_elem[1] > std::numeric_limits<m_type>::epsilon())
+            return false;
+        else if (m_elem[2] - q.m_elem[2] > std::numeric_limits<m_type>::epsilon())
+            return false;
+        else if (m_elem[3] - q.m_elem[3] > std::numeric_limits<m_type>::epsilon())
+            return false;
     }
     else
     {
-        if (m_elem[0] + q.m_elem[0] > std::numeric_limits<m_type>::epsilon()) return false;
-        else if (m_elem[1] + q.m_elem[1] > std::numeric_limits<m_type>::epsilon()) return false;
-        else if (m_elem[2] + q.m_elem[2] > std::numeric_limits<m_type>::epsilon()) return false;
-        else if (m_elem[3] + q.m_elem[3] > std::numeric_limits<m_type>::epsilon()) return false;
+        if (m_elem[0] + q.m_elem[0] > std::numeric_limits<m_type>::epsilon())
+            return false;
+        else if (m_elem[1] + q.m_elem[1] > std::numeric_limits<m_type>::epsilon())
+            return false;
+        else if (m_elem[2] + q.m_elem[2] > std::numeric_limits<m_type>::epsilon())
+            return false;
+        else if (m_elem[3] + q.m_elem[3] > std::numeric_limits<m_type>::epsilon())
+            return false;
     }
 
     return true;
 }
 
 template <typename m_type, uint16_t m_row>
-inline bool CdtQuaternion<m_type, m_row>::operator !=(const CdtQuaternion& q) const
+inline bool dtQuaternion<m_type, m_row>::operator!=(const dtQuaternion &q) const
 {
     // q and -q are same, because quaternion double covered
     if (SGN(m_elem[0]) == SGN(q.m_elem[0]))
     {
-        if (m_elem[0] - q.m_elem[0] > std::numeric_limits<m_type>::epsilon()) return true;
-        else if (m_elem[1] - q.m_elem[1] > std::numeric_limits<m_type>::epsilon()) return true;
-        else if (m_elem[2] - q.m_elem[2] > std::numeric_limits<m_type>::epsilon()) return true;
-        else if (m_elem[3] - q.m_elem[3] > std::numeric_limits<m_type>::epsilon()) return true;
+        if (m_elem[0] - q.m_elem[0] > std::numeric_limits<m_type>::epsilon())
+            return true;
+        else if (m_elem[1] - q.m_elem[1] > std::numeric_limits<m_type>::epsilon())
+            return true;
+        else if (m_elem[2] - q.m_elem[2] > std::numeric_limits<m_type>::epsilon())
+            return true;
+        else if (m_elem[3] - q.m_elem[3] > std::numeric_limits<m_type>::epsilon())
+            return true;
     }
     else
     {
-        if (m_elem[0] + q.m_elem[0] > std::numeric_limits<m_type>::epsilon()) return true;
-        else if (m_elem[1] + q.m_elem[1] > std::numeric_limits<m_type>::epsilon()) return true;
-        else if (m_elem[2] + q.m_elem[2] > std::numeric_limits<m_type>::epsilon()) return true;
-        else if (m_elem[3] + q.m_elem[3] > std::numeric_limits<m_type>::epsilon()) return true;
+        if (m_elem[0] + q.m_elem[0] > std::numeric_limits<m_type>::epsilon())
+            return true;
+        else if (m_elem[1] + q.m_elem[1] > std::numeric_limits<m_type>::epsilon())
+            return true;
+        else if (m_elem[2] + q.m_elem[2] > std::numeric_limits<m_type>::epsilon())
+            return true;
+        else if (m_elem[3] + q.m_elem[3] > std::numeric_limits<m_type>::epsilon())
+            return true;
     }
 
     return false;
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::Print(const char endChar)
+inline void dtQuaternion<m_type, m_row>::Print(const char endChar)
 {
 #if defined(ARDUINO)
     for (uint16_t irow = 0; irow < m_row; irow++)
@@ -733,7 +775,7 @@ inline void CdtQuaternion<m_type, m_row>::Print(const char endChar)
 
 //-- Private Member Function ------------------------------------------------//
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::Euler2Quat(const uint16_t order, const m_type* e)
+inline void dtQuaternion<m_type, m_row>::Euler2Quat(const uint16_t order, const m_type *e)
 {
     m_type s_ps = std::sin(e[0] * static_cast<m_type>(0.5)); // sin(psi)
     m_type c_ps = std::cos(e[0] * static_cast<m_type>(0.5)); // cos(psi)
@@ -785,13 +827,13 @@ inline void CdtQuaternion<m_type, m_row>::Euler2Quat(const uint16_t order, const
 }
 
 template <typename m_type, uint16_t m_row>
-inline void CdtQuaternion<m_type, m_row>::RotMat2Quat(const m_type* rm)
+inline void dtQuaternion<m_type, m_row>::RotMat2Quat(const m_type *rm)
 {
     // Get squared elements
-    m_elem[0] = (1 + rm[0] + rm[4] + rm[8]) * static_cast<m_type>(0.25);    // w^2
-    m_elem[1] = (1 + rm[0] - rm[4] - rm[8]) * static_cast<m_type>(0.25);    // x^2
-    m_elem[2] = (1 - rm[0] + rm[4] - rm[8]) * static_cast<m_type>(0.25);    // y^2
-    m_elem[3] = (1 - rm[0] - rm[4] + rm[8]) * static_cast<m_type>(0.25);    // z^2
+    m_elem[0] = (1 + rm[0] + rm[4] + rm[8]) * static_cast<m_type>(0.25); // w^2
+    m_elem[1] = (1 + rm[0] - rm[4] - rm[8]) * static_cast<m_type>(0.25); // x^2
+    m_elem[2] = (1 - rm[0] + rm[4] - rm[8]) * static_cast<m_type>(0.25); // y^2
+    m_elem[3] = (1 - rm[0] - rm[4] + rm[8]) * static_cast<m_type>(0.25); // z^2
 
     // Get element value but this value is always positive
     m_elem[0] = std::sqrt(m_elem[0]); // |w|
@@ -835,13 +877,17 @@ inline void CdtQuaternion<m_type, m_row>::RotMat2Quat(const m_type* rm)
 //-- Template Function ------------------------------------------------------//
 // scalar * quaternion
 template <typename type, uint16_t row>
-inline CdtQuaternion<type, row> operator *(const type s, const CdtQuaternion<type, row>& q)
+inline dtQuaternion<type, row> operator*(const type s, const dtQuaternion<type, row> &q)
 {
-    return CdtQuaternion<type, row>(
+    return dtQuaternion<type, row>(
         q.m_elem[0] * s,
         q.m_elem[1] * s,
         q.m_elem[2] * s,
         q.m_elem[3] * s);
 }
 
-typedef CdtQuaternion<> CdtQuat;
+typedef dtQuaternion<> dtQuat;
+
+} // namespace dtMath
+
+#endif // DTMATH_DTQUATERNION_TPP_

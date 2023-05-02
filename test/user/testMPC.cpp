@@ -4,17 +4,22 @@
 #include <utility/dtGnuPlot.h>
 #endif
 
+#include "testMPC.h"
+#include "testPrint.h"
 #include <cmath>
 #include <limits>
-#include "testPrint.h"
-#include "testMPC.h"
 
 #include <dtMath/dtMath.h>
 
+using dtMath::dtMatrix;
+using dtMath::dtMatrix3;
+using dtMath::dtQuadProg;
+using dtMath::dtVector;
+using dtMath::dtVector3;
 
 #define Nstep 5
 static const int simulLen = 2000;
-//static float smpT = 0.02f; // 50Hz(20ms)
+// static float smpT = 0.02f; // 50Hz(20ms)
 static float smpT = 0.25f; // 50Hz(20ms)
 static float h = 0.5f;     // height of CoM
 static float g = 9.806f;   // gravity
@@ -22,35 +27,35 @@ static float h_g = h / g;
 static float R = 1.0f;      // weight of jerk
 static float Q = 100000.0f; // weight of (z-zref)
 
-CdtMatrix<Nstep, 3> Pps, Pvs, Pzs;
-CdtMatrix<Nstep, Nstep> Ppu, Pvu, Pzu;
-CdtMatrix<3, 3> A;
-CdtVector<3> B;
-CdtVector<3> C;
+dtMatrix<Nstep, 3> Pps, Pvs, Pzs;
+dtMatrix<Nstep, Nstep> Ppu, Pvu, Pzu;
+dtMatrix<3, 3> A;
+dtVector<3> B;
+dtVector<3> C;
 
 void MakeRelationMat(float T);
 void MakeTimeData(float *timeData);
-void MakeRefXzmp(CdtVector<simulLen> &xZmpRef);
-void MakeRefYzmp(CdtVector<simulLen> &yZmpRef);
+void MakeRefXzmp(dtVector<simulLen> &xZmpRef);
+void MakeRefYzmp(dtVector<simulLen> &yZmpRef);
 
 void ADH_MPC_Test();
 void ADH_MPC_Test2();
 
 void Test_MPC()
 {
-    //AnalyticalPreviewCtrl();
-    MPC_Method1();  // dtMath Style
-    MPC_Method2();  // OSQP Style
+    // AnalyticalPreviewCtrl();
+    MPC_Method1(); // dtMath Style
+    MPC_Method2(); // OSQP Style
 
-    //ADH_MPC_Test();
-    //ADH_MPC_Test2();
+    // ADH_MPC_Test();
+    // ADH_MPC_Test2();
 }
 
 void MakeRelationMat(float T)
 {
     // x(k+1) = A*x(k) + B*x_jerk(k)
-    A << 1, T, T*T / 2.0f, 0, 1, T, 0, 0, 1;
-    B << T * T*T / 6.0f, T*T / 2.0f, T;
+    A << 1, T, T * T / 2.0f, 0, 1, T, 0, 0, 1;
+    B << T * T * T / 6.0f, T * T / 2.0f, T;
     C << 1, 0, -h_g;
 
     // Generate Pps, Pvs, Pzs Matrix (Nx3)
@@ -68,32 +73,32 @@ void MakeRelationMat(float T)
 
         rowVec[0] = 1;
         rowVec[1] = (i + 1) * T;
-        rowVec[2] = (i + 1)*(i + 1) * T*T / 2.0f;
+        rowVec[2] = (i + 1) * (i + 1) * T * T / 2.0f;
         Pps.SetRowVec(i, rowVec, sizeof(float) * 3);
 
         rowVec[2] -= h_g;
         Pzs.SetRowVec(i, rowVec, sizeof(float) * 3);
 
         // for Pxu matrix
-        Ppu_col[i] = (1 + 3 * i + 3 * i*i) * T*T*T / 6.0f;
-        Pvu_col[i] = (1 + 2 * i) * T*T / 2.0f;
-        Pzu_col[i] = (1 + 3 * i + 3 * i*i) * T*T*T / 6.0f - (T * h_g);
+        Ppu_col[i] = (1 + 3 * i + 3 * i * i) * T * T * T / 6.0f;
+        Pvu_col[i] = (1 + 2 * i) * T * T / 2.0f;
+        Pzu_col[i] = (1 + 3 * i + 3 * i * i) * T * T * T / 6.0f - (T * h_g);
     }
 
     // Generate Ppu, Pvu, Pzu Matrix (NxN)
-    CdtVector<Nstep> vec;
+    dtVector<Nstep> vec;
     for (int i = 0; i < Nstep; i++)
     {
         vec.SetZero();
-        vec.SetBlock(i, Ppu_col, sizeof(float)*Nstep);
+        vec.SetBlock(i, Ppu_col, sizeof(float) * Nstep);
         Ppu.SetColVec(i, vec);
 
         vec.SetZero();
-        vec.SetBlock(i, Pvu_col, sizeof(float)*Nstep);
+        vec.SetBlock(i, Pvu_col, sizeof(float) * Nstep);
         Pvu.SetColVec(i, vec);
 
         vec.SetZero();
-        vec.SetBlock(i, Pzu_col, sizeof(float)*Nstep);
+        vec.SetBlock(i, Pzu_col, sizeof(float) * Nstep);
         Pzu.SetColVec(i, vec);
     }
 }
@@ -108,7 +113,7 @@ void MakeTimeData(float *timeData)
     }
 }
 
-void MakeRefXzmp(CdtVector<simulLen> &xZmpRef)
+void MakeRefXzmp(dtVector<simulLen> &xZmpRef)
 {
     // make reference zmp
     float time = 0;
@@ -130,7 +135,7 @@ void MakeRefXzmp(CdtVector<simulLen> &xZmpRef)
     }
 }
 
-void MakeRefYzmp(CdtVector<simulLen> &yZmpRef)
+void MakeRefYzmp(dtVector<simulLen> &yZmpRef)
 {
     // make reference zmp
     float time = 0;
@@ -153,38 +158,50 @@ void MakeRefYzmp(CdtVector<simulLen> &yZmpRef)
 }
 
 void AnalyticalPreviewCtrl()
-{// ZMP Preview controller
+{ // ZMP Preview controller
     PrintTitle("Analytical ZMP Preview Ctrl ");
 
     CdhTimeCheck clock;
-    float timeData[simulLen] = { 0, };
+    float timeData[simulLen] = {
+        0,
+    };
     float time = 0;
 
     // graph variables
 #if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
-    CdtGnuPlot<> graphSolvTime;
-    CdtGnuPlot<> graphX;
-    CdtGnuPlot<> graphY;
+    dtGnuPlot<> graphSolvTime;
+    dtGnuPlot<> graphX;
+    dtGnuPlot<> graphY;
 #endif
-    float yZmpData[simulLen] = { 0, };
-    float yComData[simulLen] = { 0, };
-    float ySolvTimeData[simulLen] = { 0, };
+    float yZmpData[simulLen] = {
+        0,
+    };
+    float yComData[simulLen] = {
+        0,
+    };
+    float ySolvTimeData[simulLen] = {
+        0,
+    };
 
     int8_t ok;
-    CdtMatrix<Nstep, Nstep> Inn;
-    CdtMatrix<Nstep, Nstep> Inv;
+    dtMatrix<Nstep, Nstep> Inn;
+    dtMatrix<Nstep, Nstep> Inv;
 
-    CdtVector<3> xState;
-    CdtVector<simulLen> xZmpRef;
-    CdtVector<Nstep> xZmpRefK;
-    CdtVector<Nstep> xJerk;
-    float xZmpData[simulLen] = { 0, };
-    float xComData[simulLen] = { 0, };
+    dtVector<3> xState;
+    dtVector<simulLen> xZmpRef;
+    dtVector<Nstep> xZmpRefK;
+    dtVector<Nstep> xJerk;
+    float xZmpData[simulLen] = {
+        0,
+    };
+    float xComData[simulLen] = {
+        0,
+    };
 
-    CdtVector<3> yState;
-    CdtVector<simulLen> yZmpRef;
-    CdtVector<Nstep> yZmpRefK;
-    CdtVector<Nstep> yJerk;
+    dtVector<3> yState;
+    dtVector<simulLen> yZmpRef;
+    dtVector<Nstep> yZmpRefK;
+    dtVector<Nstep> yJerk;
 
     float R_Q = R / Q; // R/Q
 
@@ -217,12 +234,12 @@ void AnalyticalPreviewCtrl()
         // In simulations, state is updated with equations (idealy, there are no disturbunce)
 
         /* evaluate the jerk */
-        xJerk = -Inv * Pzu.Transpose()*(Pzs*xState - xZmpRefK);
-        yJerk = -Inv * Pzu.Transpose()*(Pzs*yState - yZmpRefK);
+        xJerk = -Inv * Pzu.Transpose() * (Pzs * xState - xZmpRefK);
+        yJerk = -Inv * Pzu.Transpose() * (Pzs * yState - yZmpRefK);
 
         /* desired CoM position, velocity and acceleration */
-        xState = A * xState + B * xJerk(0);   // x(k+1) = A*x(k) + B*x_jerk(k)
-        yState = A * yState + B * yJerk(0);   // y(k+1) = A*y(k) + B*y_jerk(k)
+        xState = A * xState + B * xJerk(0); // x(k+1) = A*x(k) + B*x_jerk(k)
+        yState = A * yState + B * yJerk(0); // y(k+1) = A*y(k) + B*y_jerk(k)
 
         clock.Stop();
 
@@ -268,45 +285,57 @@ void MPC_Method1()
 {
     PrintTitle("ZMP MPC-Method1 ");
     CdhTimeCheck clock;
-    float timeData[simulLen] = { 0, };
+    float timeData[simulLen] = {
+        0,
+    };
     float time = 0;
 
     // graph vairables
 #if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
-    CdtGnuPlot<> graphSolvTime;
-    CdtGnuPlot<> graphCost;
-    CdtGnuPlot<> graphY;
+    dtGnuPlot<> graphSolvTime;
+    dtGnuPlot<> graphCost;
+    dtGnuPlot<> graphY;
 #endif
-    float yZmpData[simulLen] = { 0, };
-    float yPosComData[simulLen] = { 0, };
-    float yVelComData[simulLen] = { 0, };
-    float yCostData[simulLen] = { 0, };
-    float ySolvTimeData[simulLen] = { 0, };
+    float yZmpData[simulLen] = {
+        0,
+    };
+    float yPosComData[simulLen] = {
+        0,
+    };
+    float yVelComData[simulLen] = {
+        0,
+    };
+    float yCostData[simulLen] = {
+        0,
+    };
+    float ySolvTimeData[simulLen] = {
+        0,
+    };
 
     // min a/2*jerk^2 + b/2*(Z-Zref)^2 wrt jerk
-    CdtMatrix<2 * Nstep, 2 * Nstep> mGy;
+    dtMatrix<2 * Nstep, 2 * Nstep> mGy;
     float w[2 * Nstep];
-    CdtVector<2 * Nstep> vGy;
+    dtVector<2 * Nstep> vGy;
 
-    CdtMatrix<2 * Nstep, 2 * Nstep> mCIy;
-    CdtVector<2 * Nstep> vCIy;
+    dtMatrix<2 * Nstep, 2 * Nstep> mCIy;
+    dtVector<2 * Nstep> vCIy;
 
-    CdtMatrix<2 * Nstep, Nstep> mCEy;
-    CdtVector<Nstep> vCEy;
+    dtMatrix<2 * Nstep, Nstep> mCEy;
+    dtVector<Nstep> vCEy;
 
-    CdtMatrix<Nstep, Nstep> PzuT;
-    CdtMatrix<Nstep, Nstep> Inn;
-    CdtVector<2 * Nstep> yX;          // yX = [yJerk; (yZ - yZref)]
-    CdtVector<3> yState;
+    dtMatrix<Nstep, Nstep> PzuT;
+    dtMatrix<Nstep, Nstep> Inn;
+    dtVector<2 * Nstep> yX; // yX = [yJerk; (yZ - yZref)]
+    dtVector<3> yState;
 
-    CdtVector<simulLen> yZmpRef;
-    CdtVector<Nstep> yZmpRefK;
-    CdtVector<simulLen> yZmpMax;
-    CdtVector<Nstep> yZmpMaxK;
-    CdtVector<simulLen> yZmpMin;
-    CdtVector<Nstep> yZmpMinK;
+    dtVector<simulLen> yZmpRef;
+    dtVector<Nstep> yZmpRefK;
+    dtVector<simulLen> yZmpMax;
+    dtVector<Nstep> yZmpMaxK;
+    dtVector<simulLen> yZmpMin;
+    dtVector<Nstep> yZmpMinK;
 
-    CdtQuadProg<2 * Nstep, 2 * Nstep, Nstep> yMPC;
+    dtQuadProg<2 * Nstep, 2 * Nstep, Nstep> yMPC;
     float yCost = 0;
 
     MakeRelationMat(smpT);
@@ -333,7 +362,7 @@ void MPC_Method1()
     /* Inequality */
     mCIy.SetBlock(0, 0, PzuT);
     mCIy.SetBlock(0, Nstep, -PzuT);
-    vCIy.SetBlock(0, Pzs*yState - yZmpMinK);
+    vCIy.SetBlock(0, Pzs * yState - yZmpMinK);
     vCIy.SetBlock(Nstep, yZmpMaxK - Pzs * yState);
 
     // make timedata & ref zmp
@@ -358,7 +387,7 @@ void MPC_Method1()
 
         /* update State */
         vCEy = Pzs * yState - yZmpRefK;
-        vCIy.SetBlock(0, Pzs*yState - yZmpMinK);
+        vCIy.SetBlock(0, Pzs * yState - yZmpMinK);
         vCIy.SetBlock(Nstep, yZmpMaxK - Pzs * yState);
 
         /* Solve */
@@ -369,7 +398,7 @@ void MPC_Method1()
         }
 
         /* desired CoM position, velocity and acceleration */
-        yState = A * yState + B * yX(0);   // y(k+1) = A*y(k) + B*y_jerk(k)
+        yState = A * yState + B * yX(0); // y(k+1) = A*y(k) + B*y_jerk(k)
 
         clock.Stop();
 
@@ -416,44 +445,54 @@ void MPC_Method2()
 {
     PrintTitle("ZMP MPC-Method2 ");
     CdhTimeCheck clock;
-    float timeData[simulLen] = { 0, };
+    float timeData[simulLen] = {
+        0,
+    };
     float time = 0;
 
     // graph vairables
 #if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
-    CdtGnuPlot<> graphSolvTime;
-    CdtGnuPlot<> graphCost;
-    CdtGnuPlot<> graphY;
+    dtGnuPlot<> graphSolvTime;
+    dtGnuPlot<> graphCost;
+    dtGnuPlot<> graphY;
 #endif
-    float yZmpData[simulLen] = { 0, };
-    float yComData[simulLen] = { 0, };
-    float yCostData[simulLen] = { 0, };
-    float ySolvTimeData[simulLen] = { 0, };
+    float yZmpData[simulLen] = {
+        0,
+    };
+    float yComData[simulLen] = {
+        0,
+    };
+    float yCostData[simulLen] = {
+        0,
+    };
+    float ySolvTimeData[simulLen] = {
+        0,
+    };
 
     // min a/2*jerk^2 + b/2*(Z-Zref)^2 wrt jerk
-    CdtMatrix<2 * Nstep, 2 * Nstep> mGy;
+    dtMatrix<2 * Nstep, 2 * Nstep> mGy;
     float w[2 * Nstep];
-    CdtVector<2 * Nstep> vGy;
+    dtVector<2 * Nstep> vGy;
 
-    CdtMatrix<2 * Nstep, 2 * Nstep> mCIy;
-    CdtVector<2 * Nstep> vCIy;
+    dtMatrix<2 * Nstep, 2 * Nstep> mCIy;
+    dtVector<2 * Nstep> vCIy;
 
-    CdtMatrix<2 * Nstep, Nstep> mCEy;
-    CdtVector<Nstep> vCEy;
+    dtMatrix<2 * Nstep, Nstep> mCEy;
+    dtVector<Nstep> vCEy;
 
-    CdtMatrix<Nstep, Nstep> PzuT;
-    CdtMatrix<Nstep, Nstep> Inn;
-    CdtVector<2 * Nstep> yX;          // yX = [yJerk; yZ]
-    CdtVector<3> yState;
+    dtMatrix<Nstep, Nstep> PzuT;
+    dtMatrix<Nstep, Nstep> Inn;
+    dtVector<2 * Nstep> yX; // yX = [yJerk; yZ]
+    dtVector<3> yState;
 
-    CdtVector<simulLen> yZmpRef;
-    CdtVector<Nstep> yZmpRefK;
-    CdtVector<simulLen> yZmpMax;
-    CdtVector<Nstep> yZmpMaxK;
-    CdtVector<simulLen> yZmpMin;
-    CdtVector<Nstep> yZmpMinK;
+    dtVector<simulLen> yZmpRef;
+    dtVector<Nstep> yZmpRefK;
+    dtVector<simulLen> yZmpMax;
+    dtVector<Nstep> yZmpMaxK;
+    dtVector<simulLen> yZmpMin;
+    dtVector<Nstep> yZmpMinK;
 
-    CdtQuadProg<2 * Nstep, 2 * Nstep, Nstep> yMPC;
+    dtQuadProg<2 * Nstep, 2 * Nstep, Nstep> yMPC;
     float yCost = 0;
 
     MakeRelationMat(smpT);
@@ -517,7 +556,7 @@ void MPC_Method2()
         }
 
         /* desired CoM position, velocity and acceleration */
-        yState = A * yState + B * yX(0);   // y(k+1) = A*y(k) + B*y_jerk(k)
+        yState = A * yState + B * yX(0); // y(k+1) = A*y(k) + B*y_jerk(k)
 
         clock.Stop();
 
@@ -560,24 +599,24 @@ void MPC_Method2()
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------
 // Dong-hyun Ann, MIT Cheetah3 MPC
-#define FORMAT  double
-#define IDX_FL  0   // Front Left Leg
-#define IDX_BL  1   // Back Left Leg
-#define IDX_FR  2   // Front Right Leg
-#define IDX_BR  3   // Back Right Leg
+#define FORMAT double
+#define IDX_FL 0 // Front Left Leg
+#define IDX_BL 1 // Back Left Leg
+#define IDX_FR 2 // Front Right Leg
+#define IDX_BR 3 // Back Right Leg
 
 const uint8_t mpc_Ns = 13;  // state number
 const uint8_t mpc_Nuf = 12; // grf number
 const uint8_t mpc_Nu = 25;  // input number
-//FORMAT mpc_Ts = 0.05f;        // sampling time
-FORMAT mpc_Ts = 0.04f;        // sampling time
-const uint8_t mpc_N = 8;    // horizon number
+// FORMAT mpc_Ts = 0.05f;        // sampling time
+FORMAT mpc_Ts = 0.04f;   // sampling time
+const uint8_t mpc_N = 8; // horizon number
 
 const uint16_t mpc_n = mpc_Nu * mpc_N; // decision variable number
 const uint16_t mpc_m = 24 * mpc_N;     // inequality constraint number
 const uint16_t mpc_p = mpc_Ns * mpc_N; // equality constaint number
 
-FORMAT mass = 18.0f; //17.141;
+FORMAT mass = 18.0f; // 17.141;
 FORMAT Ixx = 0.4f;
 FORMAT Iyy = 1.041f;
 FORMAT Izz = 0.954f;
@@ -585,51 +624,51 @@ FORMAT Izz = 0.954f;
 FORMAT com_height = 0.50f;
 FORMAT foot_height = 0.04f;
 
-CdtVector<mpc_Ns, FORMAT> act_state;
-CdtVector<mpc_Ns, FORMAT> des_state;
-CdtVector<mpc_Ns * mpc_N, FORMAT> des_state_tilde;
-CdtVector3<FORMAT> com2foot_des_pos[4];
+dtVector<mpc_Ns, FORMAT> act_state;
+dtVector<mpc_Ns, FORMAT> des_state;
+dtVector<mpc_Ns * mpc_N, FORMAT> des_state_tilde;
+dtVector3<FORMAT> com2foot_des_pos[4];
 
-CdtMatrix<mpc_Ns, mpc_Ns, FORMAT> Ad;
-CdtMatrix<mpc_Ns * mpc_N, mpc_Ns, FORMAT> Ad_tilde;
+dtMatrix<mpc_Ns, mpc_Ns, FORMAT> Ad;
+dtMatrix<mpc_Ns * mpc_N, mpc_Ns, FORMAT> Ad_tilde;
 
-CdtMatrix<mpc_Ns, mpc_Nuf, FORMAT> Bd;
-CdtMatrix<mpc_Ns * mpc_N, mpc_Nuf * mpc_N, FORMAT> Bd_tilde;
+dtMatrix<mpc_Ns, mpc_Nuf, FORMAT> Bd;
+dtMatrix<mpc_Ns * mpc_N, mpc_Nuf * mpc_N, FORMAT> Bd_tilde;
 
-CdtMatrix3<FORMAT> Ig, inv_Ig;
+dtMatrix3<FORMAT> Ig, inv_Ig;
 
-//FORMAT Q_vec[mpc_Ns] = { 500.0f, 500.0f, 0.01f,  100.0f, 100.0f, 100.0f,  5.0f, 5.0f, 5.0f,  10.0f, 10.0f, 10.0f,  1.0f };
-FORMAT Q_vec[mpc_Ns] = { 500.0f, 500.0f, 0.01f,  100.0f, 100.0f, 100.0f,  5.0f, 5.0f, 5.0f,  1.0f, 1.0f, 1.0f,  1.0f };
-CdtMatrix<mpc_Ns, mpc_Ns, FORMAT> Q_mat;
-CdtMatrix<mpc_Ns * mpc_N, mpc_Ns * mpc_N, FORMAT> Q_tilde;
+// FORMAT Q_vec[mpc_Ns] = { 500.0f, 500.0f, 0.01f,  100.0f, 100.0f, 100.0f,  5.0f, 5.0f, 5.0f,  10.0f, 10.0f, 10.0f,  1.0f };
+FORMAT Q_vec[mpc_Ns] = {500.0f, 500.0f, 0.01f, 100.0f, 100.0f, 100.0f, 5.0f, 5.0f, 5.0f, 1.0f, 1.0f, 1.0f, 1.0f};
+dtMatrix<mpc_Ns, mpc_Ns, FORMAT> Q_mat;
+dtMatrix<mpc_Ns * mpc_N, mpc_Ns * mpc_N, FORMAT> Q_tilde;
 
-//FORMAT alpha_mpc_uf = 0.0001f; //0.000001;
+// FORMAT alpha_mpc_uf = 0.0001f; //0.000001;
 FORMAT alpha_mpc_uf = 0.00001;
-CdtMatrix<mpc_Nuf, mpc_Nuf, FORMAT> R_mat;
-CdtMatrix<mpc_Nuf * mpc_N, mpc_Nuf * mpc_N, FORMAT> R_tilde;
+dtMatrix<mpc_Nuf, mpc_Nuf, FORMAT> R_mat;
+dtMatrix<mpc_Nuf * mpc_N, mpc_Nuf * mpc_N, FORMAT> R_tilde;
 
 FORMAT mpc_cost = 0;
-CdtMatrix<mpc_n, mpc_n, FORMAT> H_mat;
-CdtVector<mpc_n, FORMAT> b_vec;
-CdtMatrix<mpc_n, mpc_p, FORMAT> mpc_Ce;
-CdtVector<mpc_p, FORMAT> mpc_Ce0;
-CdtMatrix<mpc_n, mpc_m, FORMAT> mpc_Ci;
-CdtVector<mpc_m, FORMAT> mpc_Ci0;
-CdtVector<mpc_n, FORMAT> mpc_X;
+dtMatrix<mpc_n, mpc_n, FORMAT> H_mat;
+dtVector<mpc_n, FORMAT> b_vec;
+dtMatrix<mpc_n, mpc_p, FORMAT> mpc_Ce;
+dtVector<mpc_p, FORMAT> mpc_Ce0;
+dtMatrix<mpc_n, mpc_m, FORMAT> mpc_Ci;
+dtVector<mpc_m, FORMAT> mpc_Ci0;
+dtVector<mpc_n, FORMAT> mpc_X;
 FORMAT mu = 0.7f;
 
 void ADH_MPC_Init()
 {
     CdhTimeCheck clock;
-    CdtMatrix<mpc_Ns, mpc_Ns, FORMAT> tmp_Ad;
-    CdtMatrix<mpc_Ns, mpc_Nuf, FORMAT> tmp_Bd;
-    CdtMatrix<mpc_Ns * mpc_N, mpc_Ns * mpc_N, FORMAT> tmp_x;
-    CdtMatrix<6, 3, FORMAT> tmp_Ci;
-    CdtMatrix<mpc_Nuf, 24, FORMAT> tmp_Ci_2;
-    CdtVector<6, FORMAT> tmp_mCi0[4];
-    CdtVector<24, FORMAT> tmp_Ci0_2;
+    dtMatrix<mpc_Ns, mpc_Ns, FORMAT> tmp_Ad;
+    dtMatrix<mpc_Ns, mpc_Nuf, FORMAT> tmp_Bd;
+    dtMatrix<mpc_Ns * mpc_N, mpc_Ns * mpc_N, FORMAT> tmp_x;
+    dtMatrix<6, 3, FORMAT> tmp_Ci;
+    dtMatrix<mpc_Nuf, 24, FORMAT> tmp_Ci_2;
+    dtVector<6, FORMAT> tmp_mCi0[4];
+    dtVector<24, FORMAT> tmp_Ci0_2;
 
-    CdtQuadProg<mpc_n, mpc_m, mpc_p, FORMAT> mpc_qp; //decision variables, inequality constraint, equality constraint
+    dtQuadProg<mpc_n, mpc_m, mpc_p, FORMAT> mpc_qp; // decision variables, inequality constraint, equality constraint
 
     // Init
     Ig(0, 0) = Ixx;
@@ -639,10 +678,10 @@ void ADH_MPC_Init()
     inv_Ig = Ig.Inv();
 
     // destination Foot pos
-    //com2foot_des_pos[IDX_FL] << 0.26316f, 0.056f + 0.09041f, -0.477f;
-    //com2foot_des_pos[IDX_BL] << -0.26316f, 0.056f + 0.09041f, -com_height;
-    //com2foot_des_pos[IDX_FR] << 0.26316f, -(0.056f + 0.09041f), -com_height;
-    //com2foot_des_pos[IDX_BR] << -0.26316f, -(0.056f + 0.09041f), -0.477f;
+    // com2foot_des_pos[IDX_FL] << 0.26316f, 0.056f + 0.09041f, -0.477f;
+    // com2foot_des_pos[IDX_BL] << -0.26316f, 0.056f + 0.09041f, -com_height;
+    // com2foot_des_pos[IDX_FR] << 0.26316f, -(0.056f + 0.09041f), -com_height;
+    // com2foot_des_pos[IDX_BR] << -0.26316f, -(0.056f + 0.09041f), -0.477f;
 
     com2foot_des_pos[IDX_FL] << 0.26316f, 0.056f + 0.09041f, -com_height;
     com2foot_des_pos[IDX_BL] << -0.26316f, 0.056f + 0.09041f, -com_height;
@@ -848,25 +887,25 @@ void ADH_MPC_Init()
 
 void ADH_MPC_Process()
 {
-    FORMAT desState[] = { 0.000000f, 0.000000f, 0.000000f,-0.046316f, 0.000000f, 0.458223f, 0.000000f, 0.000000f, 0.000000f, 0.020518f, 0.000000f, 0.018508f, 9.806000f };
-    FORMAT actState[] = { 0.172336f, 0.177815f, 0.000000f,-0.008411f,-0.011410f, 0.510281f, 1.417905f,-1.398757f, 0.476276f, 3.246905f, 0.042101f,-0.159293f, 9.806000f };
+    FORMAT desState[] = {0.000000f, 0.000000f, 0.000000f, -0.046316f, 0.000000f, 0.458223f, 0.000000f, 0.000000f, 0.000000f, 0.020518f, 0.000000f, 0.018508f, 9.806000f};
+    FORMAT actState[] = {0.172336f, 0.177815f, 0.000000f, -0.008411f, -0.011410f, 0.510281f, 1.417905f, -1.398757f, 0.476276f, 3.246905f, 0.042101f, -0.159293f, 9.806000f};
 
     CdhTimeCheck clock;
-    CdtMatrix<mpc_Ns, mpc_Ns, FORMAT> tmp_Ad;
-    CdtMatrix<mpc_Ns, mpc_Nuf, FORMAT> tmp_Bd;
-    CdtVector<6, FORMAT> tmp_mCi0[4];
-    CdtVector<24, FORMAT> tmp_Ci0_2;
-    CdtVector<4, FORMAT> contact;
+    dtMatrix<mpc_Ns, mpc_Ns, FORMAT> tmp_Ad;
+    dtMatrix<mpc_Ns, mpc_Nuf, FORMAT> tmp_Bd;
+    dtVector<6, FORMAT> tmp_mCi0[4];
+    dtVector<24, FORMAT> tmp_Ci0_2;
+    dtVector<4, FORMAT> contact;
 
     FORMAT f_ext_max = 250;
     FORMAT F_ext_max = 250;
 
-    CdtQuadProg<mpc_n, mpc_m, mpc_p, FORMAT> mpc_qp2;
+    dtQuadProg<mpc_n, mpc_m, mpc_p, FORMAT> mpc_qp2;
 
-    //com2foot_des_pos[IDX_FL] << 0.309476f, 0.146410f, -0.458223f;
-    //com2foot_des_pos[IDX_BL] <<-0.309476f, 0.146410f, -0.458223f;
-    //com2foot_des_pos[IDX_FR] << 0.309476f,-0.146410f, -0.458223f;
-    //com2foot_des_pos[IDX_BR] <<-0.309476f,-0.146410f, -0.458223f;
+    // com2foot_des_pos[IDX_FL] << 0.309476f, 0.146410f, -0.458223f;
+    // com2foot_des_pos[IDX_BL] <<-0.309476f, 0.146410f, -0.458223f;
+    // com2foot_des_pos[IDX_FR] << 0.309476f,-0.146410f, -0.458223f;
+    // com2foot_des_pos[IDX_BR] <<-0.309476f,-0.146410f, -0.458223f;
 
     com2foot_des_pos[IDX_FL] << 0.263160f, 0.146410f, -0.470911f;
     com2foot_des_pos[IDX_BL] << -0.263160f, 0.146410f, -0.5f;
@@ -955,7 +994,7 @@ void ADH_MPC_Process()
     mpc_Ce0 = -Ad_tilde * act_state;
 
     // Inequality constraints
-    //contact.SetFill(1.0f);
+    // contact.SetFill(1.0f);
     contact(IDX_FL) = 0;
     contact(IDX_BL) = 1;
     contact(IDX_FR) = 1;
@@ -991,7 +1030,7 @@ void ADH_MPC_Process()
     mpc_qp2.UpdateVectorG(b_vec);
     int rtn = mpc_qp2.Solve(mpc_Ce, mpc_Ce0, mpc_Ci, mpc_Ci0, mpc_X);
     clock.Stop();
-    
+
     printf("MPC_Process\n");
     printf("mpc_X=\n");
     mpc_X.Print('\n');
@@ -1005,6 +1044,6 @@ void ADH_MPC_Test2()
 {
     ADH_MPC_Init();
 
-    //for (int i=0; i<50; i++)
-        ADH_MPC_Process();
+    // for (int i=0; i<50; i++)
+    ADH_MPC_Process();
 }

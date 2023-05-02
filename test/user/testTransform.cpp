@@ -1,8 +1,14 @@
-#include "testPrint.h"
 #include "testTransform.h"
+#include "testPrint.h"
 
 #include <dtMath/dtMath.h>
 
+using dtMath::dtMatrix;
+using dtMath::dtQuaternion;
+using dtMath::dtRotation;
+using dtMath::dtTransform;
+using dtMath::dtVector;
+using dtMath::dtVector3;
 
 void Test_Transform()
 {
@@ -18,40 +24,40 @@ void TrfMemberFunc()
     PrintHeading("Transformation Member Functions ");
 
     Printf("/* Class Create: () */\n");
-    CdtTransform<> t1;
+    dtTransform<> t1;
     t1.Print();
     Println;
 
     Printf("/* Class Create: with Rotation */\n");
     Printf("Rot = Rz(10)Ry(20)Rx(30) deg\n");
     Printf("Pos = [1, 2, 3]T\n");
-    CdtRotation<> r1(AXIS3(2, 1, 0), 10 * DEG2RADf, 20 * DEG2RADf, 30 * DEG2RADf);
-    CdtVector3<> v1(1, 2, 3);
-    CdtTransform<> t2(r1, v1);
+    dtRotation<> r1(AXIS3(2, 1, 0), 10 * DEG2RADf, 20 * DEG2RADf, 30 * DEG2RADf);
+    dtVector3<> v1(1, 2, 3);
+    dtTransform<> t2(r1, v1);
     t2.Print();
     Println;
 
     Printf("/* Class Create: with Quaternion */\n");
     Printf("Quat = ZYX Euler [10, 20, 30]T deg\n");
     Printf("Pos = [1, 2, 3]T\n");
-    CdtQuaternion<> q1(AXIS3(2, 1, 0), 10 * DEG2RADf, 20 * DEG2RADf, 30 * DEG2RADf);
-    CdtTransform<> t3(q1, v1);
+    dtQuaternion<> q1(AXIS3(2, 1, 0), 10 * DEG2RADf, 20 * DEG2RADf, 30 * DEG2RADf);
+    dtTransform<> t3(q1, v1);
     t3.Print();
     Println;
 
     Printf("/* Class Create: with Euler */\n");
     Printf("ZYX Euler = [10, 20, 30]T deg\n");
     Printf("Pos = [1, 2, 3]T\n");
-    CdtVector3<> euler(10 * DEG2RADf, 20 * DEG2RADf, 30 * DEG2RADf);
-    CdtTransform<> t4(AXIS3(2,1,0), euler, v1);
+    dtVector3<> euler(10 * DEG2RADf, 20 * DEG2RADf, 30 * DEG2RADf);
+    dtTransform<> t4(AXIS3(2, 1, 0), euler, v1);
     t4.Print();
     Println;
 
-    Printf("/* Class Create: CdtTransform */\n");
-    CdtTransform<> t5(t4);
+    Printf("/* Class Create: dtTransform */\n");
+    dtTransform<> t5(t4);
     t5.Print();
     Println;
-    
+
     Printf("/* Function: SetZero() */\n");
     t1.SetZero();
     t1.Print();
@@ -62,35 +68,35 @@ void TrfMemberFunc()
     t1.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtVector3 pos) */\n");
+    Printf("/* Function: SetElement(dtVector3 pos) */\n");
     Printf("Pos - [1,2,3]T\n");
     v1.SetElement(1, 2, 3);
     t1.SetElement(v1);
     t1.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtRotation) */\n");
+    Printf("/* Function: SetElement(dtRotation) */\n");
     Printf("Z-Axis 10deg Rotatin matrix\n");
     r1.SetElement(AXIS1(0), 10 * DEG2RADf);
     t1.SetElement(r1);
     t1.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtQuaternion) */\n");
+    Printf("/* Function: SetElement(dtQuaternion) */\n");
     Printf("X-Axis 10deg Quaternion\n");
     q1.SetElement(AXIS1(0), 10 * DEG2RADf);
     t1.SetElement(r1);
     t1.Print();
     Println;
 
-    Printf("/* Function: SetElement(euler angle order, CdtVector3 euler angles) */\n");
+    Printf("/* Function: SetElement(euler angle order, dtVector3 euler angles) */\n");
     Printf("XYZ Euler Angle - [10,0,0]T deg\n");
     euler.SetElement(10 * DEG2RADf, 0, 0);
     t1.SetElement(AXIS3(0, 1, 2), euler);
     t1.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtRotation, CdtVector3 Pos) */\n");
+    Printf("/* Function: SetElement(dtRotation, dtVector3 Pos) */\n");
     Printf("Z-Axis 10deg Quaternion\n");
     Printf("Position - [1,0,0]T\n");
     r1.SetElement(AXIS1(2), 10 * DEG2RADf);
@@ -99,7 +105,7 @@ void TrfMemberFunc()
     t1.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtQuaternion, CdtVector3 Pos) */\n");
+    Printf("/* Function: SetElement(dtQuaternion, dtVector3 Pos) */\n");
     Printf("Z-Axis 10deg Quaternion\n");
     Printf("Position - [0,1,0]T\n");
     q1.SetElement(AXIS1(2), 10 * DEG2RADf);
@@ -108,7 +114,7 @@ void TrfMemberFunc()
     t1.Print();
     Println;
 
-    Printf("/* Function: SetElement(euler angle order, CdtVector3 Euler, CdtVector3 Pos) */\n");
+    Printf("/* Function: SetElement(euler angle order, dtVector3 Euler, dtVector3 Pos) */\n");
     Printf("XYZ Euler Angle - [0,0,10]T deg\n");
     Printf("Position - [0,0,1]T\n");
     euler.SetElement(0, 0, 10 * DEG2RADf);
@@ -145,7 +151,7 @@ void TrfMemberFunc()
     t1.p().Print();
     Println;
 
-    Printf("/* Function: GetError(CdtTransform) */\n");
+    Printf("/* Function: GetError(dtTransform) */\n");
     Printf("T1_ori: ZYX Euler [30,0,0]T, T1_pos:[10,20,30]T\n");
     r1.SetElement(AXIS1(2), 30 * DEG2RADf);
     v1.SetElement(10, 20, 30);
@@ -157,7 +163,7 @@ void TrfMemberFunc()
     r1.SetElement(AXIS1(2), 0 * DEG2RADf);
     v1.SetElement(0, 0, 0);
     t2.SetElement(r1, v1);
-    (t2.R().GetEulerAngles(AXIS3(2, 1, 0))* RAD2DEGf).Print();
+    (t2.R().GetEulerAngles(AXIS3(2, 1, 0)) * RAD2DEGf).Print();
     Println;
 
     Printf("T1 and T2 position error:\n");
@@ -181,7 +187,7 @@ void TrfMemberFunc()
     Println;
 
     Printf("Target Matrix x Inverse Matrix:\n");
-    (t1* t1.Inv()).Print();
+    (t1 * t1.Inv()).Print();
     Println;
 
     Printf("Inverse Matrix x Inverse Matrix:\n");
@@ -192,12 +198,14 @@ void TrfMemberFunc()
 void TrfMemberAccessOperator()
 {
     PrintHeading("Transformation Member Access Operator ");
-    CdtRotation<> r1(AXIS1(2), 30 * DEG2RADf);
-    CdtVector3<> p1(1, 2, 3);
-    CdtTransform<> t1(r1, p1);
+    dtRotation<> r1(AXIS1(2), 30 * DEG2RADf);
+    dtVector3<> p1(1, 2, 3);
+    dtTransform<> t1(r1, p1);
 
     Printf("/* Operator: () */\n");
-    Printf("T(i,j) = 100; & Printf(""%%f"", T(i,j));\n");
+    Printf("T(i,j) = 100; & Printf("
+           "%%f"
+           ", T(i,j));\n");
     for (uint16_t i = 0; i < 4; i++)
     {
         for (uint16_t j = 0; j < 4; j++)
@@ -213,19 +221,19 @@ void TrfMemberAccessOperator()
 void TrfArithmetic()
 {
     PrintHeading("Transformation Arithmetic operators ");
-    float v[3] = { 1,2,3 };
-    CdtTransform<> t1;
-    CdtTransform<> t2;
-    CdtMatrix<4, 4> m44;
-    CdtMatrix<4, 6> m46;
-    CdtVector<3> v31(v, sizeof(v));
-    CdtVector3<> v3(1, 2, 3);
+    float v[3] = {1, 2, 3};
+    dtTransform<> t1;
+    dtTransform<> t2;
+    dtMatrix<4, 4> m44;
+    dtMatrix<4, 6> m46;
+    dtVector<3> v31(v, sizeof(v));
+    dtVector3<> v3(1, 2, 3);
 
     Printf("T =\n");
     t1.Print();
     Println;
 
-    Printf("/* Operator: +(const CdtMatrix) */\n");
+    Printf("/* Operator: +(const dtMatrix) */\n");
     m44.SetIdentity();
     Printf("mat44 =\n");
     m44.Print();
@@ -233,7 +241,7 @@ void TrfArithmetic()
     (t1 + -m44).Print();
     Println;
 
-    Printf("/* Operator: -(const CdtMatrix) */\n");
+    Printf("/* Operator: -(const dtMatrix) */\n");
     m44.SetIdentity();
     Printf("mat44 =\n");
     m44.Print();
@@ -241,7 +249,7 @@ void TrfArithmetic()
     (t1 - m44).Print();
     Println;
 
-    Printf("/* Operator: *(const CdtMatrix) */\n");
+    Printf("/* Operator: *(const dtMatrix) */\n");
     m44.SetFill(1);
     Printf("mat44 =\n");
     m44.Print();
@@ -249,7 +257,7 @@ void TrfArithmetic()
     (t1 * m44).Print();
     Println;
 
-    Printf("/* Operator: *(const CdtMatrix) */\n");
+    Printf("/* Operator: *(const dtMatrix) */\n");
     m46.SetFill(1);
     Printf("mat46 =\n");
     m44.Print();
@@ -257,22 +265,22 @@ void TrfArithmetic()
     (t1 * m46).Print();
     Println;
 
-    Printf("/* Operator: *(const CdtTransform) */\n");
-    t2.SetElement(CdtVector3<>(1, 2, 3));
+    Printf("/* Operator: *(const dtTransform) */\n");
+    t2.SetElement(dtVector3<>(1, 2, 3));
     Printf("T2 =\n");
     t2.Print();
     Printf("T * T2 =\n");
     (t1 * t2).Print();
     Println;
 
-    Printf("/* Operator: *(const CdtVector) */\n");
+    Printf("/* Operator: *(const dtVector) */\n");
     Printf("vec31 =\n");
     v31.Print();
     Printf("T * vec31 =\n");
     (t1 * v31).Print();
     Println;
 
-    Printf("/* Operator: *(const CdtVector3) */\n");
+    Printf("/* Operator: *(const dtVector3) */\n");
     Printf("vec3 =\n");
     v3.Print();
     Printf("T * vec3 =\n");
@@ -283,9 +291,9 @@ void TrfArithmetic()
 void TrfComparisonOperator()
 {
     PrintHeading("Transformation Comparison operators ");
-    CdtTransform<> t1;
+    dtTransform<> t1;
 
-    Printf("/* Operator: ==(CdtTransform &m) and !=(CdtTransform &m) */\n");
+    Printf("/* Operator: ==(dtTransform &m) and !=(dtTransform &m) */\n");
     if (t1 == t1) Printf("true");
     else Printf("false");
     Println;

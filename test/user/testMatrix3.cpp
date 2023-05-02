@@ -1,8 +1,13 @@
-#include "testPrint.h"
 #include "testMatrix3.h"
+#include "testPrint.h"
 
 #include <dtMath/dtMath.h>
 
+using dtMath::dtMatrix;
+using dtMath::dtMatrix3;
+using dtMath::dtRotation;
+using dtMath::dtVector;
+using dtMath::dtVector3;
 
 void Test_Matrix3()
 {
@@ -21,7 +26,7 @@ void Mat3Init()
     Printf("CommaInit, mat << 1, 2, 3, 4, 5, 6, 7, 8, 9;\n");
     Printf("mat = \n");
 
-    CdtMatrix3<> mat;
+    dtMatrix3<> mat;
     mat << 1, 2, 3,
         4, 5, 6,
         7, 8, 9;
@@ -35,8 +40,8 @@ void Mat3MemberFunc()
     PrintHeading("Matrix3 Member Functions ");
 
     Printf("/* Class Create: with array */\n");
-    float a[3 * 3] = { 1,2,3,4,5,6,7,8,9 };
-    CdtMatrix3<> m1(a, sizeof(a));
+    float a[3 * 3] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    dtMatrix3<> m1(a, sizeof(a));
     Printf("a[3*3] = {1,2,3,4,5,6,7,8,9}\n");
     Printf("mat =\n");
     m1.Print();
@@ -45,28 +50,28 @@ void Mat3MemberFunc()
     Printf("/* Class Create: with diagonal */\n");
     Printf("d[3*3] = {1,2,3,4,5,6,7,8,9}\n");
     Printf("mat =\n");
-    CdtMatrix3<> m2('d', a, sizeof(a));
+    dtMatrix3<> m2('d', a, sizeof(a));
     m2.Print();
     Println;
 
     Printf("/* Class Create: with elements */\n");
     Printf("elements are 1,2,3,4,5,6,7,8,9\n");
     Printf("mat =\n");
-    CdtMatrix3<> m3(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    dtMatrix3<> m3(1, 2, 3, 4, 5, 6, 7, 8, 9);
     m3.Print();
     Println;
 
     Printf("/* Class Create: with Matrix3 */\n");
-    Printf("CdtMatrix3 is\n");
+    Printf("dtMatrix3 is\n");
     m3.Print();
     Printf("mat =\n");
-    CdtMatrix3<> m4(m3);
+    dtMatrix3<> m4(m3);
     m4.Print();
     Println;
 
     Printf("/* Class Create: with Rotation matrix */\n");
-    CdtRotation<> r;
-    CdtMatrix3<> m5(r);
+    dtRotation<> r;
+    dtMatrix3<> m5(r);
     Printf("rotation matrix is\n");
     r.Print();
     Printf("mat =\n");
@@ -74,9 +79,9 @@ void Mat3MemberFunc()
     Println;
 
     Printf("/* Class Create: with Matrix */\n");
-    CdtMatrix<3, 3> m33;
-    CdtMatrix3<> m6(m33);
-    Printf("CdtMatrix is\n");
+    dtMatrix<3, 3> m33;
+    dtMatrix3<> m6(m33);
+    Printf("dtMatrix is\n");
     m33.Print();
     Printf("mat =\n");
     m6.Print();
@@ -122,24 +127,24 @@ void Mat3MemberFunc()
     m1.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtMatrix3 &m) */\n");
-    Printf("CdtMatrix3 is\n");
+    Printf("/* Function: SetElement(dtMatrix3 &m) */\n");
+    Printf("dtMatrix3 is\n");
     m2.Print();
     m1.SetElement(m2);
     Printf("mat =\n");
     m1.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtRotation) */\n");
-    Printf("CdtRotation is\n");
+    Printf("/* Function: SetElement(dtRotation) */\n");
+    Printf("dtRotation is\n");
     r.Print();
     m1.SetElement(r);
     Printf("mat =\n");
     m1.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtMatrix) */\n");
-    Printf("CdtMatrix is\n");
+    Printf("/* Function: SetElement(dtMatrix) */\n");
+    Printf("dtMatrix is\n");
     m1.SetElement(m33);
     Printf("mat =\n");
     m1.Print();
@@ -193,10 +198,12 @@ void Mat3MemberFunc()
 void Mat3MemberAccessOperator()
 {
     PrintHeading("Matrix3 Member Access Operator ");
-    CdtMatrix3<> m1(1,2,3,4,5,6,7,8,9);
-    
+    dtMatrix3<> m1(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
     Printf("/* Operator: () */\n");
-    Printf("mat(i,j) = 100; Printf(""%%f"", mat(i,j));\n");
+    Printf("mat(i,j) = 100; Printf("
+           "%%f"
+           ", mat(i,j));\n");
     for (uint16_t i = 0; i < 3; i++)
     {
         for (uint16_t j = 0; j < 3; j++)
@@ -212,10 +219,10 @@ void Mat3MemberAccessOperator()
 void Mat3ArithmeticSum()
 {
     PrintHeading("Matrix3 Arithmetic operators - Sum ");
-    float m[9] = { 1,2,3,4,5,6,7,8,9 };
-    CdtMatrix3<> m1(1, 2, 3, 4, 5, 6, 7, 8, 9);
-    CdtRotation<> r1(1, 2, 3, 4, 5, 6, 7, 8, 9);
-    CdtMatrix<3, 3> m33(m, sizeof(m));
+    float m[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    dtMatrix3<> m1(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    dtRotation<> r1(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    dtMatrix<3, 3> m33(m, sizeof(m));
     Printf("mat =\n");
     m1.Print();
 
@@ -224,36 +231,36 @@ void Mat3ArithmeticSum()
     (-m1).Print();
     Println;
 
-    Printf("/* Operator: +(CdtMatrix3) */\n");
+    Printf("/* Operator: +(dtMatrix3) */\n");
     Printf("mat + (-mat) =\n");
     (m1 + (-m1)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtMatrix3) */\n");
+    Printf("/* Operator: -(dtMatrix3) */\n");
     Printf("mat - mat =\n");
     (m1 - m1).Print();
     Println;
 
-    Printf("/* Operator: +(CdtRotation) */\n");
+    Printf("/* Operator: +(dtRotation) */\n");
     Printf("rot =\n");
     r1.Print();
     Printf("mat + (-rot) =\n");
     (m1 + (-r1)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtRotation) */\n");
+    Printf("/* Operator: -(dtRotation) */\n");
     Printf("mat - rot =\n");
     (m1 - r1).Print();
     Println;
 
-    Printf("/* Operator: +(CdtMatrix) */\n");
-    Printf("CdtMatrix =\n");
+    Printf("/* Operator: +(dtMatrix) */\n");
+    Printf("dtMatrix =\n");
     m33.Print();
     Printf("mat + (-mat33) =\n");
     (m1 + (-m33)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtMatrix) */\n");
+    Printf("/* Operator: -(dtMatrix) */\n");
     Printf("mat - mat33 =\n");
     (m1 - m33).Print();
     Println;
@@ -262,12 +269,12 @@ void Mat3ArithmeticSum()
 void Mat3ArithmeticProduct()
 {
     PrintHeading("Matrix3 Arithmetic operators - Product ");
-    CdtMatrix3<> m1;
-    CdtMatrix3<> m2;
-    CdtRotation<> r1;
-    CdtMatrix<3, 6> m36;
-    CdtVector<3> v31;
-    CdtVector3<> v3;
+    dtMatrix3<> m1;
+    dtMatrix3<> m2;
+    dtRotation<> r1;
+    dtMatrix<3, 6> m36;
+    dtVector<3> v31;
+    dtVector3<> v3;
     Printf("mat =\n");
     m1.SetFill(10);
     m1.Print();
@@ -282,18 +289,18 @@ void Mat3ArithmeticProduct()
     (m1 / 10.0f).Print();
     Println;
 
-    Printf("/* Operator: *(scalar, CdtMatrix3) */\n");
+    Printf("/* Operator: *(scalar, dtMatrix3) */\n");
     Printf("0.1 * mat =\n");
     (0.1f * m1).Print();
     Println;
 
-    Printf("/* Operator: *(CdtMatrix) */\n");
+    Printf("/* Operator: *(dtMatrix) */\n");
     m1.SetElement(-1, -2, 4, 4, -2, -1, -1, -2, 4);
     m36.SetFill(1);
     (m1 * m36).Print();
     Println;
 
-    Printf("/* Operator: *(CdtMatrix3) */\n");
+    Printf("/* Operator: *(dtMatrix3) */\n");
     m1.SetElement(-1, -2, 4, 4, -2, -1, -1, -2, 4);
     m2.SetFill(1);
     Printf("matA =\n");
@@ -304,7 +311,7 @@ void Mat3ArithmeticProduct()
     (m1 * m2).Print();
     Println;
 
-    Printf("/* Operator: *(CdtRotation) */\n");
+    Printf("/* Operator: *(dtRotation) */\n");
     m1.SetElement(-1, -2, 4, 4, -2, -1, -1, -2, 4);
     r1.SetFill(1);
     Printf("matA =\n");
@@ -315,7 +322,7 @@ void Mat3ArithmeticProduct()
     (m1 * r1).Print();
     Println;
 
-    Printf("/* Operator: *(CdtVector) */\n");
+    Printf("/* Operator: *(dtVector) */\n");
     m1.SetElement(-1, -2, 4, 4, -2, -1, -1, -2, 4);
     v31.SetFill(1);
     Printf("mat =\n");
@@ -326,7 +333,7 @@ void Mat3ArithmeticProduct()
     (m1 * v31).Print();
     Println;
 
-    Printf("/* Operator: *(CdtVector3) */\n");
+    Printf("/* Operator: *(dtVector3) */\n");
     m1.SetElement(-1, -2, 4, 4, -2, -1, -1, -2, 4);
     v3.SetFill(1);
     Printf("mat =\n");
@@ -341,12 +348,12 @@ void Mat3ArithmeticProduct()
 void Mat3ComparisonOperator()
 {
     PrintHeading("Matrix3 Comparison operators ");
-    float m[9] = { 1,2,3,4,5,6,7,8,9 };
-    CdtMatrix3<> m1(1, 2, 3, 4, 5, 6, 7, 8, 9);
-    CdtRotation<> r1(1, 2, 3, 4, 5, 6, 7, 8, 9);
-    CdtMatrix<3, 3> m33(m, sizeof(m));
+    float m[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    dtMatrix3<> m1(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    dtRotation<> r1(1, 2, 3, 4, 5, 6, 7, 8, 9);
+    dtMatrix<3, 3> m33(m, sizeof(m));
 
-    Printf("/* Operator: ==(CdtMatrix3 &m) and !=(CdtMatrix3 &m) */\n");
+    Printf("/* Operator: ==(dtMatrix3 &m) and !=(dtMatrix3 &m) */\n");
     if (m1 == m1) Printf("true");
     else Printf("false");
     Println;
@@ -355,7 +362,7 @@ void Mat3ComparisonOperator()
     else Printf("true");
     Println;
 
-    Printf("/* Operator: ==(CdtRotation &m) and !=(CdtRotation &m) */\n");
+    Printf("/* Operator: ==(dtRotation &m) and !=(dtRotation &m) */\n");
     if (m1 == r1) Printf("true");
     else Printf("false");
     Println;
@@ -364,7 +371,7 @@ void Mat3ComparisonOperator()
     else Printf("true");
     Println;
 
-    Printf("/* Operator: ==(CdtMatrix &m) and !=(CdtMatrix &m) */\n");
+    Printf("/* Operator: ==(dtMatrix &m) and !=(dtMatrix &m) */\n");
     if (m1 == m33) Printf("true");
     else Printf("false");
     Println;

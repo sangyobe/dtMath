@@ -1,15 +1,34 @@
+/*!
+\file       dtHouseholderQR.h
+\brief      dtMath, QR Decomposition without pivoting(Householder method) class
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
+\author     Who is next author?
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtQR<m_row, m_col, m_type>::CdtQR()
+#ifndef DTMATH_DTQR_TPP_
+#define DTMATH_DTQR_TPP_
+
+#include "dtQR.h"
+
+namespace dtMath
+{
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtQR<m_row, m_col, m_type>::dtQR()
 {
     memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
     m_isOk = 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtQR<m_row, m_col, m_type>::CdtQR(const m_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtQR<m_row, m_col, m_type>::dtQR(const m_type *element, const size_t n_byte)
 {
-    if ((sizeof(m_type) * m_row * m_col) != n_byte) m_isOk = 0;
+    if ((sizeof(m_type) * m_row * m_col) != n_byte)
+        m_isOk = 0;
     else
     {
         memcpy(m_elem, element, n_byte);
@@ -17,30 +36,32 @@ inline CdtQR<m_row, m_col, m_type>::CdtQR(const m_type *element, const size_t n_
     }
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtQR<m_row, m_col, m_type>::CdtQR(const CdtMatrix<m_row, m_col, m_type>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtQR<m_row, m_col, m_type>::dtQR(const dtMatrix<m_row, m_col, m_type> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtQR<m_row, m_col, m_type>::CdtQR(const CdtMatrix3<m_type, m_row, m_col>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtQR<m_row, m_col, m_type>::dtQR(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtQR<m_row, m_col, m_type>::Compute()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtQR<m_row, m_col, m_type>::Compute()
 {
     // A = Q*R
     int col = (m_row > m_col) ? m_col : m_row;
     int i, j, k, jj;
 
-    m_type H1n[m_row*m_row]; // size: mxm
-    m_type Hn1[m_row*m_col] = { 0, }; // Hn*...*H1*A, mxn
-    m_type H[m_row*m_row];
+    m_type H1n[m_row * m_row]; // size: mxm
+    m_type Hn1[m_row * m_col] = {
+        0,
+    }; // Hn*...*H1*A, mxn
+    m_type H[m_row * m_row];
     m_type u[m_row];
     m_type *pQi, *pQij;
     m_type *pRi, *pRij;
@@ -59,7 +80,7 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute()
     // e1 = [1 0 .. 0]T
 
     // copy mat A to mat Hn1A
-    memcpy(Hn1, m_elem, sizeof(m_type)*m_row*m_col);
+    memcpy(Hn1, m_elem, sizeof(m_type) * m_row * m_col);
 
     for (j = 0, pUi = Hn1; j < col; j++, pUi += m_col)
     {
@@ -67,7 +88,7 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute()
         sqNorm = 0;
         for (i = j, pUij = pUi + j; i < m_row; i++, pUij += m_col)
         {
-            u[i] = *(pUij); // vector a (column of R or Hn1*A)
+            u[i] = *(pUij);              // vector a (column of R or Hn1*A)
             sqNorm += *(pUij) * *(pUij); // squared norm of vector a
         }
 
@@ -95,8 +116,8 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute()
             if (j == 0)
             {
                 // Q = I*H1;
-                memcpy(H1n, H, sizeof(m_type)*m_row*m_row);
-                memcpy(m_Q, H, sizeof(m_type)*m_row*m_row);
+                memcpy(H1n, H, sizeof(m_type) * m_row * m_row);
+                memcpy(m_Q, H, sizeof(m_type) * m_row * m_row);
 
                 // R = H1*A(=Hn1)
                 pRi = m_R;
@@ -111,7 +132,7 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute()
                             *(pRij) += *(pHi + k) * *pHn1kj;
                     }
                 }
-                memcpy(Hn1, m_R, sizeof(m_type)*m_row*m_col);
+                memcpy(Hn1, m_R, sizeof(m_type) * m_row * m_col);
             }
             else
             {
@@ -129,7 +150,7 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute()
                             *(pQij) += *(pH1ni + k) * *pHkj;
                     }
                 }
-                memcpy(H1n, m_Q, sizeof(m_type)*m_row*m_row);
+                memcpy(H1n, m_Q, sizeof(m_type) * m_row * m_row);
 
                 // R = H * (Hn-1*...*H1*A)
                 pRi = m_R + m_col * j;
@@ -145,7 +166,7 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute()
                             *pRij += *(pHi + k) * *pHn1kj;
                     }
                 }
-                memcpy(Hn1, m_R, sizeof(m_type)*m_row*m_col);
+                memcpy(Hn1, m_R, sizeof(m_type) * m_row * m_col);
             }
         }
     }
@@ -154,8 +175,8 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute()
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtQR<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtQR<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
 {
     if ((sizeof(m_type) * m_row * m_col) != n_byte)
     {
@@ -170,8 +191,8 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute(const m_type *element, const 
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtQR<m_row, m_col, m_type>::Compute(const CdtMatrix<m_row, m_col, m_type>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtQR<m_row, m_col, m_type>::Compute(const dtMatrix<m_row, m_col, m_type> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     memset(m_Q, 0, sizeof(m_type) * m_row * m_row);
@@ -180,8 +201,8 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute(const CdtMatrix<m_row, m_col,
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtQR<m_row, m_col, m_type>::Compute(const CdtMatrix3<m_type, m_row, m_col>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtQR<m_row, m_col, m_type>::Compute(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     memset(m_Q, 0, sizeof(m_type) * m_row * m_row);
@@ -190,14 +211,18 @@ inline int8_t CdtQR<m_row, m_col, m_type>::Compute(const CdtMatrix3<m_type, m_ro
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_row, m_type> CdtQR<m_row, m_col, m_type>::GetMatrixQ() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_row, m_type> dtQR<m_row, m_col, m_type>::GetMatrixQ() const
 {
-    return CdtMatrix<m_row, m_row, m_type>(m_Q);
+    return dtMatrix<m_row, m_row, m_type>(m_Q);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtQR<m_row, m_col, m_type>::GetMatrixR() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtQR<m_row, m_col, m_type>::GetMatrixR() const
 {
-    return CdtMatrix<m_row, m_col, m_type>(m_R);
+    return dtMatrix<m_row, m_col, m_type>(m_R);
 }
+
+} // namespace dtMath
+
+#endif // DTMATH_DTQR_TPP_

@@ -1,27 +1,35 @@
-#include "testPrint.h"
 #include "testMatrix.h"
+#include "testPrint.h"
 
 #include <dtMath/dtMath.h>
 
+using dtMath::dtMatrix;
+using dtMath::dtMatrix3;
+using dtMath::dtRotation;
+using dtMath::dtTransform;
+using dtMath::dtVector;
+using dtMath::dtVector3;
+using dtMath::dtVector4;
+using dtMath::dtVector6;
 
-CdtMatrix<3, 3> mat33;
-CdtMatrix<3, 4> mat34;
-CdtMatrix<4, 3> mat43;
-CdtMatrix<4, 4> mat44;
-CdtMatrix<6, 3> mat63;
-CdtMatrix<6, 4> mat64;
-CdtMatrix<6, 6> mat66;
+dtMatrix<3, 3> mat33;
+dtMatrix<3, 4> mat34;
+dtMatrix<4, 3> mat43;
+dtMatrix<4, 4> mat44;
+dtMatrix<6, 3> mat63;
+dtMatrix<6, 4> mat64;
+dtMatrix<6, 6> mat66;
 
-CdtMatrix3<> mat3;
-CdtRotation<> rot;
-CdtTransform<> trf;
+dtMatrix3<> mat3;
+dtRotation<> rot;
+dtTransform<> trf;
 
-CdtVector<3> vec31;
-CdtVector<4> vec41;
-CdtVector<6> vec61;
-CdtVector3<> vec3;
-CdtVector4<> vec4;
-CdtVector6<> vec6;
+dtVector<3> vec31;
+dtVector<4> vec41;
+dtVector<6> vec61;
+dtVector3<> vec3;
+dtVector4<> vec4;
+dtVector6<> vec6;
 
 void Test_Matrix()
 {
@@ -42,7 +50,7 @@ void MatInit()
     Printf("CommaInit, mat << 1, 2, 3, 4, 5, 6, 7, 8, 9;\n");
     Printf("mat = \n");
 
-    CdtMatrix<3, 3> mat;
+    dtMatrix<3, 3> mat;
     mat << 1, 2, 3,
         4, 5, 6,
         7, 8, 9;
@@ -55,23 +63,23 @@ void MatMemberFunc()
 {
     PrintHeading("Matrix Member Functions ");
     Printf("/* Class Create: with array */\n");
-    float a[2 * 2] = { 1,2,3,4 };
-    CdtMatrix<2, 2> a22(a, sizeof(a));
+    float a[2 * 2] = {1, 2, 3, 4};
+    dtMatrix<2, 2> a22(a, sizeof(a));
     Printf("a[2*2] = {1,2,3,4}\n");
     Printf("a22 = \n");
     a22.Print();
     Println;
 
     Printf("/* Class Create: with diagonal */\n");
-    float d[3] = { 1,2,3 };
-    CdtMatrix<3, 3> d33('d', d, sizeof(d));
+    float d[3] = {1, 2, 3};
+    dtMatrix<3, 3> d33('d', d, sizeof(d));
     Printf("d3 = {1,2,3}\n");
     Printf("d33 = \n");
     d33.Print();
     Println;
 
     Printf("/* Class Create: with matrix */\n");
-    CdtMatrix<3, 3> m33(d33);
+    dtMatrix<3, 3> m33(d33);
     Printf("arg mat is d33\n");
     Printf("m33 = \n");
     m33.Print();
@@ -101,7 +109,7 @@ void MatMemberFunc()
 
     Printf("/* Function: SetDiagonal() */\n");
     Printf("diag = [1,2,3,4,5,6]T\n");
-    float dia[6] = { 1,2,3,4,5,6 };
+    float dia[6] = {1, 2, 3, 4, 5, 6};
     Printf("mat33 = \n");
     mat33.SetDiagonal(dia, sizeof(dia));
     mat33.Print();
@@ -127,7 +135,7 @@ void MatMemberFunc()
 
     Printf("/* Function: SetElement() */\n");
     Printf("elem[9] = {9,8,7,6,5,4,3,2,1};\n");
-    float elem33[3 * 3] = { 9,8,7,6,5,4,3,2,1 };
+    float elem33[3 * 3] = {9, 8, 7, 6, 5, 4, 3, 2, 1};
     Printf("mat33 = \n");
     mat33.SetElement(elem33, sizeof(elem33));
     mat33.Print();
@@ -135,14 +143,14 @@ void MatMemberFunc()
 
     Printf("mat34 = \n");
     Printf("elem[12] = {0,1,2,3,4,5,6,7,8,9,10,11};\n");
-    float elem34[3 * 4] = { 0,1,2,3,4,5,6,7,8,9,10,11 };
+    float elem34[3 * 4] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
     mat34.SetElement(elem34, sizeof(elem34));
     mat34.Print();
     Println;
 
     Printf("mat43 = \n");
     Printf("elem[12] = {0,1,2,3,4,5,6,7,8,9,10,11};\n");
-    float elem43[4 * 3] = { 0,1,2,3,4,5,6,7,8,9,10,11 };
+    float elem43[4 * 3] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
     mat43.SetElement(elem43, sizeof(elem43));
     mat43.Print();
     Println;
@@ -221,7 +229,9 @@ void MatMemberAccessOperator()
     Println;
 
     Printf("/* Operator: () */\n");
-    Printf("mat63(i,j) = 100; & Printf(""%%f"", mat63(i,j));\n");
+    Printf("mat63(i,j) = 100; & Printf("
+           "%%f"
+           ", mat63(i,j));\n");
     for (uint16_t i = 0; i < 6; i++)
     {
         for (uint16_t j = 0; j < 3; j++)
@@ -244,17 +254,17 @@ void MatArithmeticSum()
     (-mat63).Print();
     Println;
 
-    Printf("/* Operator: +(CdtMatrix &m) */\n");
+    Printf("/* Operator: +(dtMatrix &m) */\n");
     Printf("mat63 + (-mat63)\n");
     (mat63 + (-mat63)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtMatrix &m) */\n");
+    Printf("/* Operator: -(dtMatrix &m) */\n");
     Printf("mat63 - mat63\n");
     (mat63 - mat63).Print();
     Println;
 
-    Printf("/* Operator: +(CdtMatrix3 &m) */\n");
+    Printf("/* Operator: +(dtMatrix3 &m) */\n");
     Printf("mat33.SetFill(1)\n");
     Printf("mat3.SetFill(-1)\n");
     Printf("mat33 + mat3 =\n");
@@ -263,7 +273,7 @@ void MatArithmeticSum()
     (mat33 + mat3).Print();
     Println;
 
-    Printf("/* Operator: -(CdtMatrix3 &m) */\n");
+    Printf("/* Operator: -(dtMatrix3 &m) */\n");
     Printf("mat33.SetFill(1)\n");
     Printf("mat3.SetFill(-1)\n");
     Printf("mat33 - (-mat3) =\n");
@@ -272,7 +282,7 @@ void MatArithmeticSum()
     (mat33 - (-mat3)).Print();
     Println;
 
-    Printf("/* Operator: +(CdtRotation &m) */\n");
+    Printf("/* Operator: +(dtRotation &m) */\n");
     Printf("mat33.SetFill(1)\n");
     Printf("rot.SetFill(-1)\n");
     Printf("mat33 + rot = \n");
@@ -281,7 +291,7 @@ void MatArithmeticSum()
     (mat33 + rot).Print();
     Println;
 
-    Printf("/* Operator: -(CdtRotation &m) */\n");
+    Printf("/* Operator: -(dtRotation &m) */\n");
     Printf("mat33.SetFill(1)\n");
     Printf("rot.SetFill(-1)\n");
     Printf("mat33 - (-rot) = \n");
@@ -290,7 +300,7 @@ void MatArithmeticSum()
     (mat33 - (-rot)).Print();
     Println;
 
-    Printf("/* Operator: +(CdtTransform &m) */\n");
+    Printf("/* Operator: +(dtTransform &m) */\n");
     Printf("mat44.SetIdentity()\n");
     Printf("trf.SetIdentity()\n");
     Printf("mat44 + trf = \n");
@@ -299,7 +309,7 @@ void MatArithmeticSum()
     (mat44 + trf).Print();
     Println;
 
-    Printf("/* Operator: -(CdtTransform &m) */\n");
+    Printf("/* Operator: -(dtTransform &m) */\n");
     Printf("mat44.SetIdentity()\n");
     Printf("trf.SetIdentity()\n");
     Printf("mat44 - trf = \n");
@@ -320,7 +330,7 @@ void MatArithmeticScalarProduct()
     ((mat44 * 0.5) - (mat44 / 2.0)).Print();
     Println;
 
-    Printf("/* Operator: *(m_type s, CdtMatrix &m) */\n");
+    Printf("/* Operator: *(m_type s, dtMatrix &m) */\n");
     Printf("mat44.SetFill(1)\n");
     Printf("(0.5f * mat44) - (mat44 / 2.0) =\n");
     mat44.SetFill(1);
@@ -331,11 +341,13 @@ void MatArithmeticScalarProduct()
 void MatArithmeticMatProduct()
 {
     PrintHeading("Matrix Arithmetic operators - Mat x Mat ");
-    Printf("/* Matrix Product: operator *(const CdtMatrix<> &m) */\n");
+    Printf("/* Matrix Product: operator *(const dtMatrix<> &m) */\n");
     float m63[18];
     float m34[12];
-    for (int i = 0; i < 18; i++) m63[i] = i + 1.0f;
-    for (int i = 0; i < 12; i++) m34[i] = i + 1.0f;
+    for (int i = 0; i < 18; i++)
+        m63[i] = i + 1.0f;
+    for (int i = 0; i < 12; i++)
+        m34[i] = i + 1.0f;
     mat63.SetElement(m63, sizeof(m63));
     mat34.SetElement(m34, sizeof(m34));
     Printf("mat63 = \n");
@@ -347,11 +359,13 @@ void MatArithmeticMatProduct()
     mat64.Print();
     Println;
 
-    Printf("/* Matrix Product: operator *(const CdtMatrix3<> &m) */\n");
+    Printf("/* Matrix Product: operator *(const dtMatrix3<> &m) */\n");
     float m43[12];
     float m33[9];
-    for (int i = 0; i < 12; i++) m43[i] = i + 1.0f;
-    for (int i = 0; i < 9; i++) m33[i] = i + 1.0f;
+    for (int i = 0; i < 12; i++)
+        m43[i] = i + 1.0f;
+    for (int i = 0; i < 9; i++)
+        m33[i] = i + 1.0f;
     mat43.SetElement(m43, sizeof(m43));
     mat3.SetElement(m33, sizeof(m33));
     Printf("mat43 =\n");
@@ -363,8 +377,9 @@ void MatArithmeticMatProduct()
     mat43.Print();
     Println;
 
-    Printf("/* Matrix Product: operator *(const CdtRotation<> &m) */\n");
-    for (int i = 0; i < 12; i++) m43[i] = i + 1.0f;
+    Printf("/* Matrix Product: operator *(const dtRotation<> &m) */\n");
+    for (int i = 0; i < 12; i++)
+        m43[i] = i + 1.0f;
     mat43.SetElement(m43, sizeof(m43));
     rot.SetElement(AXIS3(2, 1, 0), 10.0f * DEG2RADf, 20.0f * DEG2RADf, 30.0f * DEG2RADf);
     Printf("mat43 =\n");
@@ -376,9 +391,10 @@ void MatArithmeticMatProduct()
     mat43.Print();
     Println;
 
-    Printf("/* Matrix Product: operator *(const CdtTransform<> &m) */\n");
+    Printf("/* Matrix Product: operator *(const dtTransform<> &m) */\n");
     float m64[24];
-    for (int i = 0; i < 24; i++) m64[i] = i + 1.0f;
+    for (int i = 0; i < 24; i++)
+        m64[i] = i + 1.0f;
     mat64.SetElement(m64, sizeof(m64));
     trf.SetIdentity();
     Printf("mat64 =\n");
@@ -397,8 +413,9 @@ void MatArithmeticVecProduct()
     float m64[24];
     float m66[36];
 
-    Printf("/* Vector Product: operator *(const CdtVector<> &v) */\n");
-    for (int i = 0; i < 18; i++) m63[i] = i + 1.0f;
+    Printf("/* Vector Product: operator *(const dtVector<> &v) */\n");
+    for (int i = 0; i < 18; i++)
+        m63[i] = i + 1.0f;
     mat63.SetElement(m63, sizeof(m63));
     vec31 << 1, 2, 3;
     Printf("mat63 =\n");
@@ -410,8 +427,9 @@ void MatArithmeticVecProduct()
     vec61.Print();
     Println;
 
-    Printf("/* Vector Product: operator *(const CdtVector3<> &v) */\n");
-    for (int i = 0; i < 18; i++) m63[i] = i + 1.0f;
+    Printf("/* Vector Product: operator *(const dtVector3<> &v) */\n");
+    for (int i = 0; i < 18; i++)
+        m63[i] = i + 1.0f;
     mat63.SetElement(m63, sizeof(m63));
     vec3.SetElement(1.0, 2.0, 3.0);
     Printf("mat63 =\n");
@@ -423,8 +441,9 @@ void MatArithmeticVecProduct()
     vec61.Print();
     Println;
 
-    Printf("/* Vector Product: operator *(const CdtVector4<> &v) */\n");
-    for (int i = 0; i < 24; i++) m64[i] = i + 1.0f;
+    Printf("/* Vector Product: operator *(const dtVector4<> &v) */\n");
+    for (int i = 0; i < 24; i++)
+        m64[i] = i + 1.0f;
     mat64.SetElement(m64, sizeof(m64));
     vec4.SetElement(1.0, 2.0, 3.0, 4.0);
     Printf("mat64 =\n");
@@ -436,8 +455,9 @@ void MatArithmeticVecProduct()
     vec61.Print();
     Println;
 
-    Printf("/* Vector Product: operator *(const CdtVector6<> &v) */\n");
-    for (int i = 0; i < 36; i++) m66[i] = i + 1.0f;
+    Printf("/* Vector Product: operator *(const dtVector6<> &v) */\n");
+    for (int i = 0; i < 36; i++)
+        m66[i] = i + 1.0f;
     mat66.SetElement(m66, sizeof(m66));
     vec6.SetElement(1.0, 2.0, 3.0, 4.0, 5.0, 6.0);
     Printf("mat66 =\n");
@@ -453,7 +473,7 @@ void MatArithmeticVecProduct()
 void MatComparisonOperator()
 {
     PrintHeading("Matrix Comparison operators ");
-    Printf("/* Operator: ==(CdtMatrix &m) and !=(CdtMatrix &m) */\n");
+    Printf("/* Operator: ==(dtMatrix &m) and !=(dtMatrix &m) */\n");
 
     Printf("mat63 == mat63? -> ");
     if (mat63 == mat63) Printf("true");
@@ -465,7 +485,7 @@ void MatComparisonOperator()
     else Printf("false");
     Println;
 
-    Printf("/* Operator: ==(CdtMatrix3 &m) and !=(CdtMatrix3 &m) */\n");
+    Printf("/* Operator: ==(dtMatrix3 &m) and !=(dtMatrix3 &m) */\n");
     mat3.SetElement(1, 2, 3, 4, 5, 6, 7, 8, 9);
     mat33 = mat3;
 
@@ -480,7 +500,7 @@ void MatComparisonOperator()
     else Printf("false");
     Println;
 
-    Printf("/* Operator: ==(CdtRotation &m) and !=(CdtRotation &m) */\n");
+    Printf("/* Operator: ==(dtRotation &m) and !=(dtRotation &m) */\n");
     rot.SetElement(1, 2, 3, 4, 5, 6, 7, 8, 9);
     mat33 = rot;
 
@@ -495,7 +515,7 @@ void MatComparisonOperator()
     else Printf("false");
     Println;
 
-    Printf("/* Operator: ==(CdtTransform &m) and !=(CdtTransform &m) */\n");
+    Printf("/* Operator: ==(dtTransform &m) and !=(dtTransform &m) */\n");
     trf.SetElement(rot, vec3);
     mat44 = trf;
 

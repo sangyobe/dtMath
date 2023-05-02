@@ -2,8 +2,9 @@
 \file       dtGnuPlot.h
 \brief      dtGnuPlot, Graphing utility for dtMath in windows
 \author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
 \author     Who is next author?
-\date       2021. 07. 06, 2021. 08. 30
+\date       Last modified on 2023. 05. 02
 \version    1.1.0
 \see       gnuplot software must be installed (http://www.gnuplot.info/)
 \warning    Do Not delete this comment for document history! This is minimal manners!
@@ -12,29 +13,31 @@
 #ifndef DTMATH_DTGNU_PLOT_H_
 #define DTMATH_DTGNU_PLOT_H_
 
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
 #include <stdarg.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 
 #include <dtMath/dtMath.h>
 
-
 #if defined(_WIN32)
-//#include <windows.h>
+// #include <windows.h>
 #define GNUPLOT_PCLOSE _pclose
-#define GNUPLOT_POPEN  _popen
+#define GNUPLOT_POPEN _popen
 #define GNUPLOT_FILENO _fileno
 #define GNUPLOT_VSPRINTF vsprintf_s
 #else
 #define GNUPLOT_PCLOSE pclose
-#define GNUPLOT_POPEN  popen
+#define GNUPLOT_POPEN popen
 #define GNUPLOT_FILENO fileno
-#define GNUPLOT_VSPRINTF vsnprintf 
+#define GNUPLOT_VSPRINTF vsnprintf
 #endif
 
+using dtMath::dtMatrix;
+using dtMath::dtVector;
+
 template <typename m_type = float>
-class CdtGnuPlot
+class dtGnuPlot
 {
 public:
     enum PointType
@@ -58,9 +61,9 @@ public:
     };
 
 public:
-    CdtGnuPlot(bool persist = true);
-    CdtGnuPlot(const char *gnuplotName);
-    ~CdtGnuPlot();
+    dtGnuPlot(bool persist = true);
+    dtGnuPlot(const char *gnuplotName);
+    ~dtGnuPlot();
 
     // send a command to gnuplot
     void Cmd(const char *format, ...);
@@ -68,14 +71,14 @@ public:
     // plot data
     void SetData(const char *filePath);
     template <uint16_t row, uint16_t col>
-    int8_t SetData(const CdtMatrix<row, col, m_type> &mat);
+    int8_t SetData(const dtMatrix<row, col, m_type> &mat);
 
     // plot properties
     void SetGrid(bool on = true);
-    void SetTitle(const char *name, const int size = 0, const char * font = nullptr);
-    void SetXlabel(const char *name, const int size = 0, const char * font = nullptr);
-    void SetYlabel(const char *name, const int size = 0, const char * font = nullptr);
-    void SetZlabel(const char *name, const int size = 0, const char * font = nullptr);
+    void SetTitle(const char *name, const int size = 0, const char *font = nullptr);
+    void SetXlabel(const char *name, const int size = 0, const char *font = nullptr);
+    void SetYlabel(const char *name, const int size = 0, const char *font = nullptr);
+    void SetZlabel(const char *name, const int size = 0, const char *font = nullptr);
     void SetXtics(const int majorTic = 0, const int minorTic = -1);
     void SetYtics(const int majorTic = 0, const int minorTic = -1);
     void SetZtics(const int majorTic = 0, const int minorTic = -1);
@@ -86,85 +89,85 @@ public:
 
     // generate the plot scripts to send to gnuplot
     void Point(const char *filePath, const int idxX, const int idxY,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const char pointType = PT_PLUS, const int pointSz = -1);
+               const char *title = nullptr, const char *colorName = nullptr,
+               const char pointType = PT_PLUS, const int pointSz = -1);
     int8_t Point(const m_type *x, const m_type *y, const int dataLen,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const char pointType = PT_PLUS, const int pointSz = -1);
+                 const char *title = nullptr, const char *colorName = nullptr,
+                 const char pointType = PT_PLUS, const int pointSz = -1);
     int8_t Point(const int idxX, const int idxY,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const char pointType = PT_PLUS, const int pointSz = -1);
+                 const char *title = nullptr, const char *colorName = nullptr,
+                 const char pointType = PT_PLUS, const int pointSz = -1);
 
     void Line(const char *filePath, const int idxX, const int idxY,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1);
+              const char *title = nullptr, const char *colorName = nullptr,
+              const int lineWidth = -1);
     int8_t Line(const m_type *x, const m_type *y, const int dataLen,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1);
+                const char *title = nullptr, const char *colorName = nullptr,
+                const int lineWidth = -1);
     int8_t Line(const int idxX, const int idxY,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1);
+                const char *title = nullptr, const char *colorName = nullptr,
+                const int lineWidth = -1);
 
     void LinePoint(const char *filePath, const int idxX, const int idxY,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+                   const char *title = nullptr, const char *colorName = nullptr,
+                   const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
     int8_t LinePoint(const m_type *x, const m_type *y, const int dataLen,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+                     const char *title = nullptr, const char *colorName = nullptr,
+                     const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
     int8_t LinePoint(const int idxX, const int idxY,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+                     const char *title = nullptr, const char *colorName = nullptr,
+                     const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
 
     void Dash(const char *filePath, const int idxX, const int idxY,
-        const char *title = nullptr, const char *pattern = "-",
-        const char *colorName = nullptr, const int lineWidth = -1);
+              const char *title = nullptr, const char *pattern = "-",
+              const char *colorName = nullptr, const int lineWidth = -1);
     int8_t Dash(const m_type *x, const m_type *y, const int dataLen,
-        const char *title = nullptr, const char *pattern = "-",
-        const char *colorName = nullptr, const int lineWidth = -1);
+                const char *title = nullptr, const char *pattern = "-",
+                const char *colorName = nullptr, const int lineWidth = -1);
     int8_t Dash(const int idxX, const int idxY,
-        const char *title = nullptr, const char *pattern = "-",
-        const char *colorName = nullptr, const int lineWidth = -1);
+                const char *title = nullptr, const char *pattern = "-",
+                const char *colorName = nullptr, const int lineWidth = -1);
 
     // generate the splot(3D) scripts to send to gnuplot
     void Point(const char *filePath, const int idxX, const int idxY, const int idxZ,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const char pointType = -1, const int pointSz = -1);
+               const char *title = nullptr, const char *colorName = nullptr,
+               const char pointType = -1, const int pointSz = -1);
     int8_t Point(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const char pointType = -1, const int pointSz = -1);
+                 const char *title = nullptr, const char *colorName = nullptr,
+                 const char pointType = -1, const int pointSz = -1);
     int8_t Point(const int idxX, const int idxY, const int idxZ,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const char pointType = -1, const int pointSz = -1);
+                 const char *title = nullptr, const char *colorName = nullptr,
+                 const char pointType = -1, const int pointSz = -1);
 
     void Line(const char *filePath, const int idxX, const int idxY, const int idxZ,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1);
+              const char *title = nullptr, const char *colorName = nullptr,
+              const int lineWidth = -1);
     int8_t Line(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1);
+                const char *title = nullptr, const char *colorName = nullptr,
+                const int lineWidth = -1);
     int8_t Line(const int idxX, const int idxY, const int idxZ,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1);
+                const char *title = nullptr, const char *colorName = nullptr,
+                const int lineWidth = -1);
 
     void LinePoint(const char *filePath, const int idxX, const int idxY, const int idxZ,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+                   const char *title = nullptr, const char *colorName = nullptr,
+                   const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
     int8_t LinePoint(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+                     const char *title = nullptr, const char *colorName = nullptr,
+                     const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
     int8_t LinePoint(const int idxX, const int idxY, const int idxZ,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
+                     const char *title = nullptr, const char *colorName = nullptr,
+                     const int lineWidth = -1, const char pointType = -1, const int pointSz = -1, const int pointInterval = 0);
 
     void Dash(const char *filePath, const int idxX, const int idxY, const int idxZ,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1, const char *pattern = nullptr);   
+              const char *title = nullptr, const char *colorName = nullptr,
+              const int lineWidth = -1, const char *pattern = nullptr);
     int8_t Dash(const m_type *x, const m_type *y, const m_type *z, const int dataLen,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1, const char *pattern = nullptr);
+                const char *title = nullptr, const char *colorName = nullptr,
+                const int lineWidth = -1, const char *pattern = nullptr);
     int8_t Dash(const int idxX, const int idxY, const int idxZ,
-        const char *title = nullptr, const char *colorName = nullptr,
-        const int lineWidth = -1, const char *pattern = nullptr);
+                const char *title = nullptr, const char *colorName = nullptr,
+                const int lineWidth = -1, const char *pattern = nullptr);
 
     // send the plot(or splot) script
     void Draw();
@@ -184,8 +187,6 @@ private:
     int8_t MakeDataFile(const m_type *x, const m_type *y, const m_type *z, const int dataLen);
 };
 
-
 #include "dtGnuPlot.tpp"
 
 #endif // DTMATH_DTGNU_PLOT_H_
-

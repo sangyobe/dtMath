@@ -2,8 +2,10 @@
 \file	    dtQuadProg.h
 \brief	    Quadratic Programming Solver
 \author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
 \author     Who is next author?
-\date	    2019. 04. 03
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
 \see        file QuadProg++.h and QuadProg++.cc
 \see        https://github.com/liuq/QuadProgpp
 \warning    Do Not delete this comment for document history! This is minimal manners!
@@ -69,97 +71,101 @@ s.t.
  of the MIT license.  See the LICENSE file for details.
 */
 
-
 #ifndef DTMATH_DTQUAD_PROG_H_
 #define DTMATH_DTQUAD_PROG_H_
 
 #if defined(_WIN32) || defined(__linux__)
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 #elif defined(ARDUINO)
 #include <Arduino.h>
 #endif
 
-#include <cmath>
 #include <algorithm>
+#include <cmath>
 #include <limits>
 
-template <uint16_t m_row, uint16_t m_col, typename m_type> class CdtMatrix;
-template <uint16_t m_row, typename m_type> class CdtVector;
+namespace dtMath
+{
 
-//#define DT_QP_DEBUG
+template <uint16_t m_row, uint16_t m_col, typename m_type> class dtMatrix;
+template <uint16_t m_row, typename m_type> class dtVector;
+
+// #define DT_QP_DEBUG
 
 #ifdef DT_QP_DEBUG
 using namespace std;
 #endif
 
 template <int m_dimN, int m_dimM, int m_dimP, typename m_type = float>
-class CdtQuadProg
+class dtQuadProg
 {
 public:
-    CdtQuadProg();
-    ~CdtQuadProg() {}
+    dtQuadProg();
+    ~dtQuadProg() {}
 
-    int8_t SetObjectFunc(const CdtMatrix<m_dimN, m_dimN, m_type> &mG, const CdtVector<m_dimN, m_type>& vG);
-    int8_t UpdateMatrixG(const CdtMatrix<m_dimN, m_dimN, m_type> &mG);
-    int8_t UpdateVectorG(const CdtVector<m_dimN, m_type>& vG);
-    int8_t UpdateObjectFunc(const CdtMatrix<m_dimN, m_dimN, m_type> &mG, const CdtVector<m_dimN, m_type>& vG);
+    int8_t SetObjectFunc(const dtMatrix<m_dimN, m_dimN, m_type> &mG, const dtVector<m_dimN, m_type> &vG);
+    int8_t UpdateMatrixG(const dtMatrix<m_dimN, m_dimN, m_type> &mG);
+    int8_t UpdateVectorG(const dtVector<m_dimN, m_type> &vG);
+    int8_t UpdateObjectFunc(const dtMatrix<m_dimN, m_dimN, m_type> &mG, const dtVector<m_dimN, m_type> &vG);
 
     // General QuadProg: Consider both equality and inequality constraints.
     int8_t Solve(
-        const CdtMatrix<m_dimN, m_dimP, m_type>& mCe, const CdtVector<m_dimP, m_type>& vCe,
-        const CdtMatrix<m_dimN, m_dimM, m_type>& mCi, const CdtVector<m_dimM, m_type>& vCi,
-        CdtVector<m_dimN, m_type>& vX);
+        const dtMatrix<m_dimN, m_dimP, m_type> &mCe, const dtVector<m_dimP, m_type> &vCe,
+        const dtMatrix<m_dimN, m_dimM, m_type> &mCi, const dtVector<m_dimM, m_type> &vCi,
+        dtVector<m_dimN, m_type> &vX);
 
     // Experiment! Modified QuadProg: Consider only inequality constraint.
     int8_t Solve(
-        const CdtMatrix<m_dimN, m_dimM, m_type>& mCi, const CdtVector<m_dimM, m_type>& vCi,
-        CdtVector<m_dimN, m_type>& vX);
+        const dtMatrix<m_dimN, m_dimM, m_type> &mCi, const dtVector<m_dimM, m_type> &vCi,
+        dtVector<m_dimN, m_type> &vX);
 
     int GetIteration() { return m_iter; }
     m_type GetObjectValue() { return m_fx; }
 
 private:
     m_type m_inf;
-    //CdtMatrix<m_dimN, m_dimN, m_type> m_mG;	// Positive definite symmetric Matrix of the cost function
-    CdtVector<m_dimN, m_type> m_vG;             // Vector of the cost function
-    CdtMatrix<m_dimN, m_dimN, m_type> m_mL;	    // Cholesky decomposed matrix of the matrix mG
-    CdtMatrix<m_dimN, m_dimN, m_type> m_mJ0, m_mJ, m_mR;
-    CdtVector<m_dimN, m_type> m_vX0;
+    // dtMatrix<m_dimN, m_dimN, m_type> m_mG;	// Positive definite symmetric Matrix of the cost function
+    dtVector<m_dimN, m_type> m_vG;         // Vector of the cost function
+    dtMatrix<m_dimN, m_dimN, m_type> m_mL; // Cholesky decomposed matrix of the matrix mG
+    dtMatrix<m_dimN, m_dimN, m_type> m_mJ0, m_mJ, m_mR;
+    dtVector<m_dimN, m_type> m_vX0;
 
-    CdtVector<m_dimN, m_type> m_vZ, m_vD, m_vNp, m_vOldX;
-    CdtVector<m_dimM + m_dimP, m_type> m_vS, m_vR, m_vU, m_vOldU;
-    CdtVector<m_dimM + m_dimP, int> m_vA, m_vOldA; // Active Set A
-    CdtVector<m_dimM + m_dimP, int> m_vIaIncl;
-    CdtVector<m_dimM, int> m_vConstIaIncl;
-    CdtVector<m_dimM + m_dimP, bool> m_vIaExcl;
+    dtVector<m_dimN, m_type> m_vZ, m_vD, m_vNp, m_vOldX;
+    dtVector<m_dimM + m_dimP, m_type> m_vS, m_vR, m_vU, m_vOldU;
+    dtVector<m_dimM + m_dimP, int> m_vA, m_vOldA; // Active Set A
+    dtVector<m_dimM + m_dimP, int> m_vIaIncl;
+    dtVector<m_dimM, int> m_vConstIaIncl;
+    dtVector<m_dimM + m_dimP, bool> m_vIaExcl;
 
     m_type m_fx, m_fx0;
     m_type m_c1; // c1 is trace of G matrix, c1 * c2 is an estimate for cond(G)
     m_type m_c2; // c2 is trace of J matrix, c1 * c2 is an estimate for cond(G)
     m_type m_normR;
 
-    m_type m_t;			// t is the step lenght, which is the minimum of
-    m_type m_t1, m_t2;	// the partial step length t1 and the full step length t2
+    m_type m_t;        // t is the step lenght, which is the minimum of
+    m_type m_t1, m_t2; // the partial step length t1 and the full step length t2
     m_type m_psiThreshold;
 
     int m_iter;
 
 private:
-    //m_type DotProduct(const CdtVector<m_dimN, m_type>& x, const CdtVector<m_dimN, m_type>& y);
-    int8_t CholeskyDecomposition(CdtMatrix<m_dimN, m_dimN, m_type>& A);
-    void ForwardElimination(const CdtMatrix<m_dimN, m_dimN, m_type>& L, CdtVector<m_dimN, m_type>& y, const CdtVector<m_dimN, m_type>& b);
-    void BackwardElimination(const CdtMatrix<m_dimN, m_dimN, m_type>& U, CdtVector<m_dimN, m_type>& x, const CdtVector<m_dimN, m_type>& y);
-    void CholeskySolve(const CdtMatrix<m_dimN, m_dimN, m_type>& L, CdtVector<m_dimN, m_type>& x, const CdtVector<m_dimN, m_type>& b);
+    // m_type DotProduct(const dtVector<m_dimN, m_type>& x, const dtVector<m_dimN, m_type>& y);
+    int8_t CholeskyDecomposition(dtMatrix<m_dimN, m_dimN, m_type> &A);
+    void ForwardElimination(const dtMatrix<m_dimN, m_dimN, m_type> &L, dtVector<m_dimN, m_type> &y, const dtVector<m_dimN, m_type> &b);
+    void BackwardElimination(const dtMatrix<m_dimN, m_dimN, m_type> &U, dtVector<m_dimN, m_type> &x, const dtVector<m_dimN, m_type> &y);
+    void CholeskySolve(const dtMatrix<m_dimN, m_dimN, m_type> &L, dtVector<m_dimN, m_type> &x, const dtVector<m_dimN, m_type> &b);
 
-    void ComputeVecD(CdtVector<m_dimN, m_type>& vD, const CdtMatrix<m_dimN, m_dimN, m_type>& mJ, const CdtVector<m_dimN, m_type>& vNp); // d = J^T * np
-    void UpdateVecZ(CdtVector<m_dimN, m_type>& vZ, const CdtMatrix<m_dimN, m_dimN, m_type>& mJ, const CdtVector<m_dimN, m_type>& vD, const int iq); // z = J2 * d2
-    void UpdateVecR(const CdtMatrix<m_dimN, m_dimN, m_type>& mR, CdtVector<m_dimP + m_dimM, m_type>& vR, const CdtVector<m_dimN, m_type>& vD, const int iq); // r = R^-1 d
+    void ComputeVecD(dtVector<m_dimN, m_type> &vD, const dtMatrix<m_dimN, m_dimN, m_type> &mJ, const dtVector<m_dimN, m_type> &vNp);                      // d = J^T * np
+    void UpdateVecZ(dtVector<m_dimN, m_type> &vZ, const dtMatrix<m_dimN, m_dimN, m_type> &mJ, const dtVector<m_dimN, m_type> &vD, const int iq);          // z = J2 * d2
+    void UpdateVecR(const dtMatrix<m_dimN, m_dimN, m_type> &mR, dtVector<m_dimP + m_dimM, m_type> &vR, const dtVector<m_dimN, m_type> &vD, const int iq); // r = R^-1 d
 
-    m_type Distance(m_type a, m_type b); //the euclidean distance between two numbers
-    bool AddConstraint(CdtMatrix<m_dimN, m_dimN, m_type>& mR, CdtMatrix<m_dimN, m_dimN, m_type>& mJ, CdtVector<m_dimN, m_type>& vD, int &iq, m_type& R_norm);
-    int8_t DelConstraint(CdtMatrix<m_dimN, m_dimN, m_type>& mR, CdtMatrix<m_dimN, m_dimN, m_type>& mJ, CdtVector<m_dimP + m_dimM, int>& vA, CdtVector<m_dimP + m_dimM, m_type>& vU, int &iq, const int l);
+    m_type Distance(m_type a, m_type b); // the euclidean distance between two numbers
+    bool AddConstraint(dtMatrix<m_dimN, m_dimN, m_type> &mR, dtMatrix<m_dimN, m_dimN, m_type> &mJ, dtVector<m_dimN, m_type> &vD, int &iq, m_type &R_norm);
+    int8_t DelConstraint(dtMatrix<m_dimN, m_dimN, m_type> &mR, dtMatrix<m_dimN, m_dimN, m_type> &mJ, dtVector<m_dimP + m_dimM, int> &vA, dtVector<m_dimP + m_dimM, m_type> &vU, int &iq, const int l);
 };
+
+} // namespace dtMath
 
 #include "dtQuadProg.tpp"
 

@@ -2,9 +2,10 @@
 \file       dtLowerTriangular.h
 \brief      dtMath, Lower triangular matrix solver class
 \author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
 \author     Who is next author?
-\date       2020. 10. 21
-\version    1.0.0
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
 \warning    Do Not delete this comment for document history! This is minimal manners!
 */
 
@@ -22,24 +23,29 @@
 #include <cmath>
 #include <limits>
 
+namespace dtMath
+{
+
 template <uint16_t m_row, uint16_t m_col, typename m_type = float>
-class CdtLowerTriangular
+class dtLowerTriangular
 {
 public:
-    CdtLowerTriangular() {}
+    dtLowerTriangular() {}
 
     // for General Lower Triangular Matrix
-    static int8_t Solve(CdtMatrix<m_row, m_col, m_type> &L, CdtVector<m_row, m_type> &b, CdtVector<m_col, m_type> &x);
-    static CdtVector<m_col, m_type> Solve(CdtMatrix<m_row, m_col, m_type> &L, CdtVector<m_row, m_type> &b, int8_t *isOk = nullptr);
-    static int8_t Inverse(CdtMatrix<m_row, m_col, m_type> L, CdtMatrix<m_row, m_col, m_type>& invL);
-    static CdtMatrix<m_row, m_col, m_type> Inverse(CdtMatrix<m_row, m_col, m_type> L, int8_t *isOk = nullptr);
+    static int8_t Solve(dtMatrix<m_row, m_col, m_type> &L, dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x);
+    static dtVector<m_col, m_type> Solve(dtMatrix<m_row, m_col, m_type> &L, dtVector<m_row, m_type> &b, int8_t *isOk = nullptr);
+    static int8_t Inverse(dtMatrix<m_row, m_col, m_type> L, dtMatrix<m_row, m_col, m_type> &invL);
+    static dtMatrix<m_row, m_col, m_type> Inverse(dtMatrix<m_row, m_col, m_type> L, int8_t *isOk = nullptr);
 
     // for Unit Lower Triangular Matrix
-    static int8_t SolveUnit(CdtMatrix<m_row, m_col, m_type> &L, CdtVector<m_row, m_type> &b, CdtVector<m_col, m_type> &x);
-    static CdtVector<m_col, m_type> SolveUnit(CdtMatrix<m_row, m_col, m_type> &L, CdtVector<m_row, m_type> &b, int8_t *isOk = nullptr);
-    static int8_t InverseUnit(CdtMatrix<m_row, m_col, m_type> L, CdtMatrix<m_row, m_col, m_type>& invL);
-    static CdtMatrix<m_row, m_col, m_type> InverseUnit(CdtMatrix<m_row, m_col, m_type> L, int8_t *isOk = nullptr);
+    static int8_t SolveUnit(dtMatrix<m_row, m_col, m_type> &L, dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x);
+    static dtVector<m_col, m_type> SolveUnit(dtMatrix<m_row, m_col, m_type> &L, dtVector<m_row, m_type> &b, int8_t *isOk = nullptr);
+    static int8_t InverseUnit(dtMatrix<m_row, m_col, m_type> L, dtMatrix<m_row, m_col, m_type> &invL);
+    static dtMatrix<m_row, m_col, m_type> InverseUnit(dtMatrix<m_row, m_col, m_type> L, int8_t *isOk = nullptr);
 };
+
+} // namespace dtMath
 
 #include "dtLowerTriangular.tpp"
 

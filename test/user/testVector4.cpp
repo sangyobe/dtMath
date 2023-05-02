@@ -1,8 +1,11 @@
-#include "testPrint.h"
 #include "testVector4.h"
+#include "testPrint.h"
 
 #include <dtMath/dtMath.h>
 
+using dtMath::dtMatrix;
+using dtMath::dtVector;
+using dtMath::dtVector4;
 
 void Test_Vector4()
 {
@@ -21,7 +24,7 @@ void Vec4Init()
     Printf("CommaInit, vec << 1, 2, 3, 4;\n");
     Printf("vec = \n");
 
-    CdtVector4<> vec;
+    dtVector4<> vec;
     vec << 1, 2, 3, 4;
 
     vec.Print();
@@ -32,45 +35,45 @@ void Vec4MemberFunc()
 {
     PrintHeading("Vector4 Member Functions ");
 
-    float v[4] = { 1,2,3,4 };
+    float v[4] = {1, 2, 3, 4};
 
     Printf("/* Class Create: () */\n");
-    CdtVector4<> v1;
+    dtVector4<> v1;
     v1.Print();
     Println;
 
     Printf("/* Class Create: with array */\n");
-    CdtVector4<> v2(v, sizeof(v));
+    dtVector4<> v2(v, sizeof(v));
     Printf("array[4] = {1,2,3,4}\n");
     Printf("vec =\n");
     v2.Print();
     Println;
 
     Printf("/* Class Create: with element */\n");
-    CdtVector4<> v3(1, 2, 3, 4);
+    dtVector4<> v3(1, 2, 3, 4);
     Printf("elements are 1, 2, 3, 4\n");
     Printf("vec =\n");
     v3.Print();
     Println;
 
-    Printf("/* Class Create: with CdtVector4 */\n");
-    CdtVector4<> v4(v3);
+    Printf("/* Class Create: with dtVector4 */\n");
+    dtVector4<> v4(v3);
     Printf("vec = [1,2,3,4]T\n");
     Printf("vec =\n");
     v4.Print();
     Println;
 
-    Printf("/* Class Create: with CdtVector */\n");
-    CdtVector<4> v41(v, sizeof(v));
-    CdtVector4<> v5(v41);
+    Printf("/* Class Create: with dtVector */\n");
+    dtVector<4> v41(v, sizeof(v));
+    dtVector4<> v5(v41);
     Printf("vec = [1,2,3,4]T\n");
     Printf("vec =\n");
     v5.Print();
     Println;
 
-    Printf("/* Class Create: with CdtMatrix */\n");
-    CdtMatrix<4, 1> m41(v, sizeof(v));
-    CdtVector4<> v6(m41);
+    Printf("/* Class Create: with dtMatrix */\n");
+    dtMatrix<4, 1> m41(v, sizeof(v));
+    dtVector4<> v6(m41);
     Printf("mat41 = [1,2,3,4]T\n");
     Printf("vec =\n");
     v6.Print();
@@ -103,21 +106,21 @@ void Vec4MemberFunc()
     v2.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtVector4) */\n");
+    Printf("/* Function: SetElement(dtVector4) */\n");
     Printf("vec = [1,2,3,4]T\n");
     Printf("vec =\n");
     v2.SetElement(v3);
     v2.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtVector) */\n");
+    Printf("/* Function: SetElement(dtVector) */\n");
     Printf("vec = [1,2,3,4]T\n");
     Printf("vec =\n");
     v2.SetElement(v41);
     v2.Print();
     Println;
 
-    Printf("/* Function: SetElement(CdtMatrix) */\n");
+    Printf("/* Function: SetElement(dtMatrix) */\n");
     Printf("mat41 = [1,2,3,4]T\n");
     Printf("vec =\n");
     v2.SetElement(m41);
@@ -182,11 +185,13 @@ void Vec4MemberFunc()
 
 void Vec4MemberAccessOperator()
 {
-    CdtVector4<> v1;
+    dtVector4<> v1;
 
     PrintHeading("Vector4 Access operator ");
     Printf("/* Operator: () */\n");
-    Printf("vec(i) = i; Printf(""%%f"", vec(i));\n");
+    Printf("vec(i) = i; Printf("
+           "%%f"
+           ", vec(i));\n");
 
     for (uint16_t i = 0; i < 4; i++)
     {
@@ -202,10 +207,10 @@ void Vec4ArithmeticSum()
 {
     PrintHeading("Vector4 Arithmetic operators - Sum ");
 
-    float v[4] = { 1,2,3,4 };
-    CdtVector4<> v1(1, 2, 3, 4);
-    CdtVector<4> v41(v, sizeof(v));
-    CdtMatrix<4, 1> m41(v, sizeof(v));
+    float v[4] = {1, 2, 3, 4};
+    dtVector4<> v1(1, 2, 3, 4);
+    dtVector<4> v41(v, sizeof(v));
+    dtMatrix<4, 1> m41(v, sizeof(v));
 
     Printf("vec =\n");
     v1.Print();
@@ -216,35 +221,35 @@ void Vec4ArithmeticSum()
     (-v1).Print();
     Println;
 
-    Printf("/* Operator: +(CdtVector4) */\n");
+    Printf("/* Operator: +(dtVector4) */\n");
     Printf("vec + (-vec) =\n");
     (v1 + (-v1)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtVector4) */\n");
+    Printf("/* Operator: -(dtVector4) */\n");
     Printf("vec - vec =\n");
     (v1 - v1).Print();
     Println;
 
-    Printf("/* Operator: +(CdtVector) */\n");
+    Printf("/* Operator: +(dtVector) */\n");
     Printf("vec = [1,2,3,4]T, vec41 = [1,2,3,4]T\n");
     Printf("vec + (-vec41) =\n");
     (v1 + (-v41)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtVector) */\n");
+    Printf("/* Operator: -(dtVector) */\n");
     Printf("vec = [1,2,3,4]T, vec41 = [1,2,3,4]T\n");
     Printf("vec - vec41) =\n");
     (v1 - v41).Print();
     Println;
 
-    Printf("/* Operator: +(CdtMatrix) */\n");
+    Printf("/* Operator: +(dtMatrix) */\n");
     Printf("vec = [1,2,3,4]T, mat41 = [1,2,3,4]T\n");
     Printf("vec + (-mat41) =\n");
     (v1 + (-m41)).Print();
     Println;
 
-    Printf("/* Operator: -(CdtMatrix) */\n");
+    Printf("/* Operator: -(dtMatrix) */\n");
     Printf("vec = [1,2,3,4]T, mat41 = [1,2,3,4]T\n");
     Printf("vec - mat41 =\n");
     (v1 - m41).Print();
@@ -255,12 +260,12 @@ void Vec4ArithmeticProduct()
 {
     PrintHeading("Vector4 Arithmetic operators - Product ");
 
-    float v[4] = { 1,2,3,4 };
-    CdtVector4<> v1(1, 2, 3, 4);
-    CdtVector4<> v2(v, sizeof(v));
-    CdtVector<4> v41(v, sizeof(v));
-    CdtMatrix<4, 1> m41(v, sizeof(v));
-    CdtMatrix<1, 4> m14(v, sizeof(v));
+    float v[4] = {1, 2, 3, 4};
+    dtVector4<> v1(1, 2, 3, 4);
+    dtVector4<> v2(v, sizeof(v));
+    dtVector<4> v41(v, sizeof(v));
+    dtMatrix<4, 1> m41(v, sizeof(v));
+    dtMatrix<1, 4> m14(v, sizeof(v));
 
     Printf("/* Operator: *(scalar) */\n");
     Printf("vec = [1,1,1,1]T\n");
@@ -276,14 +281,14 @@ void Vec4ArithmeticProduct()
     (v1 / 10).Print();
     Println;
 
-    Printf("/* Operator: *(scalar, CdtVector) */\n");
+    Printf("/* Operator: *(scalar, dtVector) */\n");
     Printf("vec = [1,1,1,1]T\n");
     Printf("0.1 * vec =\n");
     v1.SetFill(1);
     (0.1f * v1).Print();
     Println;
 
-    Printf("/* Operator: *(CdtMatrix<1, col>) */\n");
+    Printf("/* Operator: *(dtMatrix<1, col>) */\n");
     Printf("vec = [1,1,1,1]T, mat14 = [1,1,1,1]\n");
     Printf("vec * mat14 =\n");
     v1.SetFill(1);
@@ -291,21 +296,21 @@ void Vec4ArithmeticProduct()
     (v1 * m14).Print();
     Println;
 
-    Printf("/* Operator: dot(CdtVector4) */\n");
+    Printf("/* Operator: dot(dtVector4) */\n");
     Printf("vec1 = [1,1,1,1]T, vec2 = [1,1,1,1]T\n");
     v1.SetFill(1);
     v2.SetFill(1);
     Printf("vec1 dot vec2 = %f\n", v1.dot(v2));
     Println;
 
-    Printf("/* Operator: dot(CdtVector) */\n");
+    Printf("/* Operator: dot(dtVector) */\n");
     Printf("vec1 = [1,1,1,1]T, vec41 = [1,1,1,1]T\n");
     v1.SetFill(1);
     v41.SetFill(1);
     Printf("vec1 dot vec41 = %f\n", v1.dot(v41));
     Println;
 
-    Printf("/* Operator: dot(CdtMatrix) */\n");
+    Printf("/* Operator: dot(dtMatrix) */\n");
     Printf("vec1 = [1,1,1,1]T, mat41 = [1,1,1,1]T\n");
     v1.SetFill(1);
     m41.SetFill(1);
@@ -317,12 +322,12 @@ void Vec4ComparisonOperator()
 {
     PrintHeading("Vector4 Comparison operators ");
 
-    float v[4] = { 1,2,3,4 };
-    CdtVector4<> v1(1, 2, 3, 4);
-    CdtVector<4> v41(v, sizeof(v));
-    CdtMatrix<4, 1> m41(v, sizeof(v));
+    float v[4] = {1, 2, 3, 4};
+    dtVector4<> v1(1, 2, 3, 4);
+    dtVector<4> v41(v, sizeof(v));
+    dtMatrix<4, 1> m41(v, sizeof(v));
 
-    Printf("/* Operator: ==(CdtVector4 &v) and !=(CdtVector4 &v) */\n");
+    Printf("/* Operator: ==(dtVector4 &v) and !=(dtVector4 &v) */\n");
     if (v1 == v1) Printf("true");
     else Printf("false");
     Println;
@@ -331,7 +336,7 @@ void Vec4ComparisonOperator()
     else Printf("true");
     Println;
 
-    Printf("/* Operator: ==(CdtVector &v) and !=(CdtVector &v) */\n");
+    Printf("/* Operator: ==(dtVector &v) and !=(dtVector &v) */\n");
     if (v1 == v41) Printf("true");
     else Printf("false");
     Println;
@@ -340,7 +345,7 @@ void Vec4ComparisonOperator()
     else Printf("true");
     Println;
 
-    Printf("/* Operator: ==(CdtMatrix &v) and !=(CdtMatrix &v) */\n");
+    Printf("/* Operator: ==(dtMatrix &v) and !=(dtMatrix &v) */\n");
     if (v1 == m41) Printf("true");
     else Printf("false");
     Println;

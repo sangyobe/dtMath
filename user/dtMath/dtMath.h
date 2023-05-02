@@ -14,29 +14,29 @@
 
 #include "dtCommaInit.h"
 
+#include "dtMatrix3.h"
 #include "dtVector3.h"
 #include "dtVector4.h"
 #include "dtVector6.h"
-#include "dtMatrix3.h"
 
 #include "dtQuaternion.h"
 #include "dtRotation.h"
 #include "dtTransform.h"
 
-#include "dtVector.h"
-#include "dtMatrix.h"
 #include "dtCscMatrix.h"
+#include "dtMatrix.h"
+#include "dtVector.h"
 
-#include "dtLowerTriangular.h"// Lower triangular matrix solution
-#include "dtUpperTriangular.h"// Upper triangular matrix solution
-#include "dtNoPivLU.h"        // LU Decomposition without pivoting, Doolittle form
-#include "dtPartialPivLU.h"   // LU Decompostion using partial pivoting and Gaussian-elimination, Doolittle form
-#include "dtLLT.h"            // Choleski(LLT) Decomposition
-#include "dtLDLT.h"           // Choleski(LDLT) Decomposition
-#include "dtQR.h"             // QR Decomposition without pivoting, using Householder refection method
-#include "dtSVD.h"            // Singular Value Decomposition
+#include "dtLDLT.h"            // Choleski(LDLT) Decomposition
+#include "dtLLT.h"             // Choleski(LLT) Decomposition
+#include "dtLowerTriangular.h" // Lower triangular matrix solution
+#include "dtNoPivLU.h"         // LU Decomposition without pivoting, Doolittle form
+#include "dtPartialPivLU.h"    // LU Decompostion using partial pivoting and Gaussian-elimination, Doolittle form
+#include "dtQR.h"              // QR Decomposition without pivoting, using Householder refection method
+#include "dtSVD.h"             // Singular Value Decomposition
+#include "dtUpperTriangular.h" // Upper triangular matrix solution
 ////#include "dtFullPivLU.h" // To do!
 ////#include "dtColPivQR.h" // To do!
 
+#include "dtCARE.h" // Continuous Algebraic Riccati Equation Solver
 #include "dtQuadProg.h"
-#include "dtCARE.h"           // Continuous Algebraic Riccati Equation Solver

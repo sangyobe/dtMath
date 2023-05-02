@@ -1,15 +1,34 @@
+/*!
+\file       dtLLT.h
+\brief      dtMath, Cholesky decomposition(L*L^T form) Class
+\author     Dong-hyun Lee, phenom8305@gmail.com
+\author     Joonhee Jo, allusivejune@gmail.com
+\author     Who is next author?
+\date       Last modified on 2023. 05. 02
+\version    1.1.0
+\warning    Do Not delete this comment for document history! This is minimal manners!
+*/
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtLLT<m_row, m_col, m_type>::CdtLLT()
+#ifndef DTMATH_DTLLT_TPP_
+#define DTMATH_DTLLT_TPP_
+
+#include "dtLLT.h"
+
+namespace dtMath
+{
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtLLT<m_row, m_col, m_type>::dtLLT()
 {
     memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
     m_isOk = 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtLLT<m_row, m_col, m_type>::CdtLLT(const m_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtLLT<m_row, m_col, m_type>::dtLLT(const m_type *element, const size_t n_byte)
 {
-    if ((sizeof(m_type) * m_row * m_col) != n_byte) m_isOk = 0;
+    if ((sizeof(m_type) * m_row * m_col) != n_byte)
+        m_isOk = 0;
     else
     {
         memset(m_elem, element, n_byte);
@@ -17,22 +36,22 @@ inline CdtLLT<m_row, m_col, m_type>::CdtLLT(const m_type *element, const size_t 
     }
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtLLT<m_row, m_col, m_type>::CdtLLT(const CdtMatrix<m_row, m_col, m_type>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtLLT<m_row, m_col, m_type>::dtLLT(const dtMatrix<m_row, m_col, m_type> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtLLT<m_row, m_col, m_type>::CdtLLT(const CdtMatrix3<m_type, m_row, m_col>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtLLT<m_row, m_col, m_type>::dtLLT(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLLT<m_row, m_col, m_type>::Compute()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLLT<m_row, m_col, m_type>::Compute()
 {
     if (m_row != m_col)
     {
@@ -66,8 +85,8 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Compute()
             for (k = 0; k < j; k++)
                 *(pMi + j) -= *(pMi + k) * *(pMj + k);
 
-            *(pMi + j) /= *pMjj;        // Lower Triangular Matrix, in-place
-            *(pMj + i) = *(pMi + j);    // Upper Triangular Matrix, in-place
+            *(pMi + j) /= *pMjj;     // Lower Triangular Matrix, in-place
+            *(pMj + i) = *(pMi + j); // Upper Triangular Matrix, in-place
         }
     }
 
@@ -75,8 +94,8 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Compute()
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLLT<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLLT<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
 {
     if ((sizeof(m_type) * m_row * m_col) != n_byte)
     {
@@ -88,55 +107,59 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Compute(const m_type *element, const
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLLT<m_row, m_col, m_type>::Compute(const CdtMatrix<m_row, m_col, m_type>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLLT<m_row, m_col, m_type>::Compute(const dtMatrix<m_row, m_col, m_type> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLLT<m_row, m_col, m_type>::Compute(const CdtMatrix3<m_type, m_row, m_col>& m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLLT<m_row, m_col, m_type>::Compute(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
     return Compute();
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtLLT<m_row, m_col, m_type>::GetMatrix() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtLLT<m_row, m_col, m_type>::GetMatrix() const
 {
-    return CdtMatrix<m_row, m_col, m_type>(m_elem);
+    return dtMatrix<m_row, m_col, m_type>(m_elem);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtLLT<m_row, m_col, m_type>::GetMatrixL() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtLLT<m_row, m_col, m_type>::GetMatrixL() const
 {
     int i, j;
-    m_type L[m_row * m_col] = { 0, };
+    m_type L[m_row * m_col] = {
+        0,
+    };
 
     for (i = 0; i < m_row; i++)
         for (j = 0; j <= i; j++)
-            L[i*m_col + j] = m_elem[i*m_col + j];
+            L[i * m_col + j] = m_elem[i * m_col + j];
 
-    return CdtMatrix<m_row, m_col, m_type>(L);
+    return dtMatrix<m_row, m_col, m_type>(L);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtLLT<m_row, m_col, m_type>::GetMatrixU() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtLLT<m_row, m_col, m_type>::GetMatrixU() const
 {
     int i, j;
-    m_type U[m_row * m_col] = { 0, };
+    m_type U[m_row * m_col] = {
+        0,
+    };
 
     for (i = 0; i < m_row; i++)
         for (j = 0; j < i; j++)
-            U[i + m_col * j] = m_elem[i*m_col + j];
+            U[i + m_col * j] = m_elem[i * m_col + j];
 
-    return CdtMatrix<m_row, m_col, m_type>(U);
+    return dtMatrix<m_row, m_col, m_type>(U);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-template<uint16_t col>
-inline int8_t CdtLLT<m_row, m_col, m_type>::Solve(const CdtMatrix<m_row, col, m_type>& b, CdtMatrix<m_col, col, m_type>& x)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+template <uint16_t col>
+inline int8_t dtLLT<m_row, m_col, m_type>::Solve(const dtMatrix<m_row, col, m_type> &b, dtMatrix<m_col, col, m_type> &x)
 {
     // Solve, Ax = LLTx = LUx = b
     // where L is a lower triangular matrix
@@ -148,7 +171,8 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Solve(const CdtMatrix<m_row, col, m_
     int i, k, j;
     m_type *pMi;
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     for (j = 0; j < col; j++)
     {
@@ -156,12 +180,12 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Solve(const CdtMatrix<m_row, col, m_
         // Solve the lower triangular matrix for y (forward substitution), here x is y
         for (i = 0, pMi = m_elem; i < m_row; pMi += m_col, i++)
         {
-            x.m_elem[i*col + j] = b.m_elem[i*col + j];
+            x.m_elem[i * col + j] = b.m_elem[i * col + j];
 
             for (k = 0; k < i; k++)
-                x.m_elem[i*col + j] -= *(pMi + k) * x.m_elem[k*col + j];
+                x.m_elem[i * col + j] -= *(pMi + k) * x.m_elem[k * col + j];
 
-            x.m_elem[i*col + j] /= *(pMi + i);
+            x.m_elem[i * col + j] /= *(pMi + i);
         }
 
         /* Solve LTx = y */
@@ -169,17 +193,17 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Solve(const CdtMatrix<m_row, col, m_
         for (i = m_row - 1, pMi = m_elem + (m_row - 1) * m_col; i >= 0; i--, pMi -= m_col)
         {
             for (k = i + 1; k < m_col; k++)
-                x.m_elem[i*col + j] -= *(pMi + k) * x.m_elem[k*col + j];
+                x.m_elem[i * col + j] -= *(pMi + k) * x.m_elem[k * col + j];
 
-            x.m_elem[i*col + j] /= *(pMi + i);
+            x.m_elem[i * col + j] /= *(pMi + i);
         }
     }
 
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLLT<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_type>& b, CdtVector<m_col, m_type>& x)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLLT<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x)
 {
     // Solve, Ax = LLTx = LUx = b
     // where L is a lower triangular matrix
@@ -191,7 +215,8 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_type>
     int i, k;
     m_type *pMi;
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
     /* Solve Ly = b */
     // Solve the lower triangular matrix for y (forward substitution), here x is y
@@ -218,9 +243,9 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_type>
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-template<uint16_t col>
-inline CdtMatrix<m_col, col, m_type> CdtLLT<m_row, m_col, m_type>::Solve(const CdtMatrix<m_row, col, m_type>& b, int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+template <uint16_t col>
+inline dtMatrix<m_col, col, m_type> dtLLT<m_row, m_col, m_type>::Solve(const dtMatrix<m_row, col, m_type> &b, int8_t *isOk)
 {
     // Solve, Ax = LLTx = LUx = b
     // where L is a lower triangular matrix
@@ -231,14 +256,17 @@ inline CdtMatrix<m_col, col, m_type> CdtLLT<m_row, m_col, m_type>::Solve(const C
 
     int i, k, j;
     m_type *pMi;
-    m_type x[m_col * col] = { 0, };
+    m_type x[m_col * col] = {
+        0,
+    };
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return CdtMatrix<m_col, col, m_type>(x);
+        return dtMatrix<m_col, col, m_type>(x);
     }
 
     for (j = 0; j < col; j++)
@@ -247,12 +275,12 @@ inline CdtMatrix<m_col, col, m_type> CdtLLT<m_row, m_col, m_type>::Solve(const C
         // Solve the lower triangular matrix for y (forward substitution), here x is y
         for (i = 0, pMi = m_elem; i < m_row; pMi += m_col, i++)
         {
-            x[i*col + j] = b.m_elem[i*col + j];
+            x[i * col + j] = b.m_elem[i * col + j];
 
             for (k = 0; k < i; k++)
-                x[i*col + j] -= *(pMi + k) * x[k*col + j];
+                x[i * col + j] -= *(pMi + k) * x[k * col + j];
 
-            x[i*col + j] /= *(pMi + i);
+            x[i * col + j] /= *(pMi + i);
         }
 
         /* Solve LTx = y */
@@ -260,17 +288,17 @@ inline CdtMatrix<m_col, col, m_type> CdtLLT<m_row, m_col, m_type>::Solve(const C
         for (i = m_row - 1, pMi = m_elem + (m_row - 1) * m_col; i >= 0; i--, pMi -= m_col)
         {
             for (k = i + 1; k < m_col; k++)
-                x[i*col + j] -= *(pMi + k) * x[k*col + j];
+                x[i * col + j] -= *(pMi + k) * x[k * col + j];
 
-            x[i*col + j] /= *(pMi + i);
+            x[i * col + j] /= *(pMi + i);
         }
     }
 
-    return CdtMatrix<m_col, col, m_type>(x);
+    return dtMatrix<m_col, col, m_type>(x);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtVector<m_col, m_type> CdtLLT<m_row, m_col, m_type>::Solve(const CdtVector<m_row, m_type>& b, int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtLLT<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, int8_t *isOk)
 {
     // Solve, Ax = LLTx = LUx = b
     // where L is a lower triangular matrix
@@ -281,14 +309,17 @@ inline CdtVector<m_col, m_type> CdtLLT<m_row, m_col, m_type>::Solve(const CdtVec
 
     int i, k;
     m_type *pMi;
-    m_type x[m_col] = { 0, };
+    m_type x[m_col] = {
+        0,
+    };
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return CdtVector<m_col, m_type>(x);
+        return dtVector<m_col, m_type>(x);
     }
 
     /* Solve Ly = b */
@@ -313,19 +344,20 @@ inline CdtVector<m_col, m_type> CdtLLT<m_row, m_col, m_type>::Solve(const CdtVec
         x[i] /= *(pMi + i);
     }
 
-    return CdtVector<m_col, m_type>(x);
+    return dtVector<m_col, m_type>(x);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLLT<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, m_type>& inv)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLLT<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_type> &inv)
 {
     int i, j, k;
     m_type *pMi, *pMj, *pMk;
     m_type sum;
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
-    memcpy(inv.m_elem, m_elem, sizeof(m_type)*m_row*m_col);
+    memcpy(inv.m_elem, m_elem, sizeof(m_type) * m_row * m_col);
 
     /* Calculate the inverse of L */
     // Invert the diagonal elements of the lower triangular matrix L.
@@ -356,24 +388,25 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Inverse(CdtMatrix<m_row, m_col, m_ty
             for (k = i, pMk = pMi; k < m_col; k++, pMk += m_col)
                 sum += *(pMk + i) * *(pMk + j);
 
-            *(pMi + j) = sum;   // upper parts
-            *(pMj + i) = sum;   // lower parts
+            *(pMi + j) = sum; // upper parts
+            *(pMj + i) = sum; // lower parts
         }
     }
 
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLLT<m_row, m_col, m_type>::Inverse(CdtMatrix3<m_type, m_row, m_col>& inv)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLLT<m_row, m_col, m_type>::Inverse(dtMatrix3<m_type, m_row, m_col> &inv)
 {
     int i, j, k;
     m_type *pMi, *pMj, *pMk;
     m_type sum;
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
-    memcpy(inv.m_elem, m_elem, sizeof(m_type)*m_row*m_col);
+    memcpy(inv.m_elem, m_elem, sizeof(m_type) * m_row * m_col);
 
     /* Calculate the inverse of L */
     // Invert the diagonal elements of the lower triangular matrix L.
@@ -404,31 +437,34 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::Inverse(CdtMatrix3<m_type, m_row, m_
             for (k = i, pMk = pMi; k < m_col; k++, pMk += m_col)
                 sum += *(pMk + i) * *(pMk + j);
 
-            *(pMi + j) = sum;   // upper parts
-            *(pMj + i) = sum;   // lower parts
+            *(pMi + j) = sum; // upper parts
+            *(pMj + i) = sum; // lower parts
         }
     }
 
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline CdtMatrix<m_row, m_col, m_type> CdtLLT<m_row, m_col, m_type>::Inverse(int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtLLT<m_row, m_col, m_type>::Inverse(int8_t *isOk)
 {
     int i, j, k;
     m_type *pMi, *pMj, *pMk;
     m_type sum;
-    m_type inv[m_row * m_col] = { 0, };
+    m_type inv[m_row * m_col] = {
+        0,
+    };
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return CdtMatrix<m_row, m_col, m_type>();
+        return dtMatrix<m_row, m_col, m_type>();
     }
 
-    memcpy(inv, m_elem, sizeof(m_type)*m_row*m_col);
+    memcpy(inv, m_elem, sizeof(m_type) * m_row * m_col);
 
     /* Calculate the inverse of L */
     // Invert the diagonal elements of the lower triangular matrix L.
@@ -459,24 +495,25 @@ inline CdtMatrix<m_row, m_col, m_type> CdtLLT<m_row, m_col, m_type>::Inverse(int
             for (k = i, pMk = pMi; k < m_col; k++, pMk += m_col)
                 sum += *(pMk + i) * *(pMk + j);
 
-            *(pMi + j) = sum;   // upper parts
-            *(pMj + i) = sum;   // lower parts
+            *(pMi + j) = sum; // upper parts
+            *(pMj + i) = sum; // lower parts
         }
     }
 
-    return CdtMatrix<m_row, m_col, m_type>(inv);
+    return dtMatrix<m_row, m_col, m_type>(inv);
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t CdtLLT<m_row, m_col, m_type>::InverseArray(m_type * inv)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtLLT<m_row, m_col, m_type>::InverseArray(m_type *inv)
 {
     int i, j, k;
     m_type *pMi, *pMj, *pMk;
     m_type sum;
 
-    if (!m_isOk) return -1;
+    if (!m_isOk)
+        return -1;
 
-    memcpy(inv, m_elem, sizeof(m_type)*m_row*m_col);
+    memcpy(inv, m_elem, sizeof(m_type) * m_row * m_col);
 
     /* Calculate the inverse of L */
     // Invert the diagonal elements of the lower triangular matrix L.
@@ -507,23 +544,26 @@ inline int8_t CdtLLT<m_row, m_col, m_type>::InverseArray(m_type * inv)
             for (k = i, pMk = pMi; k < m_col; k++, pMk += m_col)
                 sum += *(pMk + i) * *(pMk + j);
 
-            *(pMi + j) = sum;   // upper parts
-            *(pMj + i) = sum;   // lower parts
+            *(pMi + j) = sum; // upper parts
+            *(pMj + i) = sum; // lower parts
         }
     }
 
     return 0;
 }
 
-template<uint16_t m_row, uint16_t m_col, typename m_type>
-inline m_type * CdtLLT<m_row, m_col, m_type>::InverseArray(int8_t * isOk)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type *dtLLT<m_row, m_col, m_type>::InverseArray(int8_t *isOk)
 {
     int i, j, k;
     m_type *pMi, *pMj, *pMk;
     m_type sum;
-    m_type inv[m_row * m_col] = { 0, };
+    m_type inv[m_row * m_col] = {
+        0,
+    };
 
-    if (isOk) *isOk = 1;
+    if (isOk)
+        *isOk = 1;
 
     if (!m_isOk && isOk)
     {
@@ -531,7 +571,7 @@ inline m_type * CdtLLT<m_row, m_col, m_type>::InverseArray(int8_t * isOk)
         return inv;
     }
 
-    memcpy(inv, m_elem, sizeof(m_type)*m_row*m_col);
+    memcpy(inv, m_elem, sizeof(m_type) * m_row * m_col);
 
     /* Calculate the inverse of L */
     // Invert the diagonal elements of the lower triangular matrix L.
@@ -562,10 +602,14 @@ inline m_type * CdtLLT<m_row, m_col, m_type>::InverseArray(int8_t * isOk)
             for (k = i, pMk = pMi; k < m_col; k++, pMk += m_col)
                 sum += *(pMk + i) * *(pMk + j);
 
-            *(pMi + j) = sum;   // upper parts
-            *(pMj + i) = sum;   // lower parts
+            *(pMi + j) = sum; // upper parts
+            *(pMj + i) = sum; // lower parts
         }
     }
 
     return inv;
 }
+
+} // namespace dtMath
+
+#endif // DTMATH_DTLLT_TPP_

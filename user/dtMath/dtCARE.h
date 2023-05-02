@@ -4,8 +4,7 @@
 \author     Dong-hyun Lee, phenom8305@gmail.com
 \author     Joonhee Jo, allusivejune@gmail.com
 \author     Who is next author?
-\date       2020. 10. 21
-\update     2023. 02. 15
+\date       Last modified on 2023. 05. 02
 \version    1.1.0
 \see        https://github.com/RobotLocomotion/drake/tree/master/math
 \warning    Do Not delete this comment for document history! This is minimal manners!
@@ -24,11 +23,14 @@
 #include <cmath>
 #include <limits>
 
-template <uint16_t m_row, uint16_t m_col, typename m_type> class CdtMatrix;
+namespace dtMath
+{
+
+template <uint16_t m_row, uint16_t m_col, typename m_type> class dtMatrix;
 
 // Computes the unique stabilizing solution X to the continuous-time algebraic
 // Riccati equation:
-// 
+//
 // equation: X A + A'X - X B R^{-1} B' X + Q = 0
 // where: A(n x n), B(n x m), Q(n x n), R(m x m)
 //
@@ -39,43 +41,45 @@ template <uint16_t m_row, uint16_t m_col, typename m_type> class CdtMatrix;
 //
 
 template <uint16_t m_dimN, uint16_t m_dimM, typename m_type = float>
-class CdtCARE
+class dtCARE
 {
 private:
-    //CdtMatrix<2 * m_dimN, 2 * m_dimN, m_type> m_mH;
-    CdtMatrix<2 * m_dimN, 2 * m_dimN, m_type> m_mZ;
-    CdtMatrix<2 * m_dimN, 2 * m_dimN, m_type> m_mZold;
+    // dtMatrix<2 * m_dimN, 2 * m_dimN, m_type> m_mH;
+    dtMatrix<2 * m_dimN, 2 * m_dimN, m_type> m_mZ;
+    dtMatrix<2 * m_dimN, 2 * m_dimN, m_type> m_mZold;
 
-    CdtMatrix<m_dimN, m_dimN, m_type> m_mW11;
-    CdtMatrix<m_dimN, m_dimN, m_type> m_mW12;
-    CdtMatrix<m_dimN, m_dimN, m_type> m_mW21;
-    CdtMatrix<m_dimN, m_dimN, m_type> m_mW22;
+    dtMatrix<m_dimN, m_dimN, m_type> m_mW11;
+    dtMatrix<m_dimN, m_dimN, m_type> m_mW12;
+    dtMatrix<m_dimN, m_dimN, m_type> m_mW21;
+    dtMatrix<m_dimN, m_dimN, m_type> m_mW22;
 
-    CdtMatrix<2 * m_dimN, m_dimN> m_mLhs;
-    CdtMatrix<2 * m_dimN, m_dimN> m_mRhs;
-    CdtMatrix<m_dimN, m_dimN> m_mEye;
+    dtMatrix<2 * m_dimN, m_dimN> m_mLhs;
+    dtMatrix<2 * m_dimN, m_dimN> m_mRhs;
+    dtMatrix<m_dimN, m_dimN> m_mEye;
 
     uint16_t m_maxIteration;
     m_type m_tolerance;
     const m_type m_power = (m_type)(-1) / (2 * m_dimN);
 
 public:
-    CdtCARE();
-    ~CdtCARE() {}
+    dtCARE();
+    ~dtCARE() {}
     void SetSolveCriteria(m_type tolerance, uint16_t maxIteration);
-    CdtMatrix<m_dimN, m_dimN, m_type> Solve(
-        const CdtMatrix<m_dimN, m_dimN, m_type> &A,
-        const CdtMatrix<m_dimN, m_dimM, m_type> &B,
-        const CdtMatrix<m_dimN, m_dimN, m_type> &Q,
-        const CdtMatrix<m_dimM, m_dimM, m_type> &R);
+    dtMatrix<m_dimN, m_dimN, m_type> Solve(
+        const dtMatrix<m_dimN, m_dimN, m_type> &A,
+        const dtMatrix<m_dimN, m_dimM, m_type> &B,
+        const dtMatrix<m_dimN, m_dimN, m_type> &Q,
+        const dtMatrix<m_dimM, m_dimM, m_type> &R);
 
     int8_t Solve(
-        const CdtMatrix<m_dimN, m_dimN, m_type> &A,
-        const CdtMatrix<m_dimN, m_dimM, m_type> &B,
-        const CdtMatrix<m_dimN, m_dimN, m_type> &Q,
-        const CdtMatrix<m_dimM, m_dimM, m_type> &R,
-        CdtMatrix<m_dimN, m_dimN, m_type> &X);
+        const dtMatrix<m_dimN, m_dimN, m_type> &A,
+        const dtMatrix<m_dimN, m_dimM, m_type> &B,
+        const dtMatrix<m_dimN, m_dimN, m_type> &Q,
+        const dtMatrix<m_dimM, m_dimM, m_type> &R,
+        dtMatrix<m_dimN, m_dimN, m_type> &X);
 };
+
+} // namespace dtMath
 
 #include "dtCARE.tpp"
 
