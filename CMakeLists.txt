@@ -1,78 +1,67 @@
 #
+# The root cmake script for dtMath, the C++ linear algebra library.
 #
-# This file is a sample RobotCtrl project embedding mujoco simulation.
-# Check whether the model opens up on mujoco.
-# author    Joonhee Jo
-# email     allusivejune@gmail.com
-# date      2023. 02. 20.
+# date      2024. 07. 08.
 #
+# Copyrignt RoboticsLab ART All rights reserved. 
 # 
 ########################################################
 
-cmake_minimum_required(VERSION 3.16...3.25)
+cmake_minimum_required(VERSION 3.13)
 
-# INTERPROCEDURAL_OPTIMIZATION is enforced when enabled.
-set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
-# Default to GLVND if available.
-set(CMAKE_POLICY_DEFAULT_CMP0072 NEW)
-
-# This line has to appear before 'PROJECT' in order to be able to disable incremental linking
-set(MSVC_INCREMENTAL_DEFAULT ON)
-
-project(
-	user
-	VERSION 1.0.0
-	DESCRIPTION "${PROJECT_NAME} binaries for a math library."
-	HOMEPAGE_URL "https://cody-escm.autoever.com/rlab/art/ctrlpart/personal/joonhee-jo/dt-math-cmake.git"
+project(dtMath
+    LANGUAGES CXX
+	VERSION 1.2.0
+	DESCRIPTION "A math library."
+	HOMEPAGE_URL "https://gitlabee.hmg-corp.io/rlab/art/ctrlpart/project/arch/03-art-framework/dtmath.git"
 )
 set(PROJECT_NAMESPACE ${PROJECT_NAME})
-set(PARENT_PROJECT_NAME ${PROJECT_NAME})
+
+cmake_policy(VERSION 3.13)
+cmake_policy(SET CMP0077 NEW)
 
 # Add CMake modules
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 
+# --------------------------------------------------------
+# Set build options
+# --------------------------------------------------------
 # Set all project options
-include(ProjectOptions)
+# include(ProjectOptions)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Set all build options
-option(TEST_PROJECT "Build tests for ${PROJECT_NAME}" ON)
-
-
-# Fecth all dependant library
-include(ProjectDependancies)
-
-
-file(GLOB_RECURSE TARGET_SRC
-    ${CMAKE_CURRENT_SOURCE_DIR}/user/*.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/user/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/user/*.tpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/user/*.ipp
-)
-
-add_library(${PROJECT_NAME} STATIC ${TARGET_SRC})
-
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "")
-
-target_include_directories(${PROJECT_NAME} 
-	PUBLIC
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-		$<INSTALL_INTERFACE:include>
-	PRIVATE user
-)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE osqp)
-
-add_library(${PROJECT_NAMESPACE}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+# Set build options
+option(BUILD_TEST "Build tests for ${PROJECT_NAME}" OFF)
 
 
-##########################################################
-# 5. Tests to build 
-# This part can verify this example builds. For your code,
-# you'll probably want tests too
+# --------------------------------------------------------
+# Fecth all dependent library
+# --------------------------------------------------------
+# include(ProjectDependencies)
 
-if(TEST_PROJECT)
-	message(STATUS "Build test: ${BUILD_TEST}")
+
+# --------------------------------------------------------
+# Build
+# --------------------------------------------------------
+# Tests to build 
+if(BUILD_TEST)
+	enable_testing()
 	add_subdirectory(test)
 endif()
 
+
+# --------------------------------------------------------
+# Install
+# --------------------------------------------------------
+install(DIRECTORY ./include/dtMath
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+)
+
+
+# --------------------------------------------------------
+# Finalize configuration and print options
+# --------------------------------------------------------
+message(STATUS "BUILD_TEST                          : ${BUILD_TEST}")

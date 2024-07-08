@@ -15,59 +15,33 @@
 #include "dtDefine.h"
 
 #if defined(_WIN32) || defined(__linux__)
-#include <assert.h>
 #include <stdint.h>
 #elif defined(ARDUINO)
 #include <Arduino.h>
 #endif
 
-namespace dt
-{
-namespace Math
+namespace dtMath
 {
 
-template <uint16_t t_size, typename t_type = float>
-class CommaInit
+template <uint16_t m_size, typename m_type = float>
+class dtCommaInit
 {
 private:
-    t_type *m_elem;
+    m_type *m_elem;
     int m_idx = 1;
 
 public:
-    CommaInit(t_type *elem) : m_elem(elem) {}
+    dtCommaInit(m_type *elem) : m_elem(elem) {}
 
-    CommaInit &operator,(const t_type s)
+    dtCommaInit &operator,(const m_type s)
     {
-        assert(m_idx < t_size && "Index out of range");
-
-        if (m_idx < t_size) m_elem[m_idx++] = s;
+        if (m_idx < m_size)
+            m_elem[m_idx++] = s;
         return *this;
     }
 };
 
-// Template Partial Specializtion Declare
-template <typename t_type>
-class CommaInit<0, t_type>
-{
-private:
-    t_type *m_elem;
-    uint16_t t_size;
-    int m_idx = 1;
-
-public:
-    CommaInit(t_type *elem, uint16_t size) : m_elem(elem), t_size(size) {}
-
-    CommaInit &operator,(const t_type s)
-    {
-        assert(m_idx < t_size && "Index out of range");
-
-        if (m_idx < t_size) m_elem[m_idx++] = s;
-        return *this;
-    }
-};
-
-} // namespace Math
-} // namespace dt
+} // namespace dtMath
 
 #include "dtCommaInit.tpp"
 

@@ -24,58 +24,50 @@
 #include <cmath>
 #include <limits>
 
-namespace dt
-{
-namespace Math
+namespace dtMath
 {
 
-template <uint16_t t_row, typename t_type> class Vector;
-template <uint16_t t_row, uint16_t t_col, typename t_type> class Matrix;
-template <typename t_type, uint16_t t_row, uint16_t t_col> class Matrix3;
-
-template <uint16_t t_row, uint16_t t_col, typename t_type = float>
-class LDLT
+template <uint16_t m_row, uint16_t m_col, typename m_type = float>
+class dtLDLT
 {
 private:
-    t_type m_elem[t_row * t_col];
+    m_type m_elem[m_row * m_col];
     int8_t m_isOk;
 
 public:
-    LDLT();
-    LDLT(const t_type *element, const size_t n_byte);
-    LDLT(const Matrix<t_row, t_col, t_type> &m);
-    LDLT(const Matrix3<t_type, t_row, t_col> &m);
+    dtLDLT();
+    dtLDLT(const m_type *element, const size_t n_byte);
+    dtLDLT(const dtMatrix<m_row, m_col, m_type> &m);
+    dtLDLT(const dtMatrix3<m_type, m_row, m_col> &m);
 
     int8_t Compute();                                           // Compute Cholesky Decomposition, L*D*L^T form
-    int8_t Compute(const t_type *element, const size_t n_byte); // Compute Cholesky Decomposition, L*D*L^T form
-    int8_t Compute(const Matrix<t_row, t_col, t_type> &m);      // Compute Cholesky Decomposition, L*D*L^T form
-    int8_t Compute(const Matrix3<t_type, t_row, t_col> &m);     // Compute Cholesky Decomposition, L*D*L^T form
+    int8_t Compute(const m_type *element, const size_t n_byte); // Compute Cholesky Decomposition, L*D*L^T form
+    int8_t Compute(const dtMatrix<m_row, m_col, m_type> &m);    // Compute Cholesky Decomposition, L*D*L^T form
+    int8_t Compute(const dtMatrix3<m_type, m_row, m_col> &m);   // Compute Cholesky Decomposition, L*D*L^T form
     int8_t IsOk() { return m_isOk; }
 
-    Matrix<t_row, t_col, t_type> GetMatrix() const;  // return matrix A including L/D/U matrix
-    Matrix<t_row, t_col, t_type> GetMatrixL() const; // return Lower Triangular matrix
-    Matrix<t_row, t_col, t_type> GetMatrixD() const; // return Diagonal matrix
-    Matrix<t_row, t_col, t_type> GetMatrixU() const; // return Upper Triangular matrix
+    dtMatrix<m_row, m_col, m_type> GetMatrix() const;  // return matrix A including L/D/U matrix
+    dtMatrix<m_row, m_col, m_type> GetMatrixL() const; // return Lower Triangular matrix
+    dtMatrix<m_row, m_col, m_type> GetMatrixD() const; // return Diagonal matrix
+    dtMatrix<m_row, m_col, m_type> GetMatrixU() const; // return Upper Triangular matrix
 
     template <uint16_t col>
-    int8_t Solve(const Matrix<t_row, col, t_type> &b, Matrix<t_col, col, t_type> &x); // Solve x = (LDU)^-1 * b
-    int8_t Solve(const Vector<t_row, t_type> &b, Vector<t_col, t_type> &x);           // Solve x = (LDU)^-1 * b
+    int8_t Solve(const dtMatrix<m_row, col, m_type> &b, dtMatrix<m_col, col, m_type> &x); // Solve x = (LDU)^-1 * b
+    int8_t Solve(const dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x);           // Solve x = (LDU)^-1 * b
     template <uint16_t col>
-    Matrix<t_col, col, t_type> Solve(const Matrix<t_row, col, t_type> &b, int8_t *isOk = nullptr); // Solve x = (LDU)^-1 * b
-    Vector<t_col, t_type> Solve(const Vector<t_row, t_type> &b, int8_t *isOk = nullptr);           // Solve x = (LDU)^-1 * b
+    dtMatrix<m_col, col, m_type> Solve(const dtMatrix<m_row, col, m_type> &b, int8_t *isOk = nullptr); // Solve x = (LDU)^-1 * b
+    dtVector<m_col, m_type> Solve(const dtVector<m_row, m_type> &b, int8_t *isOk = nullptr);           // Solve x = (LDU)^-1 * b
 
-    int8_t Inverse(Matrix<t_row, t_col, t_type> &inv);            // Inverse matrix of LDU matrix
-    int8_t Inverse(Matrix3<t_type, t_row, t_col> &inv);           // Inverse matrix of LDU matrix
-    Matrix<t_row, t_col, t_type> Inverse(int8_t *isOk = nullptr); // Inverse matrix of LDU matrix
+    int8_t Inverse(dtMatrix<m_row, m_col, m_type> &inv);            // Inverse matrix of LDU matrix
+    int8_t Inverse(dtMatrix3<m_type, m_row, m_col> &inv);           // Inverse matrix of LDU matrix
+    dtMatrix<m_row, m_col, m_type> Inverse(int8_t *isOk = nullptr); // Inverse matrix of LDU matrix
 
-    int8_t InverseArray(t_type *inv);             // Inverse array of LDU matrix
-    t_type *InverseArray(int8_t *isOk = nullptr); // Inverse array of LDU matrix
+    int8_t InverseArray(m_type *inv);             // Inverse array of LDU matrix
+    m_type *InverseArray(int8_t *isOk = nullptr); // Inverse array of LDU matrix
 };
 
-} // namespace Math
-} // namespace dt
+} // namespace dtMath
 
 #include "dtLDLT.tpp"
-#include "dtLDLT0.h"
 
 #endif // DTMATH_DTLDLT_H_

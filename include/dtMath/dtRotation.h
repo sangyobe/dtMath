@@ -25,160 +25,147 @@
 #include <cmath>
 #include <limits>
 
-namespace dt
-{
-namespace Math
+namespace dtMath
 {
 
-template <uint16_t m_size, typename t_type> class CommaInit;
-template <uint16_t t_row, typename t_type> class Vector;
-template <typename t_type, uint16_t t_row> class Vector3;
-template <typename t_type, uint16_t t_row> class Quaternion;
-template <uint16_t t_row, uint16_t t_col, typename t_type> class Matrix;
-template <typename t_type, uint16_t t_row, uint16_t t_col> class Matrix3;
+template <uint16_t m_size, typename m_type> class dtCommaInit;
+template <uint16_t m_row, typename m_type> class dtVector;
+template <typename m_type, uint16_t m_row> class dtVector3;
+template <typename m_type, uint16_t m_row> class dtQuaternion;
+template <uint16_t m_row, uint16_t m_col, typename m_type> class dtMatrix;
+template <typename m_type, uint16_t m_row, uint16_t m_col> class dtMatrix3;
 
-template <typename t_type = float, uint16_t t_row = 3, uint16_t t_col = 3>
-class Rotation
+template <typename m_type = float, uint16_t m_row = 3, uint16_t m_col = 3>
+class dtRotation
 {
 private:
-    t_type m_tolerance = std::numeric_limits<t_type>::epsilon();
-    t_type m_elem[t_row * t_col];
-    Rotation(const t_type *element);
-    inline void Euler2RotMat(const uint16_t order, const t_type *e);
-    inline void Quat2RotMat(const t_type *q);
+    m_type m_tolerance = std::numeric_limits<m_type>::epsilon();
+    m_type m_elem[m_row * m_col];
+    dtRotation(const m_type *element);
+    inline void Euler2RotMat(const uint16_t order, const m_type *e);
+    inline void Quat2RotMat(const m_type *q);
 
 public:
-    Rotation();
-    Rotation(const t_type *element, const size_t n_byte);
-    Rotation(const char c, const t_type *element, const size_t n_byte);
-    Rotation(
-        const t_type m00, const t_type m01, const t_type m02,
-        const t_type m10, const t_type m11, const t_type m12,
-        const t_type m20, const t_type m21, const t_type m22);
-    Rotation(const uint16_t order, const t_type angle);
-    Rotation(const uint16_t order, const t_type angle1, const t_type angle2);
-    Rotation(const uint16_t order, const t_type angle1, const t_type angle2, const t_type angle3);
-    Rotation(const Rotation &m);
-    Rotation(const Matrix3<t_type, t_row, t_col> &m);
-    Rotation(const Matrix<t_row, t_col, t_type> &m);
-    Rotation(const Matrix<0, 0, t_type> &m);
-    Rotation(const uint16_t order, const Vector3<t_type, 3> &e);
-    Rotation(const uint16_t order, const Vector<3, t_type> &e);
-    Rotation(const uint16_t order, const Vector<0, t_type> &e);
-    Rotation(const Quaternion<t_type, 4> &q);
-    ~Rotation() {}
+    dtRotation();
+    dtRotation(const m_type *element, const size_t n_byte);
+    dtRotation(const char c, const m_type *element, const size_t n_byte);
+    dtRotation(
+        const m_type m00, const m_type m01, const m_type m02,
+        const m_type m10, const m_type m11, const m_type m12,
+        const m_type m20, const m_type m21, const m_type m22);
+    dtRotation(const uint16_t order, const m_type angle);
+    dtRotation(const uint16_t order, const m_type angle1, const m_type angle2);
+    dtRotation(const uint16_t order, const m_type angle1, const m_type angle2, const m_type angle3);
+    dtRotation(const dtRotation &m);
+    dtRotation(const dtMatrix3<m_type, m_row, m_col> &m);
+    dtRotation(const dtMatrix<m_row, m_col, m_type> &m);
+    dtRotation(const uint16_t order, const dtVector3<m_type, 3> &e);
+    dtRotation(const uint16_t order, const dtVector<3, m_type> &e);
+    dtRotation(const dtQuaternion<m_type, 4> &q);
+    ~dtRotation() {}
 
     void SetZero();
     void SetIdentity();
-    void SetDiagonal(const t_type d1, const t_type d2, const t_type d3);
-    void SetDiagonal(const t_type *element, const size_t n_byte);
-    void SetDiagonal(const Vector<t_row, t_type> &v);
-    void SetDiagonal(const Vector<0, t_type> &v);
-    void SetDiagonal(const Vector3<t_type, t_row> &v);
-    void SetFill(const t_type value);
-    void SetElement(const t_type *element, const size_t n_byte);
+    void SetDiagonal(const m_type d1, const m_type d2, const m_type d3);
+    void SetDiagonal(const m_type *element, const size_t n_byte);
+    void SetDiagonal(const dtVector<m_row, m_type> &v);
+    void SetDiagonal(const dtVector3<m_type, m_row> &v);
+    void SetFill(const m_type value);
+    void SetElement(const m_type *element, const size_t n_byte);
     void SetElement(
-        const t_type m00, const t_type m01, const t_type m02,
-        const t_type m10, const t_type m11, const t_type m12,
-        const t_type m20, const t_type m21, const t_type m22);
+        const m_type m00, const m_type m01, const m_type m02,
+        const m_type m10, const m_type m11, const m_type m12,
+        const m_type m20, const m_type m21, const m_type m22);
 
-    void SetElement(const uint16_t order, const t_type angle);
-    void SetElement(const uint16_t order, const t_type angle1, const t_type angle2);
-    void SetElement(const uint16_t order, const t_type angle1, const t_type angle2, const t_type angle3);
+    void SetElement(const uint16_t order, const m_type angle);
+    void SetElement(const uint16_t order, const m_type angle1, const m_type angle2);
+    void SetElement(const uint16_t order, const m_type angle1, const m_type angle2, const m_type angle3);
 
-    void SetElement(const Rotation &m);
-    void SetElement(const Matrix3<t_type, t_row, t_col> &m);
-    void SetElement(const Matrix<t_row, t_col, t_type> &m);
-    void SetElement(const Matrix<0, 0, t_type> &m);
+    void SetElement(const dtRotation &m);
+    void SetElement(const dtMatrix3<m_type, m_row, m_col> &m);
+    void SetElement(const dtMatrix<m_row, m_col, m_type> &m);
 
-    void SetElement(const uint16_t order, const Vector3<t_type, 3> &e);
-    void SetElement(const uint16_t order, const Vector<3, t_type> &e);
-    void SetElement(const uint16_t order, const Vector<0, t_type> &e);
-    void SetElement(const uint16_t order, const t_type *e);
+    void SetElement(const uint16_t order, const dtVector3<m_type, 3> &e);
+    void SetElement(const uint16_t order, const dtVector<3, m_type> &e);
+    void SetElement(const uint16_t order, const m_type *e);
 
-    void SetElement(const Quaternion<t_type, 4> &q);
-    void SetElement(const t_type *q);
-    void SetElement(const t_type w, const t_type x, const t_type y, const t_type z);
+    void SetElement(const dtQuaternion<m_type, 4> &q);
+    void SetElement(const m_type *q);
+    void SetElement(const m_type w, const m_type x, const m_type y, const m_type z);
 
     void SetSwapRowVec(const uint16_t idxRow1, const uint16_t idxRow2);
     void SetSwapColVec(const uint16_t idxCol1, const uint16_t idxCol2);
 
-    const t_type *const GetElementsAddr() const;
-    Vector3<t_type, 3> GetRowVec(const uint16_t idxRow) const;
-    Vector3<t_type, 3> GetColVec(const uint16_t idxCol) const;
-    int8_t GetRowVec(const uint16_t idxRow, Vector3<t_type, 3> &v) const;
-    int8_t GetColVec(const uint16_t idxCol, Vector3<t_type, 3> &v) const;
-    Vector3<t_type, 3> GetEulerAngles(uint16_t order) const;
-    Rotation Transpose() const;
-    Rotation log() const;                                // log(R) = ln(R) : SO(3) -> so(3), SO(3) is Special Orthogonal Group, so(3) is the set of skew-symmetric 3x3 matrices
-    Vector3<t_type, 3> Log() const;                      // Log(R) = u*phi : SO(3) -> R3
-    Rotation ode(t_type wx, t_type wy, t_type wz) const; // dR/dt = R*[w]x
-    Rotation ode(t_type *w) const;                       // dR/dt = R*[w]x
-    Rotation ode(Vector3<t_type, 3> w) const;            // dR/dt = R*[w]x
-    Rotation ode(Vector<3, t_type> w) const;             // dR/dt = R*[w]x
-    Rotation ode(Vector<0, t_type> w) const;             // dR/dt = R*[w]x
-    Rotation Inv() const;
+    const m_type *const GetElementsAddr() const;
+    dtVector3<m_type, 3> GetRowVec(const uint16_t idxRow) const;
+    dtVector3<m_type, 3> GetColVec(const uint16_t idxCol) const;
+    int8_t GetRowVec(const uint16_t idxRow, dtVector3<m_type, 3> &v) const;
+    int8_t GetColVec(const uint16_t idxCol, dtVector3<m_type, 3> &v) const;
+    dtVector3<m_type, 3> GetEulerAngles(uint16_t order) const;
+    dtVector3<m_type, 3> GetRotationVec() const;
+    dtRotation Transpose() const;
+    dtRotation log() const;                                // log(R) = ln(R) : SO(3) -> so(3), SO(3) is Special Orthogonal Group, so(3) is the set of skew-symmetric 3x3 matrices
+    dtVector3<m_type, 3> Log() const;                      // Log(R) = u*phi : SO(3) -> R3
+    dtRotation ode(m_type wx, m_type wy, m_type wz) const; // dR/dt = R*[w]x
+    dtRotation ode(m_type *w) const;                       // dR/dt = R*[w]x
+    dtRotation ode(dtVector3<m_type, 3> w) const;          // dR/dt = R*[w]x
+    dtRotation ode(dtVector<3, m_type> w) const;           // dR/dt = R*[w]x
+    dtRotation Inv() const;
 
     /* Member access operators */
-    t_type &operator()(uint16_t irow, uint16_t icol);             // returns a row of modifiable elements
-    const t_type &operator()(uint16_t irow, uint16_t icol) const; // returns a row of non-modifiable elements
+    // returns a row of modifiable elements
+    m_type &operator()(uint16_t irow, uint16_t icol) { dt_assert(irow <= m_row && icol <= m_col); return m_elem[irow * m_col + icol]; }
+    // returns a row of non-modifiable elements
+    const m_type &operator()(uint16_t irow, uint16_t icol) const { dt_assert(irow <= m_row && icol <= m_col); return m_elem[irow * m_col + icol]; }
 
     /* Assignment operators */
-    Rotation &operator=(const Rotation &m);                      // matrix = matrix
-    CommaInit<t_row * t_col, t_type> operator<<(const t_type s); // Init first matrix elements
+    dtRotation &operator=(const dtRotation &m);                    // matrix = matrix
+    dtCommaInit<m_row * m_col, m_type> operator<<(const m_type s); // Init first matrix elements
 
     /* Arithmetic operators */
-    Rotation operator-() const; // minus sign
-    Matrix3<t_type, t_row, t_col> operator+(const Rotation &m) const;
-    Matrix3<t_type, t_row, t_col> operator-(const Rotation &m) const;
-    Matrix3<t_type, t_row, t_col> operator+(const Matrix3<t_type, t_row, t_col> &m) const;
-    Matrix3<t_type, t_row, t_col> operator-(const Matrix3<t_type, t_row, t_col> &m) const;
-    Matrix3<t_type, t_row, t_col> operator+(const Matrix<t_row, t_col, t_type> &m) const;
-    Matrix3<t_type, t_row, t_col> operator-(const Matrix<t_row, t_col, t_type> &m) const;
-    Matrix3<t_type, t_row, t_col> operator+(const Matrix<0, 0, t_type> &m) const;
-    Matrix3<t_type, t_row, t_col> operator-(const Matrix<0, 0, t_type> &m) const;
-    Matrix3<t_type, t_row, t_col> operator*(const t_type s) const;
-    Matrix3<t_type, t_row, t_col> operator/(const t_type s) const;
+    dtRotation operator-() const; // minus sign
+    dtMatrix3<m_type, m_row, m_col> operator+(const dtRotation &m) const;
+    dtMatrix3<m_type, m_row, m_col> operator-(const dtRotation &m) const;
+    dtMatrix3<m_type, m_row, m_col> operator+(const dtMatrix3<m_type, m_row, m_col> &m) const;
+    dtMatrix3<m_type, m_row, m_col> operator-(const dtMatrix3<m_type, m_row, m_col> &m) const;
+    dtMatrix3<m_type, m_row, m_col> operator+(const dtMatrix<m_row, m_col, m_type> &m) const;
+    dtMatrix3<m_type, m_row, m_col> operator-(const dtMatrix<m_row, m_col, m_type> &m) const;
+    dtMatrix3<m_type, m_row, m_col> operator*(const m_type s) const;
+    dtMatrix3<m_type, m_row, m_col> operator/(const m_type s) const;
 
     template <uint16_t col>
-    Matrix<t_row, col, t_type> operator*(const Matrix<t_col, col, t_type> &m) const;       // RotMat * matrix
-    Matrix<0, 0, t_type> operator*(const Matrix<0, 0, t_type> &m) const;                   // RotMat * matrix
-    Matrix3<t_type, t_row, t_col> operator*(const Matrix3<t_type, t_row, t_col> &m) const; // RotMat * matrix
-    Rotation operator*(const Rotation &m) const;                                           // RotMat * RotMat
-    Vector<t_row, t_type> operator*(const Vector<t_col, t_type> &v) const;                 // RotMat * vector
-    Vector<t_row, t_type> operator*(const Vector<0, t_type> &v) const;                     // RotMat * vector
-    Vector3<t_type, t_row> operator*(const Vector3<t_type, t_col> &v) const;               // RotMat * vector
-    Rotation operator&(const Vector<t_col, t_type> &v) const;                              // RotMat * [v]x, []x is skew-symmetric matrix
-    Rotation operator&(const Vector<0, t_type> &v) const;                                  // RotMat * [v]x, []x is skew-symmetric matrix
-    Rotation operator&(const Vector3<t_type, t_col> &v) const;                             // RotMat * [v]x, []x is skew-symmetric matrix
+    dtMatrix<m_row, col, m_type> operator*(const dtMatrix<m_col, col, m_type> &m) const;       // RotMat * matrix
+    dtMatrix3<m_type, m_row, m_col> operator*(const dtMatrix3<m_type, m_row, m_col> &m) const; // RotMat * matrix
+    dtRotation operator*(const dtRotation &m) const;                                           // RotMat * RotMat
+    dtVector<m_row, m_type> operator*(const dtVector<m_col, m_type> &v) const;                 // RotMat * vector
+    dtVector3<m_type, m_row> operator*(const dtVector3<m_type, m_col> &v) const;               // RotMat * vector
+    dtRotation operator&(const dtVector<m_col, m_type> &v) const;                              // RotMat * [v]x, []x is skew-symmetric matrix
+    dtRotation operator&(const dtVector3<m_type, m_col> &v) const;                             // RotMat * [v]x, []x is skew-symmetric matrix
 
     /* Comparison operators */
-    bool operator==(const Rotation &m) const;                      // (true or false) matrix == matrix
-    bool operator!=(const Rotation &m) const;                      // (true or false) matrix != matrix
-    bool operator==(const Matrix3<t_type, t_row, t_col> &m) const; // (true or false) matrix == matrix
-    bool operator!=(const Matrix3<t_type, t_row, t_col> &m) const; // (true or false) matrix != matrix
-    bool operator==(const Matrix<t_row, t_col, t_type> &m) const;  // (true or false) matrix == matrix
-    bool operator!=(const Matrix<t_row, t_col, t_type> &m) const;  // (true or false) matrix != matrix
-    bool operator==(const Matrix<0, 0, t_type> &m) const;          // (true or false) matrix == matrix
-    bool operator!=(const Matrix<0, 0, t_type> &m) const;          // (true or false) matrix != matrix
+    bool operator==(const dtRotation &m) const;                      // (true or false) matrix == matrix
+    bool operator!=(const dtRotation &m) const;                      // (true or false) matrix != matrix
+    bool operator==(const dtMatrix3<m_type, m_row, m_col> &m) const; // (true or false) matrix == matrix
+    bool operator!=(const dtMatrix3<m_type, m_row, m_col> &m) const; // (true or false) matrix != matrix
+    bool operator==(const dtMatrix<m_row, m_col, m_type> &m) const;  // (true or false) matrix == matrix
+    bool operator!=(const dtMatrix<m_row, m_col, m_type> &m) const;  // (true or false) matrix != matrix
 
     void Print(const char endChar = 0);
 
     /* Friend classes */
-    template <typename type, uint16_t row, uint16_t col> friend class Rotation;
-    template <typename type, uint16_t row, uint16_t col> friend class Matrix3;
-    template <typename type, uint16_t row, uint16_t col> friend class Transform;
-    template <uint16_t row, uint16_t col, typename type> friend class Matrix;
+    template <typename type, uint16_t row, uint16_t col> friend class dtRotation;
+    template <typename type, uint16_t row, uint16_t col> friend class dtMatrix3;
+    template <typename type, uint16_t row, uint16_t col> friend class dtTransform;
+    template <uint16_t row, uint16_t col, typename type> friend class dtMatrix;
 
-    template <typename type, uint16_t row> friend class Quaternion;
+    template <typename type, uint16_t row> friend class dtQuaternion;
 
     /* Friend template function */
     template <typename type, uint16_t row, uint16_t col>
-    friend Matrix3<type, row, col> operator*(const type s, const Rotation<type, row, col> &m); // scalar * RotMat
+    friend dtMatrix3<type, row, col> operator*(const type s, const dtRotation<type, row, col> &m); // scalar * RotMat
 };
 
-} // namespace Math
-} // namespace dt
+} // namespace dtMath
 
 #include "dtRotation.tpp"
 

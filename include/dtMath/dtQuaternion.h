@@ -23,108 +23,111 @@
 #include <cmath>
 #include <limits>
 
-namespace dt
-{
-namespace Math
+namespace dtMath
 {
 
-template <uint16_t m_size, typename t_type> class CommaInit;
-template <uint16_t t_row, typename t_type> class Vector;
-template <typename t_type, uint16_t t_row> class Vector3;
-template <typename t_type, uint16_t t_row, uint16_t t_col> class Matrix3;
-template <typename t_type, uint16_t t_row, uint16_t t_col> class Rotation;
+template <uint16_t m_size, typename m_type> class dtCommaInit;
+template <uint16_t m_row, typename m_type> class dtVector;
+template <typename m_type, uint16_t m_row> class dtVector3;
+template <typename m_type, uint16_t m_row, uint16_t m_col> class dtMatrix3;
+template <typename m_type, uint16_t m_row, uint16_t m_col> class dtRotation;
 
-template <typename t_type = float, uint16_t t_row = 4>
-class Quaternion
+template <typename m_type = float, uint16_t m_row = 4>
+class dtQuaternion
 {
 private:
-    t_type m_tolerance = std::numeric_limits<t_type>::epsilon();
-    t_type m_elem[t_row]; // [w, x, y, z]
-    inline int SGN(const t_type x) const { return (x >= t_type(0)) ? 1 : -1; }
-    inline void Euler2Quat(const uint16_t order, const t_type *e);
-    inline void RotMat2Quat(const t_type *rm);
+    m_type m_tolerance = std::numeric_limits<m_type>::epsilon();
+    m_type m_elem[m_row]; // [w, x, y, z]
+    inline int SGN(const m_type x) const { return (x >= m_type(0)) ? 1 : -1; }
+    // inline void Euler2Quat(const uint16_t order, const m_type *e); // adh : private to public
+    inline void RotMat2Quat(const m_type *rm);
 
 public:
-    Quaternion();
-    Quaternion(const t_type *element);
-    Quaternion(const t_type w, const t_type x, const t_type y, const t_type z);
-    Quaternion(const uint16_t order, const t_type angle);
-    Quaternion(const uint16_t order, const t_type angle1, const t_type angle2);
-    Quaternion(const uint16_t order, const t_type angle1, const t_type angle2, const t_type angle3);
-    Quaternion(const Quaternion &q);
-    Quaternion(const uint16_t order, const Vector3<t_type, 3> &e);
-    Quaternion(const uint16_t order, const Vector<3, t_type> &e);
-    Quaternion(const Rotation<t_type, 3, 3> &rm);
-    ~Quaternion() {}
+    dtQuaternion();
+    dtQuaternion(const m_type *element);
+    dtQuaternion(const m_type w, const m_type x, const m_type y, const m_type z);
+    dtQuaternion(const uint16_t order, const m_type angle);
+    dtQuaternion(const uint16_t order, const m_type angle1, const m_type angle2);
+    dtQuaternion(const uint16_t order, const m_type angle1, const m_type angle2, const m_type angle3);
+    dtQuaternion(const dtQuaternion &q);
+    dtQuaternion(const uint16_t order, const dtVector3<m_type, 3> &e);
+    dtQuaternion(const uint16_t order, const dtVector<3, m_type> &e);
+    dtQuaternion(const dtRotation<m_type, 3, 3> &rm);
+    ~dtQuaternion() {}
 
     void SetZero();
-    void SetFill(const t_type value);
-    void SetElement(const t_type *element);
-    void SetElement(const t_type w, const t_type x, const t_type y, const t_type z);
-    void SetElement(const uint16_t order, const t_type angle);
-    void SetElement(const uint16_t order, const t_type angle1, const t_type angle2);
-    void SetElement(const uint16_t order, const t_type angle1, const t_type angle2, const t_type angle3);
-    void SetElement(const Quaternion &q);
-    void SetElement(const uint16_t order, const Vector3<t_type, 3> &e);
-    void SetElement(const uint16_t order, const Vector<3, t_type> &e);
-    void SetElement(const Rotation<t_type, 3, 3> &rm);
+    void SetFill(const m_type value);
+    void SetElement(const m_type *element);
+    void SetElement(const m_type w, const m_type x, const m_type y, const m_type z);
+    void SetElement(const uint16_t order, const m_type angle);
+    void SetElement(const uint16_t order, const m_type angle1, const m_type angle2);
+    void SetElement(const uint16_t order, const m_type angle1, const m_type angle2, const m_type angle3);
+    void SetElement(const dtQuaternion &q);
+    void SetElement(const uint16_t order, const dtVector3<m_type, 3> &e);
+    void SetElement(const uint16_t order, const dtVector<3, m_type> &e);
+    void SetElement(const dtRotation<m_type, 3, 3> &rm);
     void SetSwap(const uint16_t i, const uint16_t j);
     void SetNormalize();
 
-    const t_type *const GetElementsAddr() const;
-    t_type GetNorm() const;
-    t_type GetSqNorm() const;
-    t_type GetSum() const;
-    Quaternion GetNormalized() const;
-    Quaternion GetConj() const;
-    Vector3<t_type, 3> GetEulerAngles(const uint16_t order) const;
-    Vector3<t_type, 3> GetOriErr(const Quaternion &q) const;
-    Quaternion exp() const;                                // exp(q) = e^(q), Expoential of general quaternions
-    Quaternion log() const;                                // log(q) = ln(q), Logarithm of general quaternions
-    Vector3<t_type, 3> Log() const;                        // Log(q) = u*phi : S3 -> R3, here S3 is the 3-dimensional surface of the unit sphere of R4 = unit quaternions
-    Quaternion ode(t_type wx, t_type wy, t_type wz) const; // dq/dt
-    Quaternion ode(t_type *w) const;                       // dq/dt
-    Quaternion ode(Vector3<t_type, 3> w) const;            // dq/dt
-    Quaternion ode(Vector<3, t_type> w) const;             // dq/dt
-    Quaternion Inv() const;
+    const m_type *const GetElementsAddr() const;
+    m_type GetNorm() const;
+    m_type GetSqNorm() const;
+    m_type GetSum() const;
+    dtQuaternion GetNormalized() const;
+    dtQuaternion GetConj() const;
+    dtVector3<m_type, 3> GetEulerAngles(const uint16_t order) const;
+    dtVector3<m_type, 3> GetRotVec() const;
+    dtVector3<m_type, 3> GetOriErr(const dtQuaternion &q) const;
+    dtQuaternion exp() const;                                // exp(q) = e^(q), Expoential of general quaternions
+    dtQuaternion log() const;                                // log(q) = ln(q), Logarithm of general quaternions
+    dtVector3<m_type, 3> Log() const;                        // Log(q) = u*phi : S3 -> R3, here S3 is the 3-dimensional surface of the unit sphere of R4 = unit quaternions
+    dtQuaternion ode(m_type wx, m_type wy, m_type wz) const; // dq/dt
+    dtQuaternion ode(m_type *w) const;                       // dq/dt
+    dtQuaternion ode(dtVector3<m_type, 3> w) const;          // dq/dt
+    dtQuaternion ode(dtVector<3, m_type> w) const;           // dq/dt
+    dtQuaternion Inv() const;
+    inline void Euler2Quat(const uint16_t order, const m_type *e);
 
     /* Member access operators */
-    t_type &operator()(uint16_t irow);             // returns a row of modifiable elements
-    const t_type &operator()(uint16_t irow) const; // returns a row of non-modifiable elements
+    // returns a row of modifiable elements
+    m_type &operator()(uint16_t irow) { dt_assert(irow <= m_row); return m_elem[irow]; }
+    // returns a row of non-modifiable elements
+    const m_type &operator()(uint16_t irow) const { dt_assert(irow <= m_row); return m_elem[irow]; }
 
     /* Assignment operators */
-    Quaternion &operator=(const Quaternion &q);          // quaternion1  = quaternion2
-    Quaternion &operator+=(const Quaternion &q);         // quaternion1 += quaternion2
-    Quaternion &operator-=(const Quaternion &q);         // quaternion1 -= quaternion2
-    Quaternion &operator*=(const t_type s);              // quaternion1 *= scalar
-    Quaternion &operator/=(const t_type s);              // quaternion1 /= scalar
-    CommaInit<t_row, t_type> operator<<(const t_type s); // Init first matrix elements
+    dtQuaternion &operator=(const dtQuaternion &q);        // quaternion1  = quaternion2
+    dtQuaternion &operator+=(const dtQuaternion &q);       // quaternion1 += quaternion2
+    dtQuaternion &operator-=(const dtQuaternion &q);       // quaternion1 -= quaternion2
+    dtQuaternion &operator*=(const m_type s);              // quaternion1 *= scalar
+    dtQuaternion &operator/=(const m_type s);              // quaternion1 /= scalar
+    dtCommaInit<m_row, m_type> operator<<(const m_type s); // Init first matrix elements
 
     /* Arithmetic operators */
-    Quaternion operator-() const;                    // -quaternion : minus sign
-    Quaternion operator+(const Quaternion &q) const; // quaternion + quaternion
-    Quaternion operator-(const Quaternion &q) const; // quaternion - quaternion
-    Quaternion operator*(const t_type s) const;      // quaternion * scalar
-    Quaternion operator/(const t_type s) const;      // quaternion / scalar
-    Quaternion operator*(const Quaternion &q) const; // quaternion1 * quaternion2 : Quaternion Multiplication
+    dtQuaternion operator-() const;                      // -quaternion : minus sign
+    dtQuaternion operator+(const dtQuaternion &q) const; // quaternion + quaternion
+    dtQuaternion operator-(const dtQuaternion &q) const; // quaternion - quaternion
+    dtQuaternion operator*(const m_type s) const;        // quaternion * scalar
+    dtQuaternion operator/(const m_type s) const;        // quaternion / scalar
+    dtQuaternion operator*(const dtQuaternion &q) const; // quaternion1 * quaternion2 : Quaternion Multiplication
 
     /* Comparison operators */
-    bool operator==(const Quaternion &q) const; // (true or false) quaternion1 == quaternion2
-    bool operator!=(const Quaternion &q) const; // (true or false) quaternion1 != quaternion2
+    bool operator==(const dtQuaternion &q) const; // (true or false) quaternion1 == quaternion2
+    bool operator!=(const dtQuaternion &q) const; // (true or false) quaternion1 != quaternion2
 
     void Print(const char endChar = 0);
 
     /* Friend classes */
-    template <typename type, uint16_t row> friend class Quaternion;
-    template <typename type, uint16_t row, uint16_t col> friend class Rotation;
+    template <typename type, uint16_t row> friend class dtQuaternion;
+    template <typename type, uint16_t row, uint16_t col> friend class dtRotation;
+    template <typename type, uint16_t row> friend class dtVector4;
+    template <uint16_t row, typename type> friend class dtVector;
 
     /* Friend template function */
     template <typename type, uint16_t row>
-    friend Quaternion<type, row> operator*(const type s, const Quaternion<type, row> &v); // scalar * quaternion
+    friend dtQuaternion<type, row> operator*(const type s, const dtQuaternion<type, row> &v); // scalar * quaternion
 };
 
-} // namespace Math
-} // namespace dt
+} // namespace dtMath
 
 #include "dtQuaternion.tpp"
 

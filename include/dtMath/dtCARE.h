@@ -1,6 +1,6 @@
 /*!
-\file       dtCARE.h
-\brief      dtMath, The Continuous-time Algebraic Riccati Equation Class, cmake version
+\file       dtContiRiccatiEq.h
+\brief      dtMath, The continuous-time algebraic Riccati Equation Class, cmake version
 \author     Dong-hyun Lee, phenom8305@gmail.com
 \author     Joonhee Jo, allusivejune@gmail.com
 \author     Who is next author?
@@ -23,12 +23,10 @@
 #include <cmath>
 #include <limits>
 
-namespace dt
-{
-namespace Math
+namespace dtMath
 {
 
-template <uint16_t t_row, uint16_t t_col, typename t_type> class Matrix;
+template <uint16_t m_row, uint16_t m_col, typename m_type> class dtMatrix;
 
 // Computes the unique stabilizing solution X to the continuous-time algebraic
 // Riccati equation:
@@ -42,47 +40,46 @@ template <uint16_t t_row, uint16_t t_col, typename t_type> class Matrix;
 // http://www.engr.iupui.edu/~skoskie/ECE684/Riccati_algorithms.pdf
 //
 
-template <uint16_t t_dimN, uint16_t t_dimM, typename t_type = float>
-class CARE
+template <uint16_t m_dimN, uint16_t m_dimM, typename m_type = float>
+class dtCARE
 {
 private:
-    // Matrix<2 * t_dimN, 2 * t_dimN, t_type> m_mH;
-    Matrix<2 * t_dimN, 2 * t_dimN, t_type> m_mZ;
-    Matrix<2 * t_dimN, 2 * t_dimN, t_type> m_mZold;
+    // dtMatrix<2 * m_dimN, 2 * m_dimN, m_type> m_mH;
+    dtMatrix<2 * m_dimN, 2 * m_dimN, m_type> m_mZ;
+    dtMatrix<2 * m_dimN, 2 * m_dimN, m_type> m_mZold;
 
-    Matrix<t_dimN, t_dimN, t_type> m_mW11;
-    Matrix<t_dimN, t_dimN, t_type> m_mW12;
-    Matrix<t_dimN, t_dimN, t_type> m_mW21;
-    Matrix<t_dimN, t_dimN, t_type> m_mW22;
+    dtMatrix<m_dimN, m_dimN, m_type> m_mW11;
+    dtMatrix<m_dimN, m_dimN, m_type> m_mW12;
+    dtMatrix<m_dimN, m_dimN, m_type> m_mW21;
+    dtMatrix<m_dimN, m_dimN, m_type> m_mW22;
 
-    Matrix<2 * t_dimN, t_dimN, t_type> m_mLhs;
-    Matrix<2 * t_dimN, t_dimN, t_type> m_mRhs;
-    Matrix<t_dimN, t_dimN, t_type> m_mEye;
+    dtMatrix<2 * m_dimN, m_dimN> m_mLhs;
+    dtMatrix<2 * m_dimN, m_dimN> m_mRhs;
+    dtMatrix<m_dimN, m_dimN> m_mEye;
 
     uint16_t m_maxIteration;
-    t_type m_tolerance;
-    const t_type m_power = (t_type)(-1) / (2 * t_dimN);
+    m_type m_tolerance;
+    const m_type m_power = (m_type)(-1) / (2 * m_dimN);
 
 public:
-    CARE();
-    ~CARE() {}
-    void SetSolveCriteria(t_type tolerance, uint16_t maxIteration);
-    Matrix<t_dimN, t_dimN, t_type> Solve(
-        const Matrix<t_dimN, t_dimN, t_type> &A,
-        const Matrix<t_dimN, t_dimM, t_type> &B,
-        const Matrix<t_dimN, t_dimN, t_type> &Q,
-        const Matrix<t_dimM, t_dimM, t_type> &R);
+    dtCARE();
+    ~dtCARE() {}
+    void SetSolveCriteria(m_type tolerance, uint16_t maxIteration);
+    dtMatrix<m_dimN, m_dimN, m_type> Solve(
+        const dtMatrix<m_dimN, m_dimN, m_type> &A,
+        const dtMatrix<m_dimN, m_dimM, m_type> &B,
+        const dtMatrix<m_dimN, m_dimN, m_type> &Q,
+        const dtMatrix<m_dimM, m_dimM, m_type> &R);
 
     int8_t Solve(
-        const Matrix<t_dimN, t_dimN, t_type> &A,
-        const Matrix<t_dimN, t_dimM, t_type> &B,
-        const Matrix<t_dimN, t_dimN, t_type> &Q,
-        const Matrix<t_dimM, t_dimM, t_type> &R,
-        Matrix<t_dimN, t_dimN, t_type> &X);
+        const dtMatrix<m_dimN, m_dimN, m_type> &A,
+        const dtMatrix<m_dimN, m_dimM, m_type> &B,
+        const dtMatrix<m_dimN, m_dimN, m_type> &Q,
+        const dtMatrix<m_dimM, m_dimM, m_type> &R,
+        dtMatrix<m_dimN, m_dimN, m_type> &X);
 };
 
-} // namespace Math
-} // namespace dt
+} // namespace dtMath
 
 #include "dtCARE.tpp"
 

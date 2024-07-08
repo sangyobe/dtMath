@@ -5,7 +5,7 @@
 \author     Joonhee Jo, allusivejune@gmail.com
 \author     Who is next author?
 \date       Last modified on 2023. 05. 02
-\version    1.1.1
+\version    1.1.0
 \see        file QuadProg++.h and QuadProg++.cc
 \see        https://github.com/liuq/QuadProgpp
 \warning    Do Not delete this comment for document history! This is minimal manners!
@@ -16,32 +16,30 @@
 
 #include "dtQuadProg.h"
 
-namespace dt
-{
-namespace Math
+namespace dtMath
 {
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::dtQuadProg() : m_fx(0), m_fx0(0), m_c1(0), m_c2(0), m_normR(0),
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::dtQuadProg() : m_fx(0), m_fx0(0), m_c1(0), m_c2(0), m_normR(0),
                                                                   m_t(0), m_t1(0), m_t2(0), m_psiThreshold(0), m_iter(0)
 {
-    if (std::numeric_limits<t_type>::has_infinity)
-        m_inf = std::numeric_limits<t_type>::infinity();
+    if (std::numeric_limits<m_type>::has_infinity)
+        m_inf = std::numeric_limits<m_type>::infinity();
     else
-        m_inf = (t_type)1.0E300;
+        m_inf = (m_type)1.0E300;
 
     for (int i = 0; i < m_dimM; i++)
         m_vConstIaIncl(i) = i;
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::SetObjectFunc(const Matrix<m_dimN, m_dimN, t_type> &mG, const Vector<m_dimN, t_type> &vG)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::SetObjectFunc(const dtMatrix<m_dimN, m_dimN, m_type> &mG, const dtVector<m_dimN, m_type> &vG)
 {
     return UpdateObjectFunc(mG, vG);
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateMatrixG(const Matrix<m_dimN, m_dimN, t_type> &mG)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::UpdateMatrixG(const dtMatrix<m_dimN, m_dimN, m_type> &mG)
 {
     int cnt, i, j;
 
@@ -55,6 +53,7 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateMatrixG(const Ma
     if (CholeskyDecomposition(m_mL))
         return -1;
 
+    m_vD.SetZero(); // 2023.12.13
     /*compute the inverse of the factorized matrix inv(G), this is the initial value for H(or J) */
     m_c2 = 0;
     for (i = 0; i < m_dimN; i++)
@@ -77,7 +76,7 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateMatrixG(const Ma
         m_vD(i) = 0;
     }
     /* c1 * c2 is an estimate for cond(G) */
-    m_psiThreshold = m_dimM * std::numeric_limits<t_type>::epsilon() * m_c1 * m_c2 * 100.0;
+    m_psiThreshold = m_dimM * std::numeric_limits<m_type>::epsilon() * m_c1 * m_c2 * 100.0;
 
     /* Step 0: Find the unconstrained minimum ------------------------------------------------------*/
     /* Find the unconstrained minimizer of the quadratic form 1/2 * xt * G * x + xt * g0
@@ -90,13 +89,13 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateMatrixG(const Ma
      */
     CholeskySolve(m_mL, m_vX0, m_vG);
     m_vX0 *= -1;
-    m_fx0 = 0.5f * (m_vX0.Inner(m_vG));
+    m_fx0 = 0.5f * (m_vX0.dot(m_vG));
 
     return 0;
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateVectorG(const Vector<m_dimN, t_type> &vG)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::UpdateVectorG(const dtVector<m_dimN, m_type> &vG)
 {
     m_vG = vG;
 
@@ -111,13 +110,13 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateVectorG(const Ve
      */
     CholeskySolve(m_mL, m_vX0, m_vG);
     m_vX0 *= -1;
-    m_fx0 = 0.5f * (m_vX0.Inner(m_vG));
+    m_fx0 = 0.5f * (m_vX0.dot(m_vG));
 
     return 0;
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateObjectFunc(const Matrix<m_dimN, m_dimN, t_type> &mG, const Vector<m_dimN, t_type> &vG)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::UpdateObjectFunc(const dtMatrix<m_dimN, m_dimN, m_type> &mG, const dtVector<m_dimN, m_type> &vG)
 {
     int cnt, i, j;
 
@@ -138,14 +137,13 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateObjectFunc(const
     m_mL.Print('\n');
     cout << endl;
 #endif
-
-    m_vD.SetZero();
+    m_vD.SetZero(); // 2023.12.13
 
     /*compute the inverse of the factorized matrix inv(G), this is the initial value for H(or J) */
     m_c2 = 0;
     for (i = 0; i < m_dimN; i++)
     {
-        m_vD(i) = (t_type)1;
+        m_vD(i) = (m_type)1;
 
         ForwardElimination(m_mL, m_vZ, m_vD); // m_vZ = L^-1 * m_vD
 
@@ -163,7 +161,7 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateObjectFunc(const
         m_vD(i) = 0;
     }
     /* c1 * c2 is an estimate for cond(G) */
-    m_psiThreshold = m_dimM * std::numeric_limits<t_type>::epsilon() * m_c1 * m_c2 * (t_type)100;
+    m_psiThreshold = m_dimM * std::numeric_limits<m_type>::epsilon() * m_c1 * m_c2 * (m_type)100;
 #ifdef DT_QP_DEBUG
     cout << "// Inverse of L is the initial value for H(=J)" << endl;
     cout << "mat H(=J) =" << endl;
@@ -186,7 +184,7 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateObjectFunc(const
      */
     CholeskySolve(m_mL, m_vX0, m_vG);
     m_vX0 *= -1;
-    m_fx0 = 0.5f * (m_vX0.Inner(m_vG));
+    m_fx0 = 0.5f * (m_vX0.dot(m_vG));
 #ifdef DT_QP_DEBUG
     cout << "/* Step 0: Find the unconstrained minimum */" << endl;
     cout << "solution f(x) = " << m_fx << endl;
@@ -198,22 +196,22 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateObjectFunc(const
     return 0;
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::Solve(
-    const Matrix<m_dimN, m_dimP, t_type> &mCe, const Vector<m_dimP, t_type> &vCe,
-    const Matrix<m_dimN, m_dimM, t_type> &mCi, const Vector<m_dimM, t_type> &vCi,
-    Vector<m_dimN, t_type> &vX)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::Solve(
+    const dtMatrix<m_dimN, m_dimP, m_type> &mCe, const dtVector<m_dimP, m_type> &vCe,
+    const dtMatrix<m_dimN, m_dimM, m_type> &mCi, const dtVector<m_dimM, m_type> &vCi,
+    dtVector<m_dimN, m_type> &vX)
 {
-    /* m is the number of inequality constraints */
-    /* p is the number of equality constraints */
+    /* m is the SYSREAL of inequality constraints */
+    /* p is the SYSREAL of equality constraints */
 
     int cnt, i, j, k, l; // indices
     int ip;              // this is the index of the constraint to be added to the active set
     int iq;
     m_iter = 0;
-    t_type ss;
-    t_type psi; // this value will contain the sum of all infeasibilities
-    t_type sum;
+    m_type ss;
+    m_type psi; // this value will contain the sum of all infeasibilities
+    m_type sum;
 
     /* Preprocessing phase -------------------------------------------------------------------------*/
     /* initialize the matrix R */
@@ -256,8 +254,8 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::Solve(
 
         // compute full step length t2: i.e., the minimum step in primal space s.t. the contraint becomes feasible
         m_t2 = 0;
-        if (std::abs(m_vZ.Inner(m_vZ)) > std::numeric_limits<t_type>::epsilon()) // i.e. z != 0
-            m_t2 = (-(m_vNp.Inner(vX)) - vCe(i)) / (m_vZ.Inner(m_vNp));
+        if (std::abs(m_vZ.dot(m_vZ)) > std::numeric_limits<m_type>::epsilon()) // i.e. z != 0
+            m_t2 = (-(m_vNp.dot(vX)) - vCe(i)) / (m_vZ.dot(m_vNp));
 
         /* set x = x + t2 * z */
         for (cnt = m_dimN >> 2, k = 0; cnt > 0; cnt--, k += 4)
@@ -287,7 +285,7 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::Solve(
         }
 
         /* compute the new solution value */
-        m_fx += 0.5f * (m_t2 * m_t2) * (m_vZ.Inner(m_vNp));
+        m_fx += 0.5f * (m_t2 * m_t2) * (m_vZ.dot(m_vNp));
         m_vA(i) = -i - 1;
 
         if (!AddConstraint(m_mR, m_mJ, m_vD, iq, m_normR))
@@ -343,7 +341,7 @@ Label_1:
         }
         sum += vCi(i);
         m_vS(i) = sum;
-        psi += std::min((t_type)0, sum);
+        psi += std::min((m_type)0, sum);
         // psi += (m_vS(i) < 0) ? m_vS(i) : 0;
     }
 #ifdef DT_QP_DEBUG
@@ -490,9 +488,9 @@ Label_2a:
     }
 
     /* (ii) Compute t2: full step length (minimum step in primal space such that the constraint ip becomes feasible) */
-    if (std::abs(m_vZ.Inner(m_vZ)) > std::numeric_limits<t_type>::epsilon()) // i.e. z != 0
+    if (std::abs(m_vZ.dot(m_vZ)) > std::numeric_limits<m_type>::epsilon()) // i.e. z != 0
     {
-        m_t2 = -m_vS(ip) / (m_vZ.Inner(m_vNp));
+        m_t2 = -m_vS(ip) / (m_vZ.dot(m_vNp));
         if (m_t2 < 0) // patch suggested by Takano Akio for handling numerical inconsistencies
             m_t2 = m_inf;
     }
@@ -598,7 +596,7 @@ Label_2a:
     }
 
     // update the solution value F(x)
-    m_fx += m_t * (m_vZ.Inner(m_vNp)) * (0.5f * m_t + m_vU(iq));
+    m_fx += m_t * (m_vZ.dot(m_vNp)) * (0.5f * m_t + m_vU(iq));
 
     // u = u + t * [-r 1]
     for (cnt = iq >> 2, k = 0; cnt > 0; cnt--, k += 4)
@@ -631,7 +629,7 @@ Label_2a:
 #endif
 
     /* If t == t2(full step), u = (u^+), add constraint update H and N* and go to Step1 */
-    if (std::abs(m_t - m_t2) < std::numeric_limits<t_type>::epsilon())
+    if (std::abs(m_t - m_t2) < std::numeric_limits<m_type>::epsilon())
     {
 #ifdef DT_QP_DEBUG
         cout << "(t == t2) -> Full step : t = " << m_t << endl;
@@ -701,21 +699,21 @@ Label_2a:
     goto Label_2a; // go to Step 2a: determine step direction
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::Solve(
-    const Matrix<m_dimN, m_dimM, t_type> &mCi, const Vector<m_dimM, t_type> &vCi,
-    Vector<m_dimN, t_type> &vX)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::Solve(
+    const dtMatrix<m_dimN, m_dimM, m_type> &mCi, const dtVector<m_dimM, m_type> &vCi,
+    dtVector<m_dimN, m_type> &vX)
 {
-    /* m is the number of inequality constraints */
-    /* p is the number of equality constraints */
+    /* m is the SYSREAL of inequality constraints */
+    /* p is the SYSREAL of equality constraints */
 
     int cnt, i, j, k, l; // indices
     int ip;              // this is the index of the constraint to be added to the active set
     int iq;
     m_iter = 0;
-    t_type ss;
-    t_type psi; // this value will contain the sum of all infeasibilities
-    t_type sum;
+    m_type ss;
+    m_type psi; // this value will contain the sum of all infeasibilities
+    m_type sum;
 
     /* Preprocessing phase -------------------------------------------------------------------------*/
     /* initialize the matrix R */
@@ -777,7 +775,7 @@ Label_1:
         }
         sum += vCi(i);
         m_vS(i) = sum;
-        psi += std::min((t_type)0, sum);
+        psi += std::min((m_type)0, sum);
         // psi += (m_vS(i) < 0) ? m_vS(i) : 0;
     }
 
@@ -885,9 +883,9 @@ Label_2a:
     }
 
     /* (ii) Compute t2: full step length (minimum step in primal space such that the constraint ip becomes feasible) */
-    if (std::abs(m_vZ.Inner(m_vZ)) > std::numeric_limits<t_type>::epsilon()) // i.e. z != 0
+    if (std::abs(m_vZ.dot(m_vZ)) > std::numeric_limits<m_type>::epsilon()) // i.e. z != 0
     {
-        m_t2 = -m_vS(ip) / (m_vZ.Inner(m_vNp));
+        m_t2 = -m_vS(ip) / (m_vZ.dot(m_vNp));
         if (m_t2 < 0) // patch suggested by Takano Akio for handling numerical inconsistencies
             m_t2 = m_inf;
     }
@@ -948,7 +946,7 @@ Label_2a:
     }
 
     // update the solution value F(x)
-    m_fx += m_t * (m_vZ.Inner(m_vNp)) * (0.5f * m_t + m_vU(iq));
+    m_fx += m_t * (m_vZ.dot(m_vNp)) * (0.5f * m_t + m_vU(iq));
 
     // u = u + t * [-r 1]
     for (cnt = iq >> 2, k = 0; cnt > 0; cnt--, k += 4)
@@ -966,7 +964,7 @@ Label_2a:
     m_vU(iq) += m_t;
 
     /* If t == t2(full step), u = (u^+), add constraint update H and N* and go to Step1 */
-    if (std::abs(m_t - m_t2) < std::numeric_limits<t_type>::epsilon())
+    if (std::abs(m_t - m_t2) < std::numeric_limits<m_type>::epsilon())
     {
         // full step has taken
         // add constraint ip to the active set
@@ -1019,11 +1017,11 @@ Label_2a:
 }
 
 /*
-template<int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline t_type dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::DotProduct(const Vector<m_dimN, t_type>& x, const Vector<m_dimN, t_type>& y)
+template<int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline m_type dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::DotProduct(const dtVector<m_dimN, m_type>& x, const dtVector<m_dimN, m_type>& y)
 {
     register int i;
-    register t_type sum;
+    register m_type sum;
 
     sum = 0;
     for (i = 0; i < m_dimN; i++)
@@ -1032,11 +1030,11 @@ inline t_type dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::DotProduct(const Vecto
 }
 */
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::CholeskyDecomposition(Matrix<m_dimN, m_dimN, t_type> &A)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::CholeskyDecomposition(dtMatrix<m_dimN, m_dimN, m_type> &A)
 {
     int i, j, k;
-    t_type sum;
+    m_type sum;
 
     for (i = 0; i < m_dimN; i++)
     {
@@ -1067,8 +1065,8 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::CholeskyDecomposition(
     return 0;
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::ForwardElimination(const Matrix<m_dimN, m_dimN, t_type> &L, Vector<m_dimN, t_type> &y, const Vector<m_dimN, t_type> &b)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline void dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::ForwardElimination(const dtMatrix<m_dimN, m_dimN, m_type> &L, dtVector<m_dimN, m_type> &y, const dtVector<m_dimN, m_type> &b)
 {
     int i, j;
 
@@ -1082,8 +1080,8 @@ inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::ForwardElimination(const
     }
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::BackwardElimination(const Matrix<m_dimN, m_dimN, t_type> &U, Vector<m_dimN, t_type> &x, const Vector<m_dimN, t_type> &y)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline void dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::BackwardElimination(const dtMatrix<m_dimN, m_dimN, m_type> &U, dtVector<m_dimN, m_type> &x, const dtVector<m_dimN, m_type> &y)
 {
     int i, j;
 
@@ -1097,21 +1095,21 @@ inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::BackwardElimination(cons
     }
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::CholeskySolve(const Matrix<m_dimN, m_dimN, t_type> &L, Vector<m_dimN, t_type> &x, const Vector<m_dimN, t_type> &b)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline void dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::CholeskySolve(const dtMatrix<m_dimN, m_dimN, m_type> &L, dtVector<m_dimN, m_type> &x, const dtVector<m_dimN, m_type> &b)
 {
-    Vector<m_dimN, t_type> y;
+    dtVector<m_dimN, m_type> y;
     /* Solve L * y = b */
     ForwardElimination(L, y, b);
     /* Solve L^T * x = y */
     BackwardElimination(L, x, y);
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::ComputeVecD(Vector<m_dimN, t_type> &vD, const Matrix<m_dimN, m_dimN, t_type> &mJ, const Vector<m_dimN, t_type> &vNp)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline void dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::ComputeVecD(dtVector<m_dimN, m_type> &vD, const dtMatrix<m_dimN, m_dimN, m_type> &mJ, const dtVector<m_dimN, m_type> &vNp)
 {
     int i, j, cnt;
-    t_type sum;
+    m_type sum;
 
     /* compute d = H^T * np */
     for (i = 0; i < m_dimN; i++)
@@ -1131,8 +1129,8 @@ inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::ComputeVecD(Vector<m_dim
     }
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateVecZ(Vector<m_dimN, t_type> &vZ, const Matrix<m_dimN, m_dimN, t_type> &mJ, const Vector<m_dimN, t_type> &vD, const int iq)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline void dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::UpdateVecZ(dtVector<m_dimN, m_type> &vZ, const dtMatrix<m_dimN, m_dimN, m_type> &mJ, const dtVector<m_dimN, m_type> &vD, const int iq)
 {
     int cnt, i, j;
 
@@ -1155,12 +1153,12 @@ inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateVecZ(Vector<m_dimN
     }
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateVecR(const Matrix<m_dimN, m_dimN, t_type> &mR, Vector<m_dimP + m_dimM, t_type> &vR, const Vector<m_dimN, t_type> &vD, const int iq)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline void dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::UpdateVecR(const dtMatrix<m_dimN, m_dimN, m_type> &mR, dtVector<m_dimP + m_dimM, m_type> &vR, const dtVector<m_dimN, m_type> &vD, const int iq)
 {
     // R is Upper Triangle Matrix of QR decompostion
     int cnt, i, j;
-    t_type sum;
+    m_type sum;
 
     /* setting of r = R^-1 d */
     for (i = iq - 1; i >= 0; i--)
@@ -1175,18 +1173,19 @@ inline void dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::UpdateVecR(const Matrix<
             sum += mR(i, j + 2) * vR(j + 2);
             sum += mR(i, j + 3) * vR(j + 3);
         }
-        for (cnt = (iq - i + 1) % 4; cnt > 0; cnt--, j++)
+        // for (cnt = (iq - i + 1) % 4; cnt > 0; cnt--, j++)
+        for (cnt = (iq - i - 1) % 4; cnt > 0; cnt--, j++) // 2023.12.13
             sum += mR(i, j) * vR(j);
 
         vR(i) = (vD(i) - sum) / mR(i, i);
     }
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline t_type dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::Distance(t_type a, t_type b)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline m_type dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::Distance(m_type a, m_type b)
 {
     // Increases numerical accuracy
-    t_type absA, absB, t;
+    m_type absA, absB, t;
 
     absA = std::abs(a);
     absB = std::abs(b);
@@ -1194,26 +1193,26 @@ inline t_type dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::Distance(t_type a, t_t
     if (absA > absB)
     {
         t = (absB / absA);
-        return absA * std::sqrt((t_type)1.0 + t * t);
+        return absA * std::sqrt((m_type)1.0 + t * t);
     }
     else if (absB > absA)
     {
         t = (absA / absB);
-        return absB * std::sqrt((t_type)1.0 + t * t);
+        return absB * std::sqrt((m_type)1.0 + t * t);
     }
 
-    return absA * std::sqrt((t_type)2.0);
+    return absA * std::sqrt((m_type)2.0);
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline bool dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::AddConstraint(Matrix<m_dimN, m_dimN, t_type> &mR, Matrix<m_dimN, m_dimN, t_type> &mJ, Vector<m_dimN, t_type> &vD, int &iq, t_type &R_norm)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline bool dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::AddConstraint(dtMatrix<m_dimN, m_dimN, m_type> &mR, dtMatrix<m_dimN, m_dimN, m_type> &mJ, dtVector<m_dimN, m_type> &vD, int &iq, m_type &R_norm)
 {
 #ifdef DT_QP_DEBUG
     cout << "->  Come in Func. AddConstraint(R, J, d, iq, norm R), with iq(" << iq << ")" << endl;
 #endif
     int i, j, k, cnt;
-    t_type cc, ss, h, xny;
-    t_type t1[4], t2[4];
+    m_type cc, ss, h, xny;
+    m_type t1[4], t2[4];
 
     /* we have to find the Givens rotation which will reduce the element d(j) to zero.
       if it is already zero we don't have to do anything, except of decreasing j
@@ -1232,7 +1231,7 @@ inline bool dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::AddConstraint(Matrix<m_d
         ss = vD(j);
         h = Distance(cc, ss);
 
-        if (std::abs(h) < std::numeric_limits<t_type>::epsilon()) // h == 0
+        if (std::abs(h) < std::numeric_limits<m_type>::epsilon()) // h == 0
             continue;
 
         vD(j) = 0;
@@ -1288,7 +1287,7 @@ inline bool dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::AddConstraint(Matrix<m_d
         }
     }
 
-    /* update the number of constraints added*/
+    /* update the SYSREAL of constraints added*/
     iq++;
 
     /* To update R we have to put the iq components of the d vector
@@ -1317,7 +1316,7 @@ inline bool dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::AddConstraint(Matrix<m_d
     cout << "norm of mat R = " << R_norm << endl;
     cout << endl;
 #endif
-    if (std::abs(vD(iq - 1)) <= std::numeric_limits<t_type>::epsilon() * R_norm)
+    if (std::abs(vD(iq - 1)) <= std::numeric_limits<m_type>::epsilon() * R_norm)
     {
         // problem degenerate
 #ifdef DT_QP_DEBUG
@@ -1326,20 +1325,20 @@ inline bool dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::AddConstraint(Matrix<m_d
         return false;
     }
 
-    R_norm = std::max<t_type>(R_norm, std::abs(vD(iq - 1)));
+    R_norm = std::max<m_type>(R_norm, std::abs(vD(iq - 1)));
 
     return true;
 }
 
-template <int m_dimN, int m_dimM, int m_dimP, typename t_type>
-inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::DelConstraint(Matrix<m_dimN, m_dimN, t_type> &mR, Matrix<m_dimN, m_dimN, t_type> &mJ, Vector<m_dimP + m_dimM, int> &vA, Vector<m_dimP + m_dimM, t_type> &vU, int &iq, const int l)
+template <int m_dimN, int m_dimM, int m_dimP, typename m_type>
+inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, m_type>::DelConstraint(dtMatrix<m_dimN, m_dimN, m_type> &mR, dtMatrix<m_dimN, m_dimN, m_type> &mJ, dtVector<m_dimP + m_dimM, int> &vA, dtVector<m_dimP + m_dimM, m_type> &vU, int &iq, const int l)
 {
 #ifdef DT_QP_DEBUG
     cout << "->  Come in Func. DelConstraint(R, J, A, u, iq, l), with iq(" << iq << "), l(" << l << ")" << endl;
 #endif
     int i, j, k, cnt, qq = 0; // just to prevent warnings from smart compilers
-    t_type cc, ss, h, xny;
-    t_type t1[4], t2[4];
+    m_type cc, ss, h, xny;
+    m_type t1[4], t2[4];
     bool found = false;
 
     /* Find the index qq for active constraint l to be removed */
@@ -1423,7 +1422,7 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::DelConstraint(Matrix<m
         ss = mR(j + 1, j);
         h = Distance(cc, ss);
 
-        if (std::abs(h) < std::numeric_limits<t_type>::epsilon()) // h == 0
+        if (std::abs(h) < std::numeric_limits<m_type>::epsilon()) // h == 0
             continue;
 
         cc = cc / h;
@@ -1518,7 +1517,6 @@ inline int8_t dtQuadProg<m_dimN, m_dimM, m_dimP, t_type>::DelConstraint(Matrix<m
     return 0;
 }
 
-} // namespace Math
-} // namespace dt
+} // namespace dtMath
 
 #endif // DTMATH_DTQUAD_PROG_TPP_

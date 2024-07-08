@@ -14,29 +14,26 @@
 
 #include "dtSVD.h"
 
-namespace dt
-{
-namespace Math
+namespace dtMath
 {
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline SVD<t_row, t_col, t_type>::SVD()
-    : m_A(), m_U(), m_S(), m_V(), m_superDiagonal(), m_inv()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtSVD<m_row, m_col, m_type>::dtSVD()
 {
+    memset(m_A, 0, sizeof(m_type) * m_row * m_col);
     m_isOk = 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline SVD<t_row, t_col, t_type>::SVD(const t_type *element, const size_t n_byte)
-    : m_U(), m_S(), m_V(), m_superDiagonal(), m_inv()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtSVD<m_row, m_col, m_type>::dtSVD(const m_type *element, const size_t n_byte)
 {
-    if ((sizeof(t_type) * t_row * t_col) != n_byte)
+    if ((sizeof(m_type) * m_row * m_col) != n_byte)
     {
         m_isOk = 0;
         return;
     }
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
         memcpy(m_A, element, n_byte);
 
@@ -52,25 +49,25 @@ inline SVD<t_row, t_col, t_type>::SVD(const t_type *element, const size_t n_byte
     }
     else
     { // Transposed A
-        // for (uint16_t irow = 0; irow < t_row; ++irow)
-        //     for (uint16_t icol = 0; icol < t_col; ++icol)
-        //         m_A[icol * t_row + irow] = element[irow * t_col + icol];
+        // for (uint16_t irow = 0; irow < m_row; ++irow)
+        //     for (uint16_t icol = 0; icol < m_col; ++icol)
+        //         m_A[icol * m_row + irow] = element[irow * m_col + icol];
         uint16_t cnt;
         uint16_t irow, icol;
 
-        for (irow = 0; irow < t_row; ++irow)
+        for (irow = 0; irow < m_row; ++irow)
         {
-            for (cnt = t_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
+            for (cnt = m_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
             {
-                m_A[irow + t_row * icol] = element[irow * t_col + icol];
-                m_A[irow + t_row * (icol + 1)] = element[irow * t_col + icol + 1];
-                m_A[irow + t_row * (icol + 2)] = element[irow * t_col + icol + 2];
-                m_A[irow + t_row * (icol + 3)] = element[irow * t_col + icol + 3];
+                m_A[irow + m_row * icol] = element[irow * m_col + icol];
+                m_A[irow + m_row * (icol + 1)] = element[irow * m_col + icol + 1];
+                m_A[irow + m_row * (icol + 2)] = element[irow * m_col + icol + 2];
+                m_A[irow + m_row * (icol + 3)] = element[irow * m_col + icol + 3];
             }
 
-            for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
+            for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
             {
-                m_A[irow + t_row * icol] = element[irow * t_col + icol];
+                m_A[irow + m_row * icol] = element[irow * m_col + icol];
             }
         }
 
@@ -86,13 +83,12 @@ inline SVD<t_row, t_col, t_type>::SVD(const t_type *element, const size_t n_byte
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline SVD<t_row, t_col, t_type>::SVD(const Matrix<t_row, t_col, t_type> &m)
-    : m_U(), m_S(), m_V(), m_superDiagonal(), m_inv()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtSVD<m_row, m_col, m_type>::dtSVD(const dtMatrix<m_row, m_col, m_type> &m)
 {
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        memcpy(m_A, m.m_elem, sizeof(t_type) * t_row * t_col);
+        memcpy(m_A, m.m_elem, sizeof(m_type) * m_row * m_col);
 
         // Compute SVD
         HouseholdersReductionToBidiagonalForm_Mxn();
@@ -106,25 +102,25 @@ inline SVD<t_row, t_col, t_type>::SVD(const Matrix<t_row, t_col, t_type> &m)
     }
     else
     { // Transposed A
-        // for (uint16_t irow = 0; irow < t_row; ++irow)
-        //     for (uint16_t icol = 0; icol < t_col; ++icol)
-        //         m_A[icol * t_row + irow] = m.m_elem[irow * t_col + icol];
+        // for (uint16_t irow = 0; irow < m_row; ++irow)
+        //     for (uint16_t icol = 0; icol < m_col; ++icol)
+        //         m_A[icol * m_row + irow] = m.m_elem[irow * m_col + icol];
         uint16_t cnt;
         uint16_t irow, icol;
 
-        for (irow = 0; irow < t_row; ++irow)
+        for (irow = 0; irow < m_row; ++irow)
         {
-            for (cnt = t_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
+            for (cnt = m_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
             {
-                m_A[irow + t_row * icol] = m.m_elem[irow * t_col + icol];
-                m_A[irow + t_row * (icol + 1)] = m.m_elem[irow * t_col + icol + 1];
-                m_A[irow + t_row * (icol + 2)] = m.m_elem[irow * t_col + icol + 2];
-                m_A[irow + t_row * (icol + 3)] = m.m_elem[irow * t_col + icol + 3];
+                m_A[irow + m_row * icol] = m.m_elem[irow * m_col + icol];
+                m_A[irow + m_row * (icol + 1)] = m.m_elem[irow * m_col + icol + 1];
+                m_A[irow + m_row * (icol + 2)] = m.m_elem[irow * m_col + icol + 2];
+                m_A[irow + m_row * (icol + 3)] = m.m_elem[irow * m_col + icol + 3];
             }
 
-            for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
+            for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
             {
-                m_A[irow + t_row * icol] = m.m_elem[irow * t_col + icol];
+                m_A[irow + m_row * icol] = m.m_elem[irow * m_col + icol];
             }
         }
 
@@ -140,11 +136,10 @@ inline SVD<t_row, t_col, t_type>::SVD(const Matrix<t_row, t_col, t_type> &m)
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline SVD<t_row, t_col, t_type>::SVD(const Matrix3<t_type, t_row, t_col> &m)
-    : m_U(), m_S(), m_V(), m_superDiagonal(), m_inv()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtSVD<m_row, m_col, m_type>::dtSVD(const dtMatrix3<m_type, m_row, m_col> &m)
 {
-    memcpy(m_A, m.m_elem, sizeof(t_type) * t_row * t_col);
+    memcpy(m_A, m.m_elem, sizeof(m_type) * m_row * m_col);
 
     // Compute SVD
     HouseholdersReductionToBidiagonalForm_Mxn();
@@ -157,16 +152,16 @@ inline SVD<t_row, t_col, t_type>::SVD(const Matrix3<t_type, t_row, t_col> &m)
     m_isOk = 1;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t SVD<t_row, t_col, t_type>::Compute(const t_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtSVD<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
 {
-    if ((sizeof(t_type) * t_row * t_col) != n_byte)
+    if ((sizeof(m_type) * m_row * m_col) != n_byte)
     {
         m_isOk = 0;
         return -1;
     }
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
         memcpy(m_A, element, n_byte);
 
@@ -182,25 +177,25 @@ inline int8_t SVD<t_row, t_col, t_type>::Compute(const t_type *element, const si
     }
     else
     { // Transposed A
-        // for (uint16_t irow = 0; irow < t_row; ++irow)
-        //     for (uint16_t icol = 0; icol < t_col; ++icol)
-        //         m_A[icol * t_row + irow] = element[irow * t_col + icol];
+        // for (uint16_t irow = 0; irow < m_row; ++irow)
+        //     for (uint16_t icol = 0; icol < m_col; ++icol)
+        //         m_A[icol * m_row + irow] = element[irow * m_col + icol];
         uint16_t cnt;
         uint16_t irow, icol;
 
-        for (irow = 0; irow < t_row; ++irow)
+        for (irow = 0; irow < m_row; ++irow)
         {
-            for (cnt = t_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
+            for (cnt = m_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
             {
-                m_A[irow + t_row * icol] = element[irow * t_col + icol];
-                m_A[irow + t_row * (icol + 1)] = element[irow * t_col + icol + 1];
-                m_A[irow + t_row * (icol + 2)] = element[irow * t_col + icol + 2];
-                m_A[irow + t_row * (icol + 3)] = element[irow * t_col + icol + 3];
+                m_A[irow + m_row * icol] = element[irow * m_col + icol];
+                m_A[irow + m_row * (icol + 1)] = element[irow * m_col + icol + 1];
+                m_A[irow + m_row * (icol + 2)] = element[irow * m_col + icol + 2];
+                m_A[irow + m_row * (icol + 3)] = element[irow * m_col + icol + 3];
             }
 
-            for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
+            for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
             {
-                m_A[irow + t_row * icol] = element[irow * t_col + icol];
+                m_A[irow + m_row * icol] = element[irow * m_col + icol];
             }
         }
 
@@ -218,12 +213,12 @@ inline int8_t SVD<t_row, t_col, t_type>::Compute(const t_type *element, const si
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t SVD<t_row, t_col, t_type>::Compute(const Matrix<t_row, t_col, t_type> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtSVD<m_row, m_col, m_type>::Compute(const dtMatrix<m_row, m_col, m_type> &m)
 {
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        memcpy(m_A, m.m_elem, sizeof(t_type) * t_row * t_col);
+        memcpy(m_A, m.m_elem, sizeof(m_type) * m_row * m_col);
 
         // Compute SVD
         HouseholdersReductionToBidiagonalForm_Mxn();
@@ -237,25 +232,25 @@ inline int8_t SVD<t_row, t_col, t_type>::Compute(const Matrix<t_row, t_col, t_ty
     }
     else
     { // Transposed A
-        // for (uint16_t irow = 0; irow < t_row; ++irow)
-        //     for (uint16_t icol = 0; icol < t_col; ++icol)
-        //         m_A[icol * t_row + irow] = m.m_elem[irow * t_col + icol];
+        // for (uint16_t irow = 0; irow < m_row; ++irow)
+        //     for (uint16_t icol = 0; icol < m_col; ++icol)
+        //         m_A[icol * m_row + irow] = m.m_elem[irow * m_col + icol];
         uint16_t cnt;
         uint16_t irow, icol;
 
-        for (irow = 0; irow < t_row; ++irow)
+        for (irow = 0; irow < m_row; ++irow)
         {
-            for (cnt = t_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
+            for (cnt = m_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
             {
-                m_A[irow + t_row * icol] = m.m_elem[irow * t_col + icol];
-                m_A[irow + t_row * (icol + 1)] = m.m_elem[irow * t_col + icol + 1];
-                m_A[irow + t_row * (icol + 2)] = m.m_elem[irow * t_col + icol + 2];
-                m_A[irow + t_row * (icol + 3)] = m.m_elem[irow * t_col + icol + 3];
+                m_A[irow + m_row * icol] = m.m_elem[irow * m_col + icol];
+                m_A[irow + m_row * (icol + 1)] = m.m_elem[irow * m_col + icol + 1];
+                m_A[irow + m_row * (icol + 2)] = m.m_elem[irow * m_col + icol + 2];
+                m_A[irow + m_row * (icol + 3)] = m.m_elem[irow * m_col + icol + 3];
             }
 
-            for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
+            for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
             {
-                m_A[irow + t_row * icol] = m.m_elem[irow * t_col + icol];
+                m_A[irow + m_row * icol] = m.m_elem[irow * m_col + icol];
             }
         }
 
@@ -273,10 +268,10 @@ inline int8_t SVD<t_row, t_col, t_type>::Compute(const Matrix<t_row, t_col, t_ty
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t SVD<t_row, t_col, t_type>::Compute(const Matrix3<t_type, t_row, t_col> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtSVD<m_row, m_col, m_type>::Compute(const dtMatrix3<m_type, m_row, m_col> &m)
 {
-    memcpy(m_A, m.m_elem, sizeof(t_type) * t_row * t_col);
+    memcpy(m_A, m.m_elem, sizeof(m_type) * m_row * m_col);
 
     // Compute SVD
     HouseholdersReductionToBidiagonalForm_Mxn();
@@ -291,79 +286,79 @@ inline int8_t SVD<t_row, t_col, t_type>::Compute(const Matrix3<t_type, t_row, t_
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_row, t_type> SVD<t_row, t_col, t_type>::GetMatrixU() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_row, m_type> dtSVD<m_row, m_col, m_type>::GetMatrixU() const
 {
-    if (t_row > t_col)
+    if (m_row > m_col)
     {
-        t_type U[t_row * t_row] = {
+        m_type U[m_row * m_row] = {
             0,
         };
 
-        for (int i = 0; i < t_row; i++)
-            memcpy(&U[i * t_row], &m_U[i * t_col], sizeof(t_type) * t_col);
+        for (int i = 0; i < m_row; i++)
+            memcpy(&U[i * m_row], &m_U[i * m_col], sizeof(m_type) * m_col);
 
-        return Matrix<t_row, t_row, t_type>(U);
+        return dtMatrix<m_row, m_row, m_type>(U);
     }
     else
     {
-        return Matrix<t_row, t_row, t_type>(m_U);
+        return dtMatrix<m_row, m_row, m_type>(m_U);
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> SVD<t_row, t_col, t_type>::GetMatrixS() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtSVD<m_row, m_col, m_type>::GetMatrixS() const
 {
-    return Matrix<t_row, t_col, t_type>(m_S, 'd');
+    return dtMatrix<m_row, m_col, m_type>(m_S, 'd');
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_col, t_col, t_type> SVD<t_row, t_col, t_type>::GetMatrixV() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_col, m_col, m_type> dtSVD<m_row, m_col, m_type>::GetMatrixV() const
 {
-    if (t_row < t_col)
+    if (m_row < m_col)
     {
-        t_type V[t_col * t_col] = {
+        m_type V[m_col * m_col] = {
             0,
         };
 
-        for (int i = 0; i < t_col; i++)
-            memcpy(&V[i * t_col], &m_V[i * t_row], sizeof(t_type) * t_row);
+        for (int i = 0; i < m_col; i++)
+            memcpy(&V[i * m_col], &m_V[i * m_row], sizeof(m_type) * m_row);
 
-        return Matrix<t_col, t_col, t_type>(V);
+        return dtMatrix<m_col, m_col, m_type>(V);
     }
     else
     {
-        return Matrix<t_col, t_col, t_type>(m_V);
+        return dtMatrix<m_col, m_col, m_type>(m_V);
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
+template <uint16_t m_row, uint16_t m_col, typename m_type>
 template <uint16_t col>
-inline int8_t SVD<t_row, t_col, t_type>::Solve(const Matrix<t_row, col, t_type> &b, Matrix<t_col, col, t_type> &x, t_type tolerance)
+inline int8_t dtSVD<m_row, m_col, m_type>::Solve(const dtMatrix<m_row, col, m_type> &b, dtMatrix<m_col, col, m_type> &x, m_type tolerance)
 {
     int i, j, k, c;
-    t_type *pU, *pV;
-    t_type sum;
+    m_type *pU, *pV;
+    m_type sum;
 
     if (!m_isOk)
         return -1;
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        sum = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_col;
+        sum = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_col;
         if (tolerance < sum)
             tolerance = sum;
 
         for (c = 0; c < col; c++)
         {
-            for (i = 0, pV = m_V; i < t_col; i++, pV += t_col)
+            for (i = 0, pV = m_V; i < m_col; i++, pV += m_col)
             {
                 x.m_elem[i * col + c] = 0;
-                for (j = 0; j < t_col; j++)
+                for (j = 0; j < m_col; j++)
                 {
                     if (m_S[j] > tolerance)
                     {
-                        for (k = 0, sum = 0, pU = m_U; k < t_row; k++, pU += t_col)
+                        for (k = 0, sum = 0, pU = m_U; k < m_row; k++, pU += m_col)
                             sum += *(pU + j) * b.m_elem[k * col + c];
 
                         x.m_elem[i * col + c] += sum * *(pV + j) / m_S[j];
@@ -374,20 +369,20 @@ inline int8_t SVD<t_row, t_col, t_type>::Solve(const Matrix<t_row, col, t_type> 
     }
     else
     {
-        sum = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_row;
+        sum = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_row;
         if (tolerance < sum)
             tolerance = sum;
 
         for (c = 0; c < col; c++)
         {
-            for (i = 0, pV = m_V; i < t_col; i++, pV += t_row)
+            for (i = 0, pV = m_V; i < m_col; i++, pV += m_row)
             {
                 x.m_elem[i * col + c] = 0;
-                for (j = 0; j < t_row; j++)
+                for (j = 0; j < m_row; j++)
                 {
                     if (m_S[j] > tolerance)
                     {
-                        for (k = 0, sum = 0, pU = m_U; k < t_row; k++, pU += t_row)
+                        for (k = 0, sum = 0, pU = m_U; k < m_row; k++, pU += m_row)
                             sum += *(pU + j) * b.m_elem[k * col + c];
 
                         x.m_elem[i * col + c] += sum * *(pV + j) / m_S[j];
@@ -400,30 +395,30 @@ inline int8_t SVD<t_row, t_col, t_type>::Solve(const Matrix<t_row, col, t_type> 
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t SVD<t_row, t_col, t_type>::Solve(const Vector<t_row, t_type> &b, Vector<t_col, t_type> &x, t_type tolerance)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtSVD<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x, m_type tolerance)
 {
     int i, j, k;
-    t_type *pU, *pV;
-    t_type sum;
+    m_type *pU, *pV;
+    m_type sum;
 
     if (!m_isOk)
         return -1;
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        sum = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_col;
+        sum = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_col;
         if (tolerance < sum)
             tolerance = sum;
 
-        for (i = 0, pV = m_V; i < t_col; i++, pV += t_col)
+        for (i = 0, pV = m_V; i < m_col; i++, pV += m_col)
         {
             x.m_elem[i] = 0;
-            for (j = 0; j < t_col; j++)
+            for (j = 0; j < m_col; j++)
             {
                 if (m_S[j] > tolerance)
                 {
-                    for (k = 0, sum = 0, pU = m_U; k < t_row; k++, pU += t_col)
+                    for (k = 0, sum = 0, pU = m_U; k < m_row; k++, pU += m_col)
                         sum += *(pU + j) * b.m_elem[k];
 
                     x.m_elem[i] += sum * *(pV + j) / m_S[j];
@@ -433,18 +428,18 @@ inline int8_t SVD<t_row, t_col, t_type>::Solve(const Vector<t_row, t_type> &b, V
     }
     else
     {
-        sum = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_row;
+        sum = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_row;
         if (tolerance < sum)
             tolerance = sum;
 
-        for (i = 0, pV = m_V; i < t_col; i++, pV += t_row)
+        for (i = 0, pV = m_V; i < m_col; i++, pV += m_row)
         {
             x.m_elem[i] = 0;
-            for (j = 0; j < t_row; j++)
+            for (j = 0; j < m_row; j++)
             {
                 if (m_S[j] > tolerance)
                 {
-                    for (k = 0, sum = 0, pU = m_U; k < t_row; k++, pU += t_row)
+                    for (k = 0, sum = 0, pU = m_U; k < m_row; k++, pU += m_row)
                         sum += *(pU + j) * b.m_elem[k];
 
                     x.m_elem[i] += sum * *(pV + j) / m_S[j];
@@ -456,14 +451,14 @@ inline int8_t SVD<t_row, t_col, t_type>::Solve(const Vector<t_row, t_type> &b, V
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
+template <uint16_t m_row, uint16_t m_col, typename m_type>
 template <uint16_t col>
-inline Matrix<t_col, col, t_type> SVD<t_row, t_col, t_type>::Solve(const Matrix<t_row, col, t_type> &b, int8_t *isOk, t_type tolerance)
+inline dtMatrix<m_col, col, m_type> dtSVD<m_row, m_col, m_type>::Solve(const dtMatrix<m_row, col, m_type> &b, int8_t *isOk, m_type tolerance)
 {
     int i, j, k, c;
-    t_type *pU, *pV;
-    t_type sum;
-    t_type x[t_col * col] = {
+    m_type *pU, *pV;
+    m_type sum;
+    m_type x[m_col * col] = {
         0,
     };
 
@@ -473,25 +468,25 @@ inline Matrix<t_col, col, t_type> SVD<t_row, t_col, t_type>::Solve(const Matrix<
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return Matrix<t_col, col, t_type>();
+        return dtMatrix<m_col, col, m_type>();
     }
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        sum = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_col;
+        sum = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_col;
         if (tolerance < sum)
             tolerance = sum;
 
         for (c = 0; c < col; c++)
         {
-            for (i = 0, pV = m_V; i < t_col; i++, pV += t_col)
+            for (i = 0, pV = m_V; i < m_col; i++, pV += m_col)
             {
                 x[i * col + c] = 0;
-                for (j = 0; j < t_col; j++)
+                for (j = 0; j < m_col; j++)
                 {
                     if (m_S[j] > tolerance)
                     {
-                        for (k = 0, sum = 0, pU = m_U; k < t_row; k++, pU += t_col)
+                        for (k = 0, sum = 0, pU = m_U; k < m_row; k++, pU += m_col)
                             sum += *(pU + j) * b.m_elem[k * col + c];
 
                         x[i * col + c] += sum * *(pV + j) / m_S[j];
@@ -502,20 +497,20 @@ inline Matrix<t_col, col, t_type> SVD<t_row, t_col, t_type>::Solve(const Matrix<
     }
     else
     {
-        sum = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_row;
+        sum = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_row;
         if (tolerance < sum)
             tolerance = sum;
 
         for (c = 0; c < col; c++)
         {
-            for (i = 0, pV = m_V; i < t_col; i++, pV += t_row)
+            for (i = 0, pV = m_V; i < m_col; i++, pV += m_row)
             {
                 x[i * col + c] = 0;
-                for (j = 0; j < t_row; j++)
+                for (j = 0; j < m_row; j++)
                 {
                     if (m_S[j] > tolerance)
                     {
-                        for (k = 0, sum = 0, pU = m_U; k < t_row; k++, pU += t_row)
+                        for (k = 0, sum = 0, pU = m_U; k < m_row; k++, pU += m_row)
                             sum += *(pU + j) * b.m_elem[k * col + c];
 
                         x[i * col + c] += sum * *(pV + j) / m_S[j];
@@ -525,16 +520,16 @@ inline Matrix<t_col, col, t_type> SVD<t_row, t_col, t_type>::Solve(const Matrix<
         }
     }
 
-    return Matrix<t_col, col, t_type>(x);
+    return dtMatrix<m_col, col, m_type>(x);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<t_col, t_type> SVD<t_row, t_col, t_type>::Solve(const Vector<t_row, t_type> &b, int8_t *isOk, t_type tolerance)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtSVD<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, int8_t *isOk, m_type tolerance)
 {
     int i, j, k;
-    t_type *pU, *pV;
-    t_type sum;
-    t_type x[t_col] = {
+    m_type *pU, *pV;
+    m_type sum;
+    m_type x[m_col] = {
         0,
     };
 
@@ -544,23 +539,23 @@ inline Vector<t_col, t_type> SVD<t_row, t_col, t_type>::Solve(const Vector<t_row
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return Vector<t_col, t_type>();
+        return dtVector<m_col, m_type>();
     }
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        sum = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_col;
+        sum = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_col;
         if (tolerance < sum)
             tolerance = sum;
 
-        for (i = 0, pV = m_V; i < t_col; i++, pV += t_col)
+        for (i = 0, pV = m_V; i < m_col; i++, pV += m_col)
         {
             x[i] = 0;
-            for (j = 0; j < t_col; j++)
+            for (j = 0; j < m_col; j++)
             {
                 if (m_S[j] > tolerance)
                 {
-                    for (k = 0, sum = 0, pU = m_U; k < t_row; k++, pU += t_col)
+                    for (k = 0, sum = 0, pU = m_U; k < m_row; k++, pU += m_col)
                         sum += *(pU + j) * b.m_elem[k];
 
                     x[i] += sum * *(pV + j) / m_S[j];
@@ -570,18 +565,18 @@ inline Vector<t_col, t_type> SVD<t_row, t_col, t_type>::Solve(const Vector<t_row
     }
     else
     {
-        sum = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_row;
+        sum = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_row;
         if (tolerance < sum)
             tolerance = sum;
 
-        for (i = 0, pV = m_V; i < t_col; i++, pV += t_row)
+        for (i = 0, pV = m_V; i < m_col; i++, pV += m_row)
         {
             x[i] = 0;
-            for (j = 0; j < t_row; j++)
+            for (j = 0; j < m_row; j++)
             {
                 if (m_S[j] > tolerance)
                 {
-                    for (k = 0, sum = 0, pU = m_U; k < t_row; k++, pU += t_row)
+                    for (k = 0, sum = 0, pU = m_U; k < m_row; k++, pU += m_row)
                         sum += *(pU + j) * b.m_elem[k];
 
                     x[i] += sum * *(pV + j) / m_S[j];
@@ -590,30 +585,30 @@ inline Vector<t_col, t_type> SVD<t_row, t_col, t_type>::Solve(const Vector<t_row
         }
     }
 
-    return Vector<t_col, t_type>(x);
+    return dtVector<m_col, m_type>(x);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t SVD<t_row, t_col, t_type>::Inverse(Matrix<t_col, t_row, t_type> &inv, t_type tolerance)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtSVD<m_row, m_col, m_type>::Inverse(dtMatrix<m_col, m_row, m_type> &inv, m_type tolerance)
 {
     int i, j, k;
-    t_type *pU, *pV, *pInvA;
-    t_type tol;
+    m_type *pU, *pV, *pInvA;
+    m_type tol;
 
     if (!m_isOk)
         return -1;
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        tol = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_col;
+        tol = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_col;
         if (tolerance < tol)
             tolerance = tol;
 
-        for (i = 0, pV = m_V, pInvA = inv.m_elem; i < t_col; i++, pV += t_col)
+        for (i = 0, pV = m_V, pInvA = inv.m_elem; i < m_col; i++, pV += m_col)
         {
-            for (j = 0, pU = m_U; j < t_row; j++, pInvA++)
+            for (j = 0, pU = m_U; j < m_row; j++, pInvA++)
             {
-                for (k = 0, *pInvA = 0; k < t_col; k++, pU++)
+                for (k = 0, *pInvA = 0; k < m_col; k++, pU++)
                     if (m_S[k] > tolerance)
                         *pInvA += *(pV + k) * *pU / m_S[k];
             }
@@ -621,15 +616,15 @@ inline int8_t SVD<t_row, t_col, t_type>::Inverse(Matrix<t_col, t_row, t_type> &i
     }
     else
     {
-        tol = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_row;
+        tol = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_row;
         if (tolerance < tol)
             tolerance = tol;
 
-        for (i = 0, pV = m_V, pInvA = inv.m_elem; i < t_col; i++, pV += t_row)
+        for (i = 0, pV = m_V, pInvA = inv.m_elem; i < m_col; i++, pV += m_row)
         {
-            for (j = 0, pU = m_U; j < t_row; j++, pInvA++)
+            for (j = 0, pU = m_U; j < m_row; j++, pInvA++)
             {
-                for (k = 0, *pInvA = 0; k < t_row; k++, pU++)
+                for (k = 0, *pInvA = 0; k < m_row; k++, pU++)
                     if (m_S[k] > tolerance)
                         *pInvA += *(pV + k) * *pU / m_S[k];
             }
@@ -639,25 +634,25 @@ inline int8_t SVD<t_row, t_col, t_type>::Inverse(Matrix<t_col, t_row, t_type> &i
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t SVD<t_row, t_col, t_type>::Inverse(Matrix3<t_type, t_col, t_row> &inv, t_type tolerance)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtSVD<m_row, m_col, m_type>::Inverse(dtMatrix3<m_type, m_col, m_row> &inv, m_type tolerance)
 {
     int i, j, k;
-    t_type *pU, *pV, *pInvA;
-    t_type tol;
+    m_type *pU, *pV, *pInvA;
+    m_type tol;
 
     if (!m_isOk)
         return -1;
 
-    tol = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_col;
+    tol = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_col;
     if (tolerance < tol)
         tolerance = tol;
 
-    for (i = 0, pV = m_V, pInvA = inv.m_elem; i < t_col; i++, pV += t_col)
+    for (i = 0, pV = m_V, pInvA = inv.m_elem; i < m_col; i++, pV += m_col)
     {
-        for (j = 0, pU = m_U; j < t_row; j++, pInvA++)
+        for (j = 0, pU = m_U; j < m_row; j++, pInvA++)
         {
-            for (k = 0, *pInvA = 0; k < t_col; k++, pU++)
+            for (k = 0, *pInvA = 0; k < m_col; k++, pU++)
                 if (m_S[k] > tolerance)
                     *pInvA += *(pV + k) * *pU / m_S[k];
         }
@@ -666,12 +661,12 @@ inline int8_t SVD<t_row, t_col, t_type>::Inverse(Matrix3<t_type, t_col, t_row> &
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_col, t_row, t_type> SVD<t_row, t_col, t_type>::Inverse(int8_t *isOk, t_type tolerance)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_col, m_row, m_type> dtSVD<m_row, m_col, m_type>::Inverse(int8_t *isOk, m_type tolerance)
 {
     int i, j, k;
-    t_type *pU, *pV, *pInvA;
-    t_type tol;
+    m_type *pU, *pV, *pInvA;
+    m_type tol;
 
     if (isOk)
         *isOk = 1;
@@ -679,68 +674,73 @@ inline Matrix<t_col, t_row, t_type> SVD<t_row, t_col, t_type>::Inverse(int8_t *i
     if (!m_isOk && isOk)
     {
         *isOk = 0;
-        return Matrix<t_col, t_row, t_type>();
+        return dtMatrix<m_col, m_row, m_type>();
     }
 
-    memset(m_inv, 0, sizeof(t_type) * t_row * t_col);
+    memset(m_inv, 0, sizeof(m_type) * m_row * m_col);
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        tol = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_col;
+        tol = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_col;
         if (tolerance < tol)
             tolerance = tol;
 
-        for (i = 0, pV = m_V, pInvA = m_inv; i < t_col; i++, pV += t_col)
+        // for (k = 0;k < m_col; k++)
+        //     if (m_S[k] > tolerance)
+        //         m_invS[k] = 1. / m_S[k];
+
+        for (i = 0, pV = m_V, pInvA = m_inv; i < m_col; i++, pV += m_col)
         {
-            for (j = 0, pU = m_U; j < t_row; j++, pInvA++)
+            for (j = 0, pU = m_U; j < m_row; j++, pInvA++)
             {
-                for (k = 0, *pInvA = 0; k < t_col; k++, pU++)
+                for (k = 0, *pInvA = 0; k < m_col; k++, pU++)
                     if (m_S[k] > tolerance)
                         *pInvA += *(pV + k) * *pU / m_S[k];
+                // *pInvA += *(pV + k) * *pU * m_invS[k];
             }
         }
     }
     else
     {
-        tol = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_row;
+        tol = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_row;
         if (tolerance < tol)
             tolerance = tol;
 
-        for (i = 0, pV = m_V, pInvA = m_inv; i < t_col; i++, pV += t_row)
+        for (i = 0, pV = m_V, pInvA = m_inv; i < m_col; i++, pV += m_row)
         {
-            for (j = 0, pU = m_U; j < t_row; j++, pInvA++)
+            for (j = 0, pU = m_U; j < m_row; j++, pInvA++)
             {
-                for (k = 0, *pInvA = 0; k < t_row; k++, pU++)
+                for (k = 0, *pInvA = 0; k < m_row; k++, pU++)
                     if (m_S[k] > tolerance)
                         *pInvA += *(pV + k) * *pU / m_S[k];
             }
         }
     }
 
-    return Matrix<t_col, t_row, t_type>(m_inv);
+    return dtMatrix<m_col, m_row, m_type>(m_inv);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t SVD<t_row, t_col, t_type>::InverseArray(t_type *inv, t_type tolerance)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtSVD<m_row, m_col, m_type>::InverseArray(m_type *inv, m_type tolerance)
 {
     int i, j, k;
-    t_type *pU, *pV, *pInvA;
-    t_type tol;
+    m_type *pU, *pV, *pInvA;
+    m_type tol;
 
     if (!m_isOk)
         return -1;
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        tol = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_col;
+        tol = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_col;
         if (tolerance < tol)
             tolerance = tol;
 
-        for (i = 0, pV = m_V, pInvA = inv; i < t_col; i++, pV += t_col)
+        for (i = 0, pV = m_V, pInvA = inv; i < m_col; i++, pV += m_col)
         {
-            for (j = 0, pU = m_U; j < t_row; j++, pInvA++)
+            for (j = 0, pU = m_U; j < m_row; j++, pInvA++)
             {
-                for (k = 0, *pInvA = 0; k < t_col; k++, pU++)
+                for (k = 0, *pInvA = 0; k < m_col; k++, pU++)
                     if (m_S[k] > tolerance)
                         *pInvA += *(pV + k) * *pU / m_S[k];
             }
@@ -748,15 +748,15 @@ inline int8_t SVD<t_row, t_col, t_type>::InverseArray(t_type *inv, t_type tolera
     }
     else
     {
-        tol = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_row;
+        tol = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_row;
         if (tolerance < tol)
             tolerance = tol;
 
-        for (i = 0, pV = m_V, pInvA = inv; i < t_col; i++, pV += t_row)
+        for (i = 0, pV = m_V, pInvA = inv; i < m_col; i++, pV += m_row)
         {
-            for (j = 0, pU = m_U; j < t_row; j++, pInvA++)
+            for (j = 0, pU = m_U; j < m_row; j++, pInvA++)
             {
-                for (k = 0, *pInvA = 0; k < t_row; k++, pU++)
+                for (k = 0, *pInvA = 0; k < m_row; k++, pU++)
                     if (m_S[k] > tolerance)
                         *pInvA += *(pV + k) * *pU / m_S[k];
             }
@@ -766,13 +766,13 @@ inline int8_t SVD<t_row, t_col, t_type>::InverseArray(t_type *inv, t_type tolera
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline t_type *SVD<t_row, t_col, t_type>::InverseArray(int8_t *isOk, t_type tolerance)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type *dtSVD<m_row, m_col, m_type>::InverseArray(int8_t *isOk, m_type tolerance)
 {
     int i, j, k;
-    t_type *pU, *pV, *pInvA;
-    t_type tol;
-    memset(m_inv, 0, sizeof(t_type) * t_row * t_col);
+    m_type *pU, *pV, *pInvA;
+    m_type tol;
+    memset(m_inv, 0, sizeof(m_type) * m_row * m_col);
 
     if (isOk)
         *isOk = 1;
@@ -783,17 +783,17 @@ inline t_type *SVD<t_row, t_col, t_type>::InverseArray(int8_t *isOk, t_type tole
         return m_inv;
     }
 
-    if (t_row >= t_col)
+    if (m_row >= m_col)
     {
-        tol = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_col;
+        tol = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_col;
         if (tolerance < tol)
             tolerance = tol;
 
-        for (i = 0, pV = m_V, pInvA = m_inv; i < t_col; i++, pV += t_col)
+        for (i = 0, pV = m_V, pInvA = m_inv; i < m_col; i++, pV += m_col)
         {
-            for (j = 0, pU = m_U; j < t_row; j++, pInvA++)
+            for (j = 0, pU = m_U; j < m_row; j++, pInvA++)
             {
-                for (k = 0, *pInvA = 0; k < t_col; k++, pU++)
+                for (k = 0, *pInvA = 0; k < m_col; k++, pU++)
                     if (m_S[k] > tolerance)
                         *pInvA += *(pV + k) * *pU / m_S[k];
             }
@@ -801,15 +801,15 @@ inline t_type *SVD<t_row, t_col, t_type>::InverseArray(int8_t *isOk, t_type tole
     }
     else
     {
-        tol = std::numeric_limits<t_type>::epsilon() * m_S[0] * (t_type)t_row;
+        tol = std::numeric_limits<m_type>::epsilon() * m_S[0] * (m_type)m_row;
         if (tolerance < tol)
             tolerance = tol;
 
-        for (i = 0, pV = m_V, pInvA = m_inv; i < t_col; i++, pV += t_row)
+        for (i = 0, pV = m_V, pInvA = m_inv; i < m_col; i++, pV += m_row)
         {
-            for (j = 0, pU = m_U; j < t_row; j++, pInvA++)
+            for (j = 0, pU = m_U; j < m_row; j++, pInvA++)
             {
-                for (k = 0, *pInvA = 0; k < t_row; k++, pU++)
+                for (k = 0, *pInvA = 0; k < m_row; k++, pU++)
                     if (m_S[k] > tolerance)
                         *pInvA += *(pV + k) * *pU / m_S[k];
             }
@@ -819,33 +819,33 @@ inline t_type *SVD<t_row, t_col, t_type>::InverseArray(int8_t *isOk, t_type tole
     return m_inv;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_Mxn()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtSVD<m_row, m_col, m_type>::HouseholdersReductionToBidiagonalForm_Mxn()
 {
     int i, j, k, ip1;
-    t_type s, s2, si, scale;
-    t_type *pU, *pUi, *pV, *pVi;
-    t_type halfNormSquared;
+    m_type s, s2, si, scale;
+    m_type *pU, *pUi, *pV, *pVi;
+    m_type halfNormSquared;
 
     // Copy A to U
-    memcpy(m_U, m_A, sizeof(t_type) * t_row * t_col);
+    memcpy(m_U, m_A, sizeof(m_type) * m_row * m_col);
 
     m_S[0] = 0;
     s = 0;
     scale = 0;
 
-    for (i = 0, pUi = m_U, ip1 = 1; i < t_col; pUi += t_col, i++, ip1++)
+    for (i = 0, pUi = m_U, ip1 = 1; i < m_col; pUi += m_col, i++, ip1++)
     {
         m_superDiagonal[i] = scale * s;
 
         // Perform Householder transform on columns.
         // Calculate the normed squared of the i-th column vector starting at row i.
-        for (j = i, pU = pUi, scale = 0; j < t_row; j++, pU += t_col)
+        for (j = i, pU = pUi, scale = 0; j < m_row; j++, pU += m_col)
             scale += std::abs(*(pU + i));
 
-        if (scale > std::numeric_limits<t_type>::epsilon())
+        if (scale > std::numeric_limits<m_type>::epsilon())
         {
-            for (j = i, pU = pUi, s2 = 0; j < t_row; j++, pU += t_col)
+            for (j = i, pU = pUi, s2 = 0; j < m_row; j++, pU += m_col)
             {
                 *(pU + i) /= scale;
                 s2 += *(pU + i) * *(pU + i);
@@ -860,19 +860,19 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_Mxn
             // Transform remaining columns by the Householder transform.
             *(pUi + i) -= s;
 
-            for (j = ip1; j < t_col; j++)
+            for (j = ip1; j < m_col; j++)
             {
-                for (k = i, si = 0, pU = pUi; k < t_row; k++, pU += t_col)
+                for (k = i, si = 0, pU = pUi; k < m_row; k++, pU += m_col)
                     si += *(pU + i) * *(pU + j);
 
                 si /= halfNormSquared;
 
-                for (k = i, pU = pUi; k < t_row; k++, pU += t_col)
+                for (k = i, pU = pUi; k < m_row; k++, pU += m_col)
                     *(pU + j) += si * *(pU + i);
             }
         }
 
-        for (j = i, pU = pUi; j < t_row; j++, pU += t_col)
+        for (j = i, pU = pUi; j < m_row; j++, pU += m_col)
             *(pU + i) *= scale;
 
         m_S[i] = s * scale;
@@ -881,15 +881,15 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_Mxn
         // Calculate the normed squared of the i-th row vector starting at column i.
         s = 0;
         scale = 0;
-        if (i >= t_row || i == (t_col - 1))
+        if (i >= m_row || i == (m_col - 1))
             continue;
 
-        for (j = ip1; j < t_col; j++)
+        for (j = ip1; j < m_col; j++)
             scale += std::abs(*(pUi + j));
 
-        if (scale > std::numeric_limits<t_type>::epsilon())
+        if (scale > std::numeric_limits<m_type>::epsilon())
         {
-            for (j = ip1, s2 = 0; j < t_col; j++)
+            for (j = ip1, s2 = 0; j < m_col; j++)
             {
                 *(pUi + j) /= scale;
                 s2 += *(pUi + j) * *(pUi + j);
@@ -904,55 +904,55 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_Mxn
             // Transform the rows by the Householder transform.
             *(pUi + ip1) -= s;
 
-            for (k = ip1; k < t_col; k++)
+            for (k = ip1; k < m_col; k++)
                 m_superDiagonal[k] = *(pUi + k) / halfNormSquared;
 
-            if (i < (t_row - 1))
+            if (i < (m_row - 1))
             {
-                for (j = ip1, pU = pUi + t_col; j < t_row; j++, pU += t_col)
+                for (j = ip1, pU = pUi + m_col; j < m_row; j++, pU += m_col)
                 {
-                    for (k = ip1, si = 0; k < t_col; k++)
+                    for (k = ip1, si = 0; k < m_col; k++)
                         si += *(pUi + k) * *(pU + k);
 
-                    for (k = ip1; k < t_col; k++)
+                    for (k = ip1; k < m_col; k++)
                         *(pU + k) += si * m_superDiagonal[k];
                 }
             }
-            for (k = ip1; k < t_col; k++)
+            for (k = ip1; k < m_col; k++)
                 *(pUi + k) *= scale;
         }
     }
 
     /* Update V */
-    pUi = m_U + t_col * (t_col - 2);
-    pVi = m_V + t_col * (t_col - 1);
-    *(pVi + t_col - 1) = 1;
-    s = m_superDiagonal[t_col - 1];
-    pVi -= t_col;
+    pUi = m_U + m_col * (m_col - 2);
+    pVi = m_V + m_col * (m_col - 1);
+    *(pVi + m_col - 1) = 1;
+    s = m_superDiagonal[m_col - 1];
+    pVi -= m_col;
 
-    for (i = t_col - 2, ip1 = t_col - 1; i >= 0; i--, pUi -= t_col, pVi -= t_col, ip1--)
+    for (i = m_col - 2, ip1 = m_col - 1; i >= 0; i--, pUi -= m_col, pVi -= m_col, ip1--)
     {
-        if (std::abs(s) > std::numeric_limits<t_type>::epsilon())
+        if (std::abs(s) > std::numeric_limits<m_type>::epsilon())
         {
-            pV = pVi + t_col;
+            pV = pVi + m_col;
 
-            for (j = ip1; j < t_col; j++, pV += t_col)
+            for (j = ip1; j < m_col; j++, pV += m_col)
                 *(pV + i) = (*(pUi + j) / *(pUi + ip1)) / s;
 
-            for (j = ip1; j < t_col; j++)
+            for (j = ip1; j < m_col; j++)
             {
                 si = 0;
 
-                for (k = ip1, pV = pVi + t_col; k < t_col; k++, pV += t_col)
+                for (k = ip1, pV = pVi + m_col; k < m_col; k++, pV += m_col)
                     si += *(pUi + k) * *(pV + j);
 
-                for (k = ip1, pV = pVi + t_col; k < t_col; k++, pV += t_col)
+                for (k = ip1, pV = pVi + m_col; k < m_col; k++, pV += m_col)
                     *(pV + j) += si * *(pV + i);
             }
         }
 
-        pV = pVi + t_col;
-        for (j = ip1; j < t_col; j++, pV += t_col)
+        pV = pVi + m_col;
+        for (j = ip1; j < m_col; j++, pV += m_col)
         {
             *(pVi + j) = 0;
             *(pV + i) = 0;
@@ -963,35 +963,35 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_Mxn
     }
 
     /* Update U */
-    pUi = m_U + t_col * (t_col - 1);
-    for (i = t_col - 1, ip1 = t_col; i >= 0; ip1 = i, i--, pUi -= t_col)
+    pUi = m_U + m_col * (m_col - 1);
+    for (i = m_col - 1, ip1 = m_col; i >= 0; ip1 = i, i--, pUi -= m_col)
     {
         s = m_S[i];
 
-        for (j = ip1; j < t_col; j++)
+        for (j = ip1; j < m_col; j++)
             *(pUi + j) = 0;
 
-        if (std::abs(s) > std::numeric_limits<t_type>::epsilon())
+        if (std::abs(s) > std::numeric_limits<m_type>::epsilon())
         {
-            for (j = ip1; j < t_col; j++)
+            for (j = ip1; j < m_col; j++)
             {
                 si = 0;
-                pU = pUi + t_col;
+                pU = pUi + m_col;
 
-                for (k = ip1; k < t_row; k++, pU += t_col)
+                for (k = ip1; k < m_row; k++, pU += m_col)
                     si += *(pU + i) * *(pU + j);
 
                 si = (si / *(pUi + i)) / s;
-                for (k = i, pU = pUi; k < t_row; k++, pU += t_col)
+                for (k = i, pU = pUi; k < m_row; k++, pU += m_col)
                     *(pU + j) += si * *(pU + i);
             }
 
-            for (j = i, pU = pUi; j < t_row; j++, pU += t_col)
+            for (j = i, pU = pUi; j < m_row; j++, pU += m_col)
                 *(pU + i) /= s;
         }
         else
         {
-            for (j = i, pU = pUi; j < t_row; j++, pU += t_col)
+            for (j = i, pU = pUi; j < m_row; j++, pU += m_col)
                 *(pU + i) = 0;
         }
 
@@ -999,28 +999,28 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_Mxn
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_Mxn()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtSVD<m_row, m_col, m_type>::GivensReductionToDiagonalForm_Mxn()
 {
-    t_type epsilon;
-    t_type c, s;
-    t_type f, g, h;
-    t_type x, y, z;
-    t_type *pU, *pV;
+    m_type epsilon;
+    m_type c, s;
+    m_type f, g, h;
+    m_type x, y, z;
+    m_type *pU, *pV;
     int i, j, k, m;
     int rotation_test;
     int iteration_count;
 
-    for (i = 0, x = 0; i < t_col; i++)
+    for (i = 0, x = 0; i < m_col; i++)
     {
         y = std::abs(m_S[i]) + std::abs(m_superDiagonal[i]);
         if (x < y)
             x = y;
     }
 
-    epsilon = x * std::numeric_limits<t_type>::epsilon();
+    epsilon = x * std::numeric_limits<m_type>::epsilon();
 
-    for (k = t_col - 1; k >= 0; k--)
+    for (k = m_col - 1; k >= 0; k--)
     {
         iteration_count = 0;
         while (1)
@@ -1056,7 +1056,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_Mxn()
                     c = g / h;
                     s = -f / h;
 
-                    for (j = 0, pU = m_U; j < t_row; j++, pU += t_col)
+                    for (j = 0, pU = m_U; j < m_row; j++, pU += m_col)
                     {
                         y = *(pU + m - 1);
                         z = *(pU + i);
@@ -1073,7 +1073,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_Mxn()
                 if (z < 0)
                 {
                     m_S[k] = -z;
-                    for (j = 0, pV = m_V; j < t_col; j++, pV += t_col)
+                    for (j = 0, pV = m_V; j < m_col; j++, pV += m_col)
                         *(pV + k) = -*(pV + k);
                 }
                 break;
@@ -1114,7 +1114,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_Mxn()
                     h = y * s;
                     y *= c;
 
-                    for (j = 0, pV = m_V; j < t_col; j++, pV += t_col)
+                    for (j = 0, pV = m_V; j < m_col; j++, pV += m_col)
                     {
                         x = *(pV + i - 1);
                         z = *(pV + i);
@@ -1125,7 +1125,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_Mxn()
                     z = std::sqrt(f * f + h * h);
                     m_S[i - 1] = z;
 
-                    if (std::abs(z) > std::numeric_limits<t_type>::epsilon())
+                    if (std::abs(z) > std::numeric_limits<m_type>::epsilon())
                     {
                         c = f / z;
                         s = h / z;
@@ -1134,7 +1134,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_Mxn()
                     f = c * g + s * y;
                     x = -s * g + c * y;
 
-                    for (j = 0, pU = m_U; j < t_row; j++, pU += t_col)
+                    for (j = 0, pU = m_U; j < m_row; j++, pU += m_col)
                     {
                         y = *(pU + i - 1);
                         z = *(pU + i);
@@ -1152,18 +1152,18 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_Mxn()
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void SVD<t_row, t_col, t_type>::SortByDecreasingSingularValues_Mxn()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtSVD<m_row, m_col, m_type>::SortByDecreasingSingularValues_Mxn()
 {
     int i, j, maxIdx;
-    t_type temp;
-    t_type *pM1, *pM2;
+    m_type temp;
+    m_type *pM1, *pM2;
 
-    for (i = 0; i < t_col - 1; i++)
+    for (i = 0; i < m_col - 1; i++)
     {
         maxIdx = i;
 
-        for (j = i + 1; j < t_col; j++)
+        for (j = i + 1; j < m_col; j++)
         {
             if (m_S[j] > m_S[maxIdx])
                 maxIdx = j;
@@ -1178,7 +1178,7 @@ inline void SVD<t_row, t_col, t_type>::SortByDecreasingSingularValues_Mxn()
         pM1 = m_U + maxIdx;
         pM2 = m_U + i;
 
-        for (j = 0; j < t_row; j++, pM1 += t_col, pM2 += t_col)
+        for (j = 0; j < m_row; j++, pM1 += m_col, pM2 += m_col)
         {
             temp = *pM1;
             *pM1 = *pM2;
@@ -1188,7 +1188,7 @@ inline void SVD<t_row, t_col, t_type>::SortByDecreasingSingularValues_Mxn()
         pM1 = m_V + maxIdx;
         pM2 = m_V + i;
 
-        for (j = 0; j < t_col; j++, pM1 += t_col, pM2 += t_col)
+        for (j = 0; j < m_col; j++, pM1 += m_col, pM2 += m_col)
         {
             temp = *pM1;
             *pM1 = *pM2;
@@ -1197,33 +1197,33 @@ inline void SVD<t_row, t_col, t_type>::SortByDecreasingSingularValues_Mxn()
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_mxN()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtSVD<m_row, m_col, m_type>::HouseholdersReductionToBidiagonalForm_mxN()
 {
     int i, j, k, ip1;
-    t_type s, s2, si, scale;
-    t_type *pV, *pVi, *pU, *pUi;
-    t_type halfNormSquared;
+    m_type s, s2, si, scale;
+    m_type *pV, *pVi, *pU, *pUi;
+    m_type halfNormSquared;
 
     // Copy A to V
-    memcpy(m_V, m_A, sizeof(t_type) * t_col * t_row);
+    memcpy(m_V, m_A, sizeof(m_type) * m_col * m_row);
 
     m_S[0] = 0;
     s = 0;
     scale = 0;
 
-    for (i = 0, pVi = m_V, ip1 = 1; i < t_row; pVi += t_row, i++, ip1++)
+    for (i = 0, pVi = m_V, ip1 = 1; i < m_row; pVi += m_row, i++, ip1++)
     {
         m_superDiagonal[i] = scale * s;
 
         // Perform Householder transform on columns.
         // Calculate the normed squared of the i-th column vector starting at row i.
-        for (j = i, pV = pVi, scale = 0; j < t_col; j++, pV += t_row)
+        for (j = i, pV = pVi, scale = 0; j < m_col; j++, pV += m_row)
             scale += std::abs(*(pV + i));
 
-        if (scale > std::numeric_limits<t_type>::epsilon())
+        if (scale > std::numeric_limits<m_type>::epsilon())
         {
-            for (j = i, pV = pVi, s2 = 0; j < t_col; j++, pV += t_row)
+            for (j = i, pV = pVi, s2 = 0; j < m_col; j++, pV += m_row)
             {
                 *(pV + i) /= scale;
                 s2 += *(pV + i) * *(pV + i);
@@ -1238,18 +1238,18 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_mxN
             // Transform remaining columns by the Householder transform.
             *(pVi + i) -= s;
 
-            for (j = ip1; j < t_row; j++)
+            for (j = ip1; j < m_row; j++)
             {
-                for (k = i, si = 0, pV = pVi; k < t_col; k++, pV += t_row)
+                for (k = i, si = 0, pV = pVi; k < m_col; k++, pV += m_row)
                     si += *(pV + i) * *(pV + j);
 
                 si /= halfNormSquared;
 
-                for (k = i, pV = pVi; k < t_col; k++, pV += t_row)
+                for (k = i, pV = pVi; k < m_col; k++, pV += m_row)
                     *(pV + j) += si * *(pV + i);
             }
         }
-        for (j = i, pV = pVi; j < t_col; j++, pV += t_row)
+        for (j = i, pV = pVi; j < m_col; j++, pV += m_row)
             *(pV + i) *= scale;
         m_S[i] = s * scale;
 
@@ -1257,15 +1257,15 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_mxN
         // Calculate the normed squared of the i-th row vector starting at column i.
         s = 0;
         scale = 0;
-        if (i >= t_col || i == (t_row - 1))
+        if (i >= m_col || i == (m_row - 1))
             continue;
 
-        for (j = ip1; j < t_row; j++)
+        for (j = ip1; j < m_row; j++)
             scale += std::abs(*(pVi + j));
 
-        if (scale > std::numeric_limits<t_type>::epsilon())
+        if (scale > std::numeric_limits<m_type>::epsilon())
         {
-            for (j = ip1, s2 = 0; j < t_row; j++)
+            for (j = ip1, s2 = 0; j < m_row; j++)
             {
                 *(pVi + j) /= scale;
                 s2 += *(pVi + j) * *(pVi + j);
@@ -1280,55 +1280,55 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_mxN
             // Transform the rows by the Householder transform.
             *(pVi + ip1) -= s;
 
-            for (k = ip1; k < t_row; k++)
+            for (k = ip1; k < m_row; k++)
                 m_superDiagonal[k] = *(pVi + k) / halfNormSquared;
 
-            if (i < (t_col - 1))
+            if (i < (m_col - 1))
             {
-                for (j = ip1, pV = pVi + t_row; j < t_col; j++, pV += t_row)
+                for (j = ip1, pV = pVi + m_row; j < m_col; j++, pV += m_row)
                 {
-                    for (k = ip1, si = 0; k < t_row; k++)
+                    for (k = ip1, si = 0; k < m_row; k++)
                         si += *(pVi + k) * *(pV + k);
 
-                    for (k = ip1; k < t_row; k++)
+                    for (k = ip1; k < m_row; k++)
                         *(pV + k) += si * m_superDiagonal[k];
                 }
             }
-            for (k = ip1; k < t_row; k++)
+            for (k = ip1; k < m_row; k++)
                 *(pVi + k) *= scale;
         }
     }
 
     /* Update U */
-    pVi = m_V + t_row * (t_row - 2);
-    pUi = m_U + t_row * (t_row - 1);
-    *(pUi + t_row - 1) = 1;
-    s = m_superDiagonal[t_row - 1];
-    pUi -= t_row;
+    pVi = m_V + m_row * (m_row - 2);
+    pUi = m_U + m_row * (m_row - 1);
+    *(pUi + m_row - 1) = 1;
+    s = m_superDiagonal[m_row - 1];
+    pUi -= m_row;
 
-    for (i = t_row - 2, ip1 = t_row - 1; i >= 0; i--, pVi -= t_row, pUi -= t_row, ip1--)
+    for (i = m_row - 2, ip1 = m_row - 1; i >= 0; i--, pVi -= m_row, pUi -= m_row, ip1--)
     {
-        if (std::abs(s) > std::numeric_limits<t_type>::epsilon())
+        if (std::abs(s) > std::numeric_limits<m_type>::epsilon())
         {
-            pU = pUi + t_row;
+            pU = pUi + m_row;
 
-            for (j = ip1; j < t_row; j++, pU += t_row)
+            for (j = ip1; j < m_row; j++, pU += m_row)
                 *(pU + i) = (*(pVi + j) / *(pVi + ip1)) / s;
 
-            for (j = ip1; j < t_row; j++)
+            for (j = ip1; j < m_row; j++)
             {
                 si = 0;
 
-                for (k = ip1, pU = pUi + t_row; k < t_row; k++, pU += t_row)
+                for (k = ip1, pU = pUi + m_row; k < m_row; k++, pU += m_row)
                     si += *(pVi + k) * *(pU + j);
 
-                for (k = ip1, pU = pUi + t_row; k < t_row; k++, pU += t_row)
+                for (k = ip1, pU = pUi + m_row; k < m_row; k++, pU += m_row)
                     *(pU + j) += si * *(pU + i);
             }
         }
 
-        pU = pUi + t_row;
-        for (j = ip1; j < t_row; j++, pU += t_row)
+        pU = pUi + m_row;
+        for (j = ip1; j < m_row; j++, pU += m_row)
         {
             *(pUi + j) = 0;
             *(pU + i) = 0;
@@ -1339,35 +1339,35 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_mxN
     }
 
     /* Update V */
-    pVi = m_V + t_row * (t_row - 1);
-    for (i = t_row - 1, ip1 = t_row; i >= 0; ip1 = i, i--, pVi -= t_row)
+    pVi = m_V + m_row * (m_row - 1);
+    for (i = m_row - 1, ip1 = m_row; i >= 0; ip1 = i, i--, pVi -= m_row)
     {
         s = m_S[i];
 
-        for (j = ip1; j < t_row; j++)
+        for (j = ip1; j < m_row; j++)
             *(pVi + j) = 0;
 
-        if (std::abs(s) > std::numeric_limits<t_type>::epsilon())
+        if (std::abs(s) > std::numeric_limits<m_type>::epsilon())
         {
-            for (j = ip1; j < t_row; j++)
+            for (j = ip1; j < m_row; j++)
             {
                 si = 0;
-                pV = pVi + t_row;
+                pV = pVi + m_row;
 
-                for (k = ip1; k < t_col; k++, pV += t_row)
+                for (k = ip1; k < m_col; k++, pV += m_row)
                     si += *(pV + i) * *(pV + j);
 
                 si = (si / *(pVi + i)) / s;
-                for (k = i, pV = pVi; k < t_col; k++, pV += t_row)
+                for (k = i, pV = pVi; k < m_col; k++, pV += m_row)
                     *(pV + j) += si * *(pV + i);
             }
 
-            for (j = i, pV = pVi; j < t_col; j++, pV += t_row)
+            for (j = i, pV = pVi; j < m_col; j++, pV += m_row)
                 *(pV + i) /= s;
         }
         else
         {
-            for (j = i, pV = pVi; j < t_col; j++, pV += t_row)
+            for (j = i, pV = pVi; j < m_col; j++, pV += m_row)
                 *(pV + i) = 0;
         }
 
@@ -1375,28 +1375,28 @@ inline void SVD<t_row, t_col, t_type>::HouseholdersReductionToBidiagonalForm_mxN
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_mxN()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtSVD<m_row, m_col, m_type>::GivensReductionToDiagonalForm_mxN()
 {
-    t_type epsilon;
-    t_type c, s;
-    t_type f, g, h;
-    t_type x, y, z;
-    t_type *pV, *pU;
+    m_type epsilon;
+    m_type c, s;
+    m_type f, g, h;
+    m_type x, y, z;
+    m_type *pV, *pU;
     int i, j, k, m;
     int rotation_test;
     int iteration_count;
 
-    for (i = 0, x = 0; i < t_row; i++)
+    for (i = 0, x = 0; i < m_row; i++)
     {
         y = std::abs(m_S[i]) + std::abs(m_superDiagonal[i]);
         if (x < y)
             x = y;
     }
 
-    epsilon = x * std::numeric_limits<t_type>::epsilon();
+    epsilon = x * std::numeric_limits<m_type>::epsilon();
 
-    for (k = t_row - 1; k >= 0; k--)
+    for (k = m_row - 1; k >= 0; k--)
     {
         iteration_count = 0;
         while (1)
@@ -1432,7 +1432,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_mxN()
                     c = g / h;
                     s = -f / h;
 
-                    for (j = 0, pV = m_V; j < t_col; j++, pV += t_row)
+                    for (j = 0, pV = m_V; j < m_col; j++, pV += m_row)
                     {
                         y = *(pV + m - 1);
                         z = *(pV + i);
@@ -1449,7 +1449,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_mxN()
                 if (z < 0)
                 {
                     m_S[k] = -z;
-                    for (j = 0, pU = m_U; j < t_row; j++, pU += t_row)
+                    for (j = 0, pU = m_U; j < m_row; j++, pU += m_row)
                         *(pU + k) = -*(pU + k);
                 }
                 break;
@@ -1490,7 +1490,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_mxN()
                     h = y * s;
                     y *= c;
 
-                    for (j = 0, pU = m_U; j < t_row; j++, pU += t_row)
+                    for (j = 0, pU = m_U; j < m_row; j++, pU += m_row)
                     {
                         x = *(pU + i - 1);
                         z = *(pU + i);
@@ -1501,7 +1501,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_mxN()
                     z = std::sqrt(f * f + h * h);
                     m_S[i - 1] = z;
 
-                    if (std::abs(z) > std::numeric_limits<t_type>::epsilon())
+                    if (std::abs(z) > std::numeric_limits<m_type>::epsilon())
                     {
                         c = f / z;
                         s = h / z;
@@ -1510,7 +1510,7 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_mxN()
                     f = c * g + s * y;
                     x = -s * g + c * y;
 
-                    for (j = 0, pV = m_V; j < t_col; j++, pV += t_row)
+                    for (j = 0, pV = m_V; j < m_col; j++, pV += m_row)
                     {
                         y = *(pV + i - 1);
                         z = *(pV + i);
@@ -1528,18 +1528,18 @@ inline int8_t SVD<t_row, t_col, t_type>::GivensReductionToDiagonalForm_mxN()
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void SVD<t_row, t_col, t_type>::SortByDecreasingSingularValues_mxN()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtSVD<m_row, m_col, m_type>::SortByDecreasingSingularValues_mxN()
 {
     int i, j, maxIdx;
-    t_type temp;
-    t_type *pM1, *pM2;
+    m_type temp;
+    m_type *pM1, *pM2;
 
-    for (i = 0; i < t_row - 1; i++)
+    for (i = 0; i < m_row - 1; i++)
     {
         maxIdx = i;
 
-        for (j = i + 1; j < t_row; j++)
+        for (j = i + 1; j < m_row; j++)
         {
             if (m_S[j] > m_S[maxIdx])
                 maxIdx = j;
@@ -1554,7 +1554,7 @@ inline void SVD<t_row, t_col, t_type>::SortByDecreasingSingularValues_mxN()
         pM1 = m_V + maxIdx;
         pM2 = m_V + i;
 
-        for (j = 0; j < t_col; j++, pM1 += t_row, pM2 += t_row)
+        for (j = 0; j < m_col; j++, pM1 += m_row, pM2 += m_row)
         {
             temp = *pM1;
             *pM1 = *pM2;
@@ -1564,7 +1564,7 @@ inline void SVD<t_row, t_col, t_type>::SortByDecreasingSingularValues_mxN()
         pM1 = m_U + maxIdx;
         pM2 = m_U + i;
 
-        for (j = 0; j < t_row; j++, pM1 += t_row, pM2 += t_row)
+        for (j = 0; j < m_row; j++, pM1 += m_row, pM2 += m_row)
         {
             temp = *pM1;
             *pM1 = *pM2;
@@ -1573,7 +1573,6 @@ inline void SVD<t_row, t_col, t_type>::SortByDecreasingSingularValues_mxN()
     }
 }
 
-} // namespace Math
-} // namespace dt
+} // namespace dtMath
 
 #endif // DTMATH_DTSVD_TPP_

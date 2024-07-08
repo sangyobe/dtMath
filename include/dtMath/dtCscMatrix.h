@@ -25,95 +25,69 @@
 #include <cmath>
 #include <limits>
 
-namespace dt
-{
-namespace Math
+namespace dtMath
 {
 
-template <uint16_t t_row, typename t_type> class Vector;
-template <typename t_type, uint16_t t_row> class Vector3;
-template <typename t_type, uint16_t t_row> class Vector4;
-template <typename t_type, uint16_t t_row> class Vector6;
-template <uint16_t t_row, uint16_t t_col, typename t_type> class Matrix;
-template <typename t_type, uint16_t t_row, uint16_t t_col> class Matrix3;
+template <uint16_t m_row, typename m_type> class dtVector;
+template <uint16_t m_row, uint16_t m_col, typename m_type> class dtMatrix;
 
-template <uint16_t t_row, uint16_t t_col, typename t_type = float>
-class CscMatrix
+template <uint16_t m_row, uint16_t m_col, typename m_type = float>
+class dtCscMatrix
 {
 private:
-    int m_elemNum;
-    t_type m_elem[t_row * t_col];
-    int m_rowIdx[t_row * t_col]; // row indices
-    int m_colPtr[t_col + 1];     // column index pointer
-    CscMatrix(const t_type *element, const int elemNum, const int *rowIdx, const int *colPtr);
+    int m_elemNum = 0;
+    m_type m_elem[m_row * m_col];
+    int m_rowIdx[m_row * m_col]; // row indices
+    int m_colIdx[m_row * m_col]; // row indices, (adh)
+    int m_colPtr[m_col + 1];     // column index pointer
+    dtCscMatrix(const m_type *element, const int elemNum, const int *rowIdx, const int *colPtr);
 
 public:
-    CscMatrix();
-    CscMatrix(const t_type *element, const size_t n_byte);
-    CscMatrix(const CscMatrix &m);
-    CscMatrix(const CscMatrix<0, 0, t_type> &m);
-    CscMatrix(const Matrix<t_row, t_col, t_type> &m);
-    CscMatrix(const Matrix<0, 0, t_type> &m);
-    ~CscMatrix() {}
+    dtCscMatrix();
+    dtCscMatrix(const dtMatrix<m_row, m_col, m_type> &m, bool isUpperTriangle = false);
+    dtCscMatrix(const dtCscMatrix &m);
+    ~dtCscMatrix() {}
 
-    void SetElement(const t_type *element, const size_t n_byte);
-    void SetElement(const Matrix<t_row, t_col, t_type> &m);
-    void SetElement(const Matrix3<t_type, t_row, t_col> &m);
-    void SetElement(const Matrix<0, 0, t_type> &m);
-
-    const t_type *const GetDataAddr() const;
+    const m_type *const GetDataAddr() const;
     const int *const GetRowIdx() const;
+    const int *const GetColIdx() const;
     const int *const GetColPtr() const;
-    uint16_t GetRowSize() const { return t_row; } // size of row
-    uint16_t GetColSize() const { return t_col; } // size of colum
-    Vector<t_col, t_type> GetRowVec(const uint16_t idxRow) const;
-    Vector<t_row, t_type> GetColVec(const uint16_t idxCol) const;
-    Vector<0, t_type> GetRowVec(const uint16_t idxRow, const uint16_t col) const;
-    Vector<0, t_type> GetColVec(const uint16_t idxCol, const uint16_t row) const;
-    int8_t GetRowVec(const uint16_t idxRow, Vector<t_col, t_type> &v) const;
-    int8_t GetColVec(const uint16_t idxCol, Vector<t_row, t_type> &v) const;
-    int8_t GetRowVec(const uint16_t idxRow, Vector<0, t_type> &v) const;
-    int8_t GetColVec(const uint16_t idxCol, Vector<0, t_type> &v) const;
-    Matrix<t_row, t_col, t_type> GetDenseMat() const;
+    uint16_t GetRowSize() const { return m_row; } // size of row
+    uint16_t GetColSize() const { return m_col; } // size of colum
+    dtVector<m_col, m_type> GetRowVec(const uint16_t idxRow) const;
+    dtVector<m_row, m_type> GetColVec(const uint16_t idxCol) const;
+    int8_t GetRowVec(const uint16_t idxRow, dtVector<m_col, m_type> &v) const;
+    int8_t GetColVec(const uint16_t idxCol, dtVector<m_row, m_type> &v) const;
+    dtMatrix<m_row, m_col, m_type> GetDenseMat() const;
+    dtCscMatrix<m_col, m_row, m_type> Transpose() const;
 
-    CscMatrix<t_col, t_row, t_type> Transpose() const;
-    t_type GetNorm() const;
-    t_type GetSqNorm() const;
-    t_type GetLpNorm(const int p) const;
+    void CalcCscMatrixForPIQP(const dtMatrix<m_row, m_col, m_type> &m);
+
+    m_type GetNorm() const;
+    m_type GetSqNorm() const;
+    const int GetElemNum() const { return m_elemNum; }
 
     /* Assignment operators */
-    CscMatrix &operator=(const CscMatrix &m);               // matrix  = matrix
-    CscMatrix &operator=(const CscMatrix<0, 0, t_type> &m); // matrix  = matrix
-    CscMatrix &operator*=(const t_type s);                  // matrix *= scalar
-    CscMatrix &operator/=(const t_type s);                  // matrix /= scalar
+    dtCscMatrix &operator=(const dtCscMatrix &m); // matrix  = matrix
+    dtCscMatrix &operator*=(const m_type s);      // matrix *= scalar
+    dtCscMatrix &operator/=(const m_type s);      // matrix /= scalar
 
     /* Arithmetic operators */
-    CscMatrix operator-() const;               // minus sign
-    CscMatrix operator*(const t_type s) const; // matrix * scalar
-    CscMatrix operator/(const t_type s) const; // matrix / scalar
+    dtCscMatrix operator*(const m_type s) const; // matrix * scalar
+    dtCscMatrix operator/(const m_type s) const; // matrix / scalar
 
-    Vector<t_row, t_type> operator*(const Vector<t_col, t_type> &v) const;  // matrix * vector
-    Vector<t_row, t_type> operator*(const Vector<0, t_type> &v) const;      // matrix * vector
-    Vector<t_row, t_type> operator*(const Vector3<t_type, t_col> &v) const; // matrix * vector3
-    Vector<t_row, t_type> operator*(const Vector4<t_type, t_col> &v) const; // matrix * vector4
-    Vector<t_row, t_type> operator*(const Vector6<t_type, t_col> &v) const; // matrix * vector6
-    Vector<t_col, t_type> TposeVec(const Vector<t_row, t_type> &v) const;   // matrix^T * vector
-    Vector<t_col, t_type> TposeVec(const Vector<0, t_type> &v) const;       // matrix^T * vector
-    Vector<t_col, t_type> TposeVec(const Vector3<t_type, t_row> &v) const;  // matrix^T * vector3
-    Vector<t_col, t_type> TposeVec(const Vector4<t_type, t_row> &v) const;  // matrix^T * vector4
-    Vector<t_col, t_type> TposeVec(const Vector6<t_type, t_row> &v) const;  // matrix^T * vector6
+    dtVector<m_row, m_type> operator*(const dtVector<m_col, m_type> &v) const; // matrix * vector
+    dtVector<m_col, m_type> TposeVec(const dtVector<m_row, m_type> &v) const;  // matrix^T * vector
 
+    void Update(const dtMatrix<m_row, m_col, m_type> &m);
     void Print(const char endChar = 0);
 
     /* Friend classes */
-    template <uint16_t row, uint16_t col, typename type> friend class CscMatrix;
+    template <uint16_t row, uint16_t col, typename type> friend class dtCscMatrix;
 };
 
-} // namespace Math
-} // namespace dt
+} // namespace dtMath
 
 #include "dtCscMatrix.tpp"
-
-#include "dtCscMatrix0.h"
 
 #endif // DTMATH_DTCSC_MATRIX_H_

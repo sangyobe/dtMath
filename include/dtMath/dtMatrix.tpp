@@ -1,5 +1,5 @@
 /*!
-\file       dtMatrix.tpp
+\file       dtMatrix.h
 \brief      dtMath, General Matrix(m x n) class
 \author     Dong-hyun Lee, phenom8305@gmail.com
 \author     Joonhee Jo, allusivejune@gmail.com
@@ -14,28 +14,25 @@
 
 #include "dtMatrix.h"
 
-#include <cassert>
-
-namespace dt
-{
-namespace Math
+namespace dtMath
 {
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type>::Matrix() : m_elem()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type>::dtMatrix()
 {
+    memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type>::Matrix(const t_type *element)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type>::dtMatrix(const m_type *element)
 {
-    memcpy(m_elem, element, sizeof(t_type) * t_row * t_col);
+    memcpy(m_elem, element, sizeof(m_type) * m_row * m_col);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type>::Matrix(const t_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type>::dtMatrix(const m_type *element, const size_t n_byte)
 {
-    size_t matSz = sizeof(t_type) * t_row * t_col;
+    size_t matSz = sizeof(m_type) * m_row * m_col;
 
     if (matSz <= n_byte)
         memcpy(m_elem, element, matSz);
@@ -46,21 +43,21 @@ inline Matrix<t_row, t_col, t_type>::Matrix(const t_type *element, const size_t 
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type>::Matrix(const char c, const t_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type>::dtMatrix(const char c, const m_type *element, const size_t n_byte)
 {
     if (c == 'a')
     {
-        size_t matSz = sizeof(t_type) * t_row * t_col;
+        size_t matSz = sizeof(m_type) * m_row * m_col;
 
         if (matSz <= n_byte)
         {
             // memcpy(m_elem, element, matSz);
             uint16_t i, j, k;
             k = 0;
-            for (i = 0; i < t_row; ++i)
-                for (j = 0; j < t_col; ++j)
-                    m_elem[i * t_col + j] = element[k++];
+            for (i = 0; i < m_row; ++i)
+                for (j = 0; j < m_col; ++j)
+                    m_elem[i * m_col + j] = element[k++];
         }
         else
         {
@@ -71,11 +68,11 @@ inline Matrix<t_row, t_col, t_type>::Matrix(const char c, const t_type *element,
 
     else if (c == 'd')
     {
-        memset(m_elem, 0, sizeof(t_type) * t_row * t_col);
+        memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
 
-        uint16_t num = (t_row > t_col) ? t_col : t_row;
-        uint16_t offset = t_col + 1;
-        uint16_t elemNum = (uint16_t)(n_byte / sizeof(t_type));
+        uint16_t num = (m_row > m_col) ? m_col : m_row;
+        uint16_t offset = m_col + 1;
+        uint16_t elemNum = (uint16_t)(n_byte / sizeof(m_type));
 
         num = (num > elemNum) ? elemNum : num;
 
@@ -85,39 +82,39 @@ inline Matrix<t_row, t_col, t_type>::Matrix(const char c, const t_type *element,
 
     else
     {
-        memset(m_elem, 0, sizeof(t_type) * t_row * t_col);
+        memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type>::Matrix(const Matrix<t_row, t_col, t_type> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type>::dtMatrix(const dtMatrix<m_row, m_col, m_type> &m)
 {
-    memcpy(m_elem, m.m_elem, sizeof(t_type) * t_row * t_col);
+    memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetZero()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetZero()
 {
-    memset(m_elem, 0, sizeof(t_type) * t_row * t_col);
+    memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetIdentity()
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetIdentity()
 {
-    memset(m_elem, 0, sizeof(t_type) * t_row * t_col);
-    uint16_t num = (t_row > t_col) ? t_col : t_row;
-    uint16_t offset = t_col + 1;
+    memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
+    uint16_t num = (m_row > m_col) ? m_col : m_row;
+    uint16_t offset = m_col + 1;
 
     for (uint16_t i = 0; i < num; i++)
         m_elem[i * offset] = 1;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetDiagonal(const t_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetDiagonal(const m_type *element, const size_t n_byte)
 {
-    uint16_t num = (t_row > t_col) ? t_col : t_row;
-    uint16_t offset = t_col + 1;
-    uint16_t elemNum = (uint16_t)(n_byte / sizeof(t_type));
+    uint16_t num = (m_row > m_col) ? m_col : m_row;
+    uint16_t offset = m_col + 1;
+    uint16_t elemNum = (uint16_t)(n_byte / sizeof(m_type));
 
     num = (num > elemNum) ? elemNum : num;
 
@@ -125,12 +122,12 @@ inline void Matrix<t_row, t_col, t_type>::SetDiagonal(const t_type *element, con
         m_elem[i * offset] = element[i];
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetFill(const t_type value)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetFill(const m_type value)
 {
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 2u; cnt > 0u; cnt--, i += 4)
+    for (cnt = (m_row * m_col) >> 2u; cnt > 0u; cnt--, i += 4)
     {
         m_elem[i] = value;
         m_elem[i + 1] = value;
@@ -138,16 +135,16 @@ inline void Matrix<t_row, t_col, t_type>::SetFill(const t_type value)
         m_elem[i + 3] = value;
     }
 
-    for (cnt = (t_row * t_col) % 4u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 4u; cnt > 0u; cnt--, i++)
     {
         m_elem[i] = value;
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetElement(const t_type *element, const size_t n_byte)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetElement(const m_type *element, const size_t n_byte)
 {
-    size_t matSz = sizeof(t_type) * t_row * t_col;
+    size_t matSz = sizeof(m_type) * m_row * m_col;
 
     if (matSz <= n_byte)
         memcpy(m_elem, element, matSz);
@@ -155,784 +152,556 @@ inline void Matrix<t_row, t_col, t_type>::SetElement(const t_type *element, cons
         memcpy(m_elem, element, n_byte);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
+template <uint16_t m_row, uint16_t m_col, typename m_type>
 template <uint16_t row, uint16_t col>
-inline void Matrix<t_row, t_col, t_type>::SetBlock(const uint16_t idxRow, const uint16_t idxCol, const Matrix<row, col, t_type> &m)
+inline void dtMatrix<m_row, m_col, m_type>::SetBlock(const uint16_t idxRow, const uint16_t idxCol, const dtMatrix<row, col, m_type> &m)
 {
-    assert(t_row > idxRow && "Index out of range");
-    assert(t_col > idxCol && "Index out of range");
-
     for (uint16_t irow = 0; irow < row; ++irow)
         for (uint16_t icol = 0; icol < col; ++icol)
-            m_elem[(irow + idxRow) * t_col + idxCol + icol] = m.m_elem[irow * col + icol];
+            m_elem[(irow + idxRow) * m_col + idxCol + icol] = m.m_elem[irow * col + icol];
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetBlock(const uint16_t idxRow, const uint16_t idxCol, const Matrix<0, 0, t_type> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetBlock(const uint16_t idxRow, const uint16_t idxCol, const dtMatrix3<m_type, 3, 3> &m)
 {
-    assert(m.m_elem != nullptr && "Memory has not been allocated");
-    assert(t_row > idxRow && "Index out of range");
-    assert(t_col > idxCol && "Index out of range");
+    m_elem[idxRow * m_col + idxCol + 0] = m.m_elem[0];
+    m_elem[idxRow * m_col + idxCol + 1] = m.m_elem[1];
+    m_elem[idxRow * m_col + idxCol + 2] = m.m_elem[2];
 
-    for (uint16_t irow = 0; irow < m.m_row; ++irow)
-        for (uint16_t icol = 0; icol < m.m_col; ++icol)
-            m_elem[(irow + idxRow) * t_col + idxCol + icol] = m.m_elem[irow * m.m_col + icol];
+    m_elem[(1 + idxRow) * m_col + idxCol + 0] = m.m_elem[3];
+    m_elem[(1 + idxRow) * m_col + idxCol + 1] = m.m_elem[4];
+    m_elem[(1 + idxRow) * m_col + idxCol + 2] = m.m_elem[5];
+
+    m_elem[(2 + idxRow) * m_col + idxCol + 0] = m.m_elem[6];
+    m_elem[(2 + idxRow) * m_col + idxCol + 1] = m.m_elem[7];
+    m_elem[(2 + idxRow) * m_col + idxCol + 2] = m.m_elem[8];
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetBlock(const uint16_t idxRow, const uint16_t idxCol, const Matrix3<t_type, 3, 3> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetBlock(const uint16_t idxRow, const uint16_t idxCol, const dtRotation<m_type, 3, 3> &m)
 {
-    assert(t_row > idxRow && "Index out of range");
-    assert(t_col > idxCol && "Index out of range");
+    m_elem[idxRow * m_col + idxCol + 0] = m.m_elem[0];
+    m_elem[idxRow * m_col + idxCol + 1] = m.m_elem[1];
+    m_elem[idxRow * m_col + idxCol + 2] = m.m_elem[2];
 
-    m_elem[idxRow * t_col + idxCol + 0] = m.m_elem[0];
-    m_elem[idxRow * t_col + idxCol + 1] = m.m_elem[1];
-    m_elem[idxRow * t_col + idxCol + 2] = m.m_elem[2];
+    m_elem[(1 + idxRow) * m_col + idxCol + 0] = m.m_elem[3];
+    m_elem[(1 + idxRow) * m_col + idxCol + 1] = m.m_elem[4];
+    m_elem[(1 + idxRow) * m_col + idxCol + 2] = m.m_elem[5];
 
-    m_elem[(1 + idxRow) * t_col + idxCol + 0] = m.m_elem[3];
-    m_elem[(1 + idxRow) * t_col + idxCol + 1] = m.m_elem[4];
-    m_elem[(1 + idxRow) * t_col + idxCol + 2] = m.m_elem[5];
-
-    m_elem[(2 + idxRow) * t_col + idxCol + 0] = m.m_elem[6];
-    m_elem[(2 + idxRow) * t_col + idxCol + 1] = m.m_elem[7];
-    m_elem[(2 + idxRow) * t_col + idxCol + 2] = m.m_elem[8];
+    m_elem[(2 + idxRow) * m_col + idxCol + 0] = m.m_elem[6];
+    m_elem[(2 + idxRow) * m_col + idxCol + 1] = m.m_elem[7];
+    m_elem[(2 + idxRow) * m_col + idxCol + 2] = m.m_elem[8];
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetBlock(const uint16_t idxRow, const uint16_t idxCol, const Rotation<t_type, 3, 3> &m)
-{
-    assert(t_row > idxRow && "Index out of range");
-    assert(t_col > idxCol && "Index out of range");
-
-    m_elem[idxRow * t_col + idxCol + 0] = m.m_elem[0];
-    m_elem[idxRow * t_col + idxCol + 1] = m.m_elem[1];
-    m_elem[idxRow * t_col + idxCol + 2] = m.m_elem[2];
-
-    m_elem[(1 + idxRow) * t_col + idxCol + 0] = m.m_elem[3];
-    m_elem[(1 + idxRow) * t_col + idxCol + 1] = m.m_elem[4];
-    m_elem[(1 + idxRow) * t_col + idxCol + 2] = m.m_elem[5];
-
-    m_elem[(2 + idxRow) * t_col + idxCol + 0] = m.m_elem[6];
-    m_elem[(2 + idxRow) * t_col + idxCol + 1] = m.m_elem[7];
-    m_elem[(2 + idxRow) * t_col + idxCol + 2] = m.m_elem[8];
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
+template <uint16_t m_row, uint16_t m_col, typename m_type>
 template <uint16_t col>
-inline void Matrix<t_row, t_col, t_type>::SetRowVec(const uint16_t idxRow, const Vector<col, t_type> &v)
+inline void dtMatrix<m_row, m_col, m_type>::SetRowVec(const uint16_t idxRow, const dtVector<col, m_type> &v)
 {
-    assert(t_row > idxRow && "Index out of range");
-
-    uint16_t maxCol = (t_col < col) ? t_col : col;
+    uint16_t maxCol = (m_col < col) ? m_col : col;
     uint16_t cnt;
     uint16_t icol = 0;
 
     for (cnt = maxCol >> 2u; cnt > 0u; cnt--, icol += 4)
     {
-        m_elem[idxRow * t_col + icol] = v.m_elem[icol];
-        m_elem[idxRow * t_col + icol + 1] = v.m_elem[icol + 1];
-        m_elem[idxRow * t_col + icol + 2] = v.m_elem[icol + 2];
-        m_elem[idxRow * t_col + icol + 3] = v.m_elem[icol + 3];
+        m_elem[idxRow * m_col + icol] = v.m_elem[icol];
+        m_elem[idxRow * m_col + icol + 1] = v.m_elem[icol + 1];
+        m_elem[idxRow * m_col + icol + 2] = v.m_elem[icol + 2];
+        m_elem[idxRow * m_col + icol + 3] = v.m_elem[icol + 3];
     }
 
     for (cnt = maxCol % 4u; cnt > 0u; cnt--, icol++)
     {
-        m_elem[idxRow * t_col + icol] = v.m_elem[icol];
+        m_elem[idxRow * m_col + icol] = v.m_elem[icol];
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetRowVec(const uint16_t idxRow, const Vector<0, t_type> &v)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetRowVec(const uint16_t idxRow, const dtVector3<m_type, 3> &v)
 {
-    assert(t_row > idxRow && "Index out of range");
-    assert(v.m_elem != nullptr && "Memory has not been allocated");
+    if (m_col >= 3)
+    {
+        m_elem[m_col * idxRow] = v.m_elem[0];
+        m_elem[m_col * idxRow + 1] = v.m_elem[1];
+        m_elem[m_col * idxRow + 2] = v.m_elem[2];
+    }
+    else
+    {
+        for (uint16_t icol = 0; icol < m_col; icol++)
+            m_elem[idxRow * m_col + icol] = v.m_elem[icol];
+    }
+}
 
-    uint16_t maxCol = (t_col < v.m_row) ? t_col : v.m_row;
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetRowVec(const uint16_t idxRow, const dtVector4<m_type, 4> &v)
+{
+    if (m_col >= 4)
+    {
+        m_elem[m_col * idxRow] = v.m_elem[0];
+        m_elem[m_col * idxRow + 1] = v.m_elem[1];
+        m_elem[m_col * idxRow + 2] = v.m_elem[2];
+        m_elem[m_col * idxRow + 3] = v.m_elem[3];
+    }
+    else
+    {
+        for (uint16_t icol = 0; icol < m_col; icol++)
+            m_elem[idxRow * m_col + icol] = v.m_elem[icol];
+    }
+}
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetRowVec(const uint16_t idxRow, const dtVector6<m_type, 6> &v)
+{
+    if (m_col >= 6)
+    {
+        m_elem[m_col * idxRow] = v.m_elem[0];
+        m_elem[m_col * idxRow + 1] = v.m_elem[1];
+        m_elem[m_col * idxRow + 2] = v.m_elem[2];
+        m_elem[m_col * idxRow + 3] = v.m_elem[3];
+        m_elem[m_col * idxRow + 4] = v.m_elem[4];
+        m_elem[m_col * idxRow + 5] = v.m_elem[5];
+    }
+    else
+    {
+        for (uint16_t icol = 0; icol < m_col; icol++)
+            m_elem[idxRow * m_col + icol] = v.m_elem[icol];
+    }
+}
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetRowVec(const uint16_t idxRow, const m_type *v, const size_t n_byte)
+{
+    uint16_t col = (uint16_t)(n_byte / sizeof(m_type));
+    uint16_t maxCol = (m_col < col) ? m_col : col;
     uint16_t cnt;
     uint16_t icol = 0;
 
     for (cnt = maxCol >> 2u; cnt > 0u; cnt--, icol += 4)
     {
-        m_elem[idxRow * t_col + icol] = v.m_elem[icol];
-        m_elem[idxRow * t_col + icol + 1] = v.m_elem[icol + 1];
-        m_elem[idxRow * t_col + icol + 2] = v.m_elem[icol + 2];
-        m_elem[idxRow * t_col + icol + 3] = v.m_elem[icol + 3];
+        m_elem[idxRow * m_col + icol] = v[icol];
+        m_elem[idxRow * m_col + icol + 1] = v[icol + 1];
+        m_elem[idxRow * m_col + icol + 2] = v[icol + 2];
+        m_elem[idxRow * m_col + icol + 3] = v[icol + 3];
     }
 
     for (cnt = maxCol % 4u; cnt > 0u; cnt--, icol++)
     {
-        m_elem[idxRow * t_col + icol] = v.m_elem[icol];
+        m_elem[idxRow * m_col + icol] = v[icol];
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetRowVec(const uint16_t idxRow, const Vector3<t_type, 3> &v)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetRowVec(const uint16_t idxRow, const m_type v)
 {
-    assert(t_row > idxRow && "Index out of range");
-
-    if (t_col >= 3)
-    {
-        m_elem[t_col * idxRow] = v.m_elem[0];
-        m_elem[t_col * idxRow + 1] = v.m_elem[1];
-        m_elem[t_col * idxRow + 2] = v.m_elem[2];
-    }
-    else
-    {
-        for (uint16_t icol = 0; icol < t_col; icol++)
-            m_elem[idxRow * t_col + icol] = v.m_elem[icol];
-    }
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetRowVec(const uint16_t idxRow, const Vector4<t_type, 4> &v)
-{
-    assert(t_row > idxRow && "Index out of range");
-
-    if (t_col >= 4)
-    {
-        m_elem[t_col * idxRow] = v.m_elem[0];
-        m_elem[t_col * idxRow + 1] = v.m_elem[1];
-        m_elem[t_col * idxRow + 2] = v.m_elem[2];
-        m_elem[t_col * idxRow + 3] = v.m_elem[3];
-    }
-    else
-    {
-        for (uint16_t icol = 0; icol < t_col; icol++)
-            m_elem[idxRow * t_col + icol] = v.m_elem[icol];
-    }
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetRowVec(const uint16_t idxRow, const Vector6<t_type, 6> &v)
-{
-    assert(t_row > idxRow && "Index out of range");
-
-    if (t_col >= 6)
-    {
-        m_elem[t_col * idxRow] = v.m_elem[0];
-        m_elem[t_col * idxRow + 1] = v.m_elem[1];
-        m_elem[t_col * idxRow + 2] = v.m_elem[2];
-        m_elem[t_col * idxRow + 3] = v.m_elem[3];
-        m_elem[t_col * idxRow + 4] = v.m_elem[4];
-        m_elem[t_col * idxRow + 5] = v.m_elem[5];
-    }
-    else
-    {
-        for (uint16_t icol = 0; icol < t_col; icol++)
-            m_elem[idxRow * t_col + icol] = v.m_elem[icol];
-    }
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetRowVec(const uint16_t idxRow, const t_type *v, const size_t n_byte)
-{
-    assert(t_row > idxRow && "Index out of range");
-
-    uint16_t col = (uint16_t)(n_byte / sizeof(t_type));
-    uint16_t maxCol = (t_col < col) ? t_col : col;
     uint16_t cnt;
     uint16_t icol = 0;
 
-    for (cnt = maxCol >> 2u; cnt > 0u; cnt--, icol += 4)
+    for (cnt = m_col >> 2u; cnt > 0u; cnt--, icol += 4)
     {
-        m_elem[idxRow * t_col + icol] = v[icol];
-        m_elem[idxRow * t_col + icol + 1] = v[icol + 1];
-        m_elem[idxRow * t_col + icol + 2] = v[icol + 2];
-        m_elem[idxRow * t_col + icol + 3] = v[icol + 3];
+        m_elem[idxRow * m_col + icol] = v;
+        m_elem[idxRow * m_col + icol + 1] = v;
+        m_elem[idxRow * m_col + icol + 2] = v;
+        m_elem[idxRow * m_col + icol + 3] = v;
     }
 
-    for (cnt = maxCol % 4u; cnt > 0u; cnt--, icol++)
+    for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
     {
-        m_elem[idxRow * t_col + icol] = v[icol];
+        m_elem[idxRow * m_col + icol] = v;
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
+template <uint16_t m_row, uint16_t m_col, typename m_type>
 template <uint16_t row>
-inline void Matrix<t_row, t_col, t_type>::SetColVec(const uint16_t idxCol, const Vector<row, t_type> &v)
+inline void dtMatrix<m_row, m_col, m_type>::SetColVec(const uint16_t idxCol, const dtVector<row, m_type> &v)
 {
-    assert(t_col > idxCol && "Index out of range");
-
-    uint16_t maxRow = (t_row < row) ? t_row : row;
+    uint16_t maxRow = (m_row < row) ? m_row : row;
     uint16_t cnt;
     uint16_t irow = 0;
 
     for (cnt = maxRow >> 2u; cnt > 0u; cnt--, irow += 4)
     {
-        m_elem[irow * t_col + idxCol] = v.m_elem[irow];
-        m_elem[(irow + 1) * t_col + idxCol] = v.m_elem[irow + 1];
-        m_elem[(irow + 2) * t_col + idxCol] = v.m_elem[irow + 2];
-        m_elem[(irow + 3) * t_col + idxCol] = v.m_elem[irow + 3];
+        m_elem[irow * m_col + idxCol] = v.m_elem[irow];
+        m_elem[(irow + 1) * m_col + idxCol] = v.m_elem[irow + 1];
+        m_elem[(irow + 2) * m_col + idxCol] = v.m_elem[irow + 2];
+        m_elem[(irow + 3) * m_col + idxCol] = v.m_elem[irow + 3];
     }
 
     for (cnt = maxRow % 4u; cnt > 0u; cnt--, irow++)
     {
-        m_elem[irow * t_col + idxCol] = v.m_elem[irow];
+        m_elem[irow * m_col + idxCol] = v.m_elem[irow];
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetColVec(const uint16_t idxCol, const Vector<0, t_type> &v)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetColVec(const uint16_t idxCol, const dtVector3<m_type, 3> &v)
 {
-    assert(t_col > idxCol && "Index out of range");
-    assert(v.m_elem != nullptr && "Memory has not been allocated");
+    if (m_row >= 3)
+    {
+        m_elem[idxCol] = v.m_elem[0];
+        m_elem[m_col + idxCol] = v.m_elem[1];
+        m_elem[m_col * 2 + idxCol] = v.m_elem[2];
+    }
+    else
+    {
+        for (uint16_t irow = 0; irow < m_row; irow++)
+            m_elem[irow * m_col + idxCol] = v.m_elem[irow];
+    }
+}
 
-    uint16_t maxRow = (t_row < v.m_row) ? t_row : v.m_row;
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetColVec(const uint16_t idxCol, const dtVector4<m_type, 4> &v)
+{
+    if (m_row >= 4)
+    {
+        m_elem[idxCol] = v.m_elem[0];
+        m_elem[m_col + idxCol] = v.m_elem[1];
+        m_elem[m_col * 2 + idxCol] = v.m_elem[2];
+        m_elem[m_col * 3 + idxCol] = v.m_elem[3];
+    }
+    else
+    {
+        for (uint16_t irow = 0; irow < m_row; irow++)
+            m_elem[irow * m_col + idxCol] = v.m_elem[irow];
+    }
+}
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetColVec(const uint16_t idxCol, const dtVector6<m_type, 6> &v)
+{
+    if (m_row >= 6)
+    {
+        m_elem[idxCol] = v.m_elem[0];
+        m_elem[m_col + idxCol] = v.m_elem[1];
+        m_elem[m_col * 2 + idxCol] = v.m_elem[2];
+        m_elem[m_col * 3 + idxCol] = v.m_elem[3];
+        m_elem[m_col * 4 + idxCol] = v.m_elem[4];
+        m_elem[m_col * 5 + idxCol] = v.m_elem[5];
+    }
+    else
+    {
+        for (uint16_t irow = 0; irow < m_row; irow++)
+            m_elem[irow * m_col + idxCol] = v.m_elem[irow];
+    }
+}
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetColVec(const uint16_t idxCol, const m_type *v, const size_t n_byte)
+{
+    uint16_t row = n_byte / sizeof(m_type);
+    uint16_t maxRow = (m_row < row) ? m_row : row;
     uint16_t cnt;
     uint16_t irow = 0;
 
     for (cnt = maxRow >> 2u; cnt > 0u; cnt--, irow += 4)
     {
-        m_elem[irow * t_col + idxCol] = v.m_elem[irow];
-        m_elem[(irow + 1) * t_col + idxCol] = v.m_elem[irow + 1];
-        m_elem[(irow + 2) * t_col + idxCol] = v.m_elem[irow + 2];
-        m_elem[(irow + 3) * t_col + idxCol] = v.m_elem[irow + 3];
+        m_elem[irow * m_col + idxCol] = v[irow];
+        m_elem[(irow + 1) * m_col + idxCol] = v[irow + 1];
+        m_elem[(irow + 2) * m_col + idxCol] = v[irow + 2];
+        m_elem[(irow + 3) * m_col + idxCol] = v[irow + 3];
     }
 
     for (cnt = maxRow % 4u; cnt > 0u; cnt--, irow++)
     {
-        m_elem[irow * t_col + idxCol] = v.m_elem[irow];
+        m_elem[irow * m_col + idxCol] = v[irow];
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetColVec(const uint16_t idxCol, const Vector3<t_type, 3> &v)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetColVec(const uint16_t idxCol, const m_type v)
 {
-    assert(t_col > idxCol && "Index out of range");
-
-    if (t_row >= 3)
-    {
-        m_elem[idxCol] = v.m_elem[0];
-        m_elem[t_col + idxCol] = v.m_elem[1];
-        m_elem[t_col * 2 + idxCol] = v.m_elem[2];
-    }
-    else
-    {
-        for (uint16_t irow = 0; irow < t_row; irow++)
-            m_elem[irow * t_col + idxCol] = v.m_elem[irow];
-    }
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetColVec(const uint16_t idxCol, const Vector4<t_type, 4> &v)
-{
-    assert(t_col > idxCol && "Index out of range");
-
-    if (t_row >= 4)
-    {
-        m_elem[idxCol] = v.m_elem[0];
-        m_elem[t_col + idxCol] = v.m_elem[1];
-        m_elem[t_col * 2 + idxCol] = v.m_elem[2];
-        m_elem[t_col * 3 + idxCol] = v.m_elem[3];
-    }
-    else
-    {
-        for (uint16_t irow = 0; irow < t_row; irow++)
-            m_elem[irow * t_col + idxCol] = v.m_elem[irow];
-    }
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetColVec(const uint16_t idxCol, const Vector6<t_type, 6> &v)
-{
-    assert(t_col > idxCol && "Index out of range");
-
-    if (t_row >= 6)
-    {
-        m_elem[idxCol] = v.m_elem[0];
-        m_elem[t_col + idxCol] = v.m_elem[1];
-        m_elem[t_col * 2 + idxCol] = v.m_elem[2];
-        m_elem[t_col * 3 + idxCol] = v.m_elem[3];
-        m_elem[t_col * 4 + idxCol] = v.m_elem[4];
-        m_elem[t_col * 5 + idxCol] = v.m_elem[5];
-    }
-    else
-    {
-        for (uint16_t irow = 0; irow < t_row; irow++)
-            m_elem[irow * t_col + idxCol] = v.m_elem[irow];
-    }
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetColVec(const uint16_t idxCol, const t_type *v, const size_t n_byte)
-{
-    assert(t_col > idxCol && "Index out of range");
-
-    uint16_t row = n_byte / sizeof(t_type);
-    uint16_t maxRow = (t_row < row) ? t_row : row;
     uint16_t cnt;
     uint16_t irow = 0;
 
-    for (cnt = maxRow >> 2u; cnt > 0u; cnt--, irow += 4)
+    for (cnt = m_row >> 2u; cnt > 0u; cnt--, irow += 4)
     {
-        m_elem[irow * t_col + idxCol] = v[irow];
-        m_elem[(irow + 1) * t_col + idxCol] = v[irow + 1];
-        m_elem[(irow + 2) * t_col + idxCol] = v[irow + 2];
-        m_elem[(irow + 3) * t_col + idxCol] = v[irow + 3];
+        m_elem[irow * m_col + idxCol] = v;
+        m_elem[(irow + 1) * m_col + idxCol] = v;
+        m_elem[(irow + 2) * m_col + idxCol] = v;
+        m_elem[(irow + 3) * m_col + idxCol] = v;
     }
 
-    for (cnt = maxRow % 4u; cnt > 0u; cnt--, irow++)
+    for (cnt = m_row % 4u; cnt > 0u; cnt--, irow++)
     {
-        m_elem[irow * t_col + idxCol] = v[irow];
+        m_elem[irow * m_col + idxCol] = v;
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetSwapRowVec(const uint16_t idxRow1, const uint16_t idxRow2)
-{
-    assert(t_row > idxRow1 && "Index out of range");
-    assert(t_row > idxRow2 && "Index out of range");
 
-    t_type tmpVec[t_col];
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetSwapRowVec(const uint16_t idxRow1, const uint16_t idxRow2)
+{
+    m_type tmpVec[m_col];
     uint16_t cnt;
     uint16_t icol = 0;
 
-    for (cnt = t_col >> 2u; cnt > 0u; cnt--, icol += 4)
+    for (cnt = m_col >> 2u; cnt > 0u; cnt--, icol += 4)
     {
-        tmpVec[icol] = m_elem[idxRow1 * t_col + icol];
-        m_elem[idxRow1 * t_col + icol] = m_elem[idxRow2 * t_col + icol];
-        m_elem[idxRow2 * t_col + icol] = tmpVec[icol];
+        tmpVec[icol] = m_elem[idxRow1 * m_col + icol];
+        m_elem[idxRow1 * m_col + icol] = m_elem[idxRow2 * m_col + icol];
+        m_elem[idxRow2 * m_col + icol] = tmpVec[icol];
 
-        tmpVec[icol + 1] = m_elem[idxRow1 * t_col + icol + 1];
-        m_elem[idxRow1 * t_col + icol + 1] = m_elem[idxRow2 * t_col + icol + 1];
-        m_elem[idxRow2 * t_col + icol + 1] = tmpVec[icol + 1];
+        tmpVec[icol + 1] = m_elem[idxRow1 * m_col + icol + 1];
+        m_elem[idxRow1 * m_col + icol + 1] = m_elem[idxRow2 * m_col + icol + 1];
+        m_elem[idxRow2 * m_col + icol + 1] = tmpVec[icol + 1];
 
-        tmpVec[icol + 2] = m_elem[idxRow1 * t_col + icol + 2];
-        m_elem[idxRow1 * t_col + icol + 2] = m_elem[idxRow2 * t_col + icol + 2];
-        m_elem[idxRow2 * t_col + icol + 2] = tmpVec[icol + 2];
+        tmpVec[icol + 2] = m_elem[idxRow1 * m_col + icol + 2];
+        m_elem[idxRow1 * m_col + icol + 2] = m_elem[idxRow2 * m_col + icol + 2];
+        m_elem[idxRow2 * m_col + icol + 2] = tmpVec[icol + 2];
 
-        tmpVec[icol + 3] = m_elem[idxRow1 * t_col + icol + 3];
-        m_elem[idxRow1 * t_col + icol + 3] = m_elem[idxRow2 * t_col + icol + 3];
-        m_elem[idxRow2 * t_col + icol + 3] = tmpVec[icol + 3];
+        tmpVec[icol + 3] = m_elem[idxRow1 * m_col + icol + 3];
+        m_elem[idxRow1 * m_col + icol + 3] = m_elem[idxRow2 * m_col + icol + 3];
+        m_elem[idxRow2 * m_col + icol + 3] = tmpVec[icol + 3];
     }
 
-    for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
+    for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
     {
-        tmpVec[icol] = m_elem[idxRow1 * t_col + icol];
-        m_elem[idxRow1 * t_col + icol] = m_elem[idxRow2 * t_col + icol];
-        m_elem[idxRow2 * t_col + icol] = tmpVec[icol];
+        tmpVec[icol] = m_elem[idxRow1 * m_col + icol];
+        m_elem[idxRow1 * m_col + icol] = m_elem[idxRow2 * m_col + icol];
+        m_elem[idxRow2 * m_col + icol] = tmpVec[icol];
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::SetSwapColVec(const uint16_t idxCol1, const uint16_t idxCol2)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::SetSwapColVec(const uint16_t idxCol1, const uint16_t idxCol2)
 {
-    assert(t_col > idxCol1 && "Index out of range");
-    assert(t_col > idxCol2 && "Index out of range");
-
-    t_type tmpVec[t_row];
+    m_type tmpVec[m_row];
     uint16_t cnt;
     uint16_t irow = 0;
 
-    for (cnt = t_row >> 2u; cnt > 0u; cnt--, irow += 4)
+    for (cnt = m_row >> 2u; cnt > 0u; cnt--, irow += 4)
     {
-        tmpVec[irow] = m_elem[irow * t_col + idxCol1];
-        m_elem[irow * t_col + idxCol1] = m_elem[irow * t_col + idxCol2];
-        m_elem[irow * t_col + idxCol2] = tmpVec[irow];
+        tmpVec[irow] = m_elem[irow * m_col + idxCol1];
+        m_elem[irow * m_col + idxCol1] = m_elem[irow * m_col + idxCol2];
+        m_elem[irow * m_col + idxCol2] = tmpVec[irow];
 
-        tmpVec[irow + 1] = m_elem[(irow + 1) * t_col + idxCol1];
-        m_elem[(irow + 1) * t_col + idxCol1] = m_elem[(irow + 1) * t_col + idxCol2];
-        m_elem[(irow + 1) * t_col + idxCol2] = tmpVec[irow + 1];
+        tmpVec[irow + 1] = m_elem[(irow + 1) * m_col + idxCol1];
+        m_elem[(irow + 1) * m_col + idxCol1] = m_elem[(irow + 1) * m_col + idxCol2];
+        m_elem[(irow + 1) * m_col + idxCol2] = tmpVec[irow + 1];
 
-        tmpVec[irow + 2] = m_elem[(irow + 2) * t_col + idxCol1];
-        m_elem[(irow + 2) * t_col + idxCol1] = m_elem[(irow + 2) * t_col + idxCol2];
-        m_elem[(irow + 2) * t_col + idxCol2] = tmpVec[irow + 2];
+        tmpVec[irow + 2] = m_elem[(irow + 2) * m_col + idxCol1];
+        m_elem[(irow + 2) * m_col + idxCol1] = m_elem[(irow + 2) * m_col + idxCol2];
+        m_elem[(irow + 2) * m_col + idxCol2] = tmpVec[irow + 2];
 
-        tmpVec[irow + 3] = m_elem[(irow + 3) * t_col + idxCol1];
-        m_elem[(irow + 3) * t_col + idxCol1] = m_elem[(irow + 3) * t_col + idxCol2];
-        m_elem[(irow + 3) * t_col + idxCol2] = tmpVec[irow + 3];
+        tmpVec[irow + 3] = m_elem[(irow + 3) * m_col + idxCol1];
+        m_elem[(irow + 3) * m_col + idxCol1] = m_elem[(irow + 3) * m_col + idxCol2];
+        m_elem[(irow + 3) * m_col + idxCol2] = tmpVec[irow + 3];
     }
 
-    for (cnt = t_row % 4u; cnt > 0u; cnt--, irow++)
+    for (cnt = m_row % 4u; cnt > 0u; cnt--, irow++)
     {
-        tmpVec[irow] = m_elem[irow * t_col + idxCol1];
-        m_elem[irow * t_col + idxCol1] = m_elem[irow * t_col + idxCol2];
-        m_elem[irow * t_col + idxCol2] = tmpVec[irow];
+        tmpVec[irow] = m_elem[irow * m_col + idxCol1];
+        m_elem[irow * m_col + idxCol1] = m_elem[irow * m_col + idxCol2];
+        m_elem[irow * m_col + idxCol2] = tmpVec[irow];
     }
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline const t_type *const Matrix<t_row, t_col, t_type>::GetElementsAddr() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline const m_type *const dtMatrix<m_row, m_col, m_type>::GetElementsAddr() const
 {
     return m_elem;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
+template <uint16_t m_row, uint16_t m_col, typename m_type>
 template <uint16_t row, uint16_t col>
-inline Matrix<row, col, t_type> Matrix<t_row, t_col, t_type>::GetBlock(const uint16_t idxRow, const uint16_t idxCol)
+inline dtMatrix<row, col, m_type> dtMatrix<m_row, m_col, m_type>::GetBlock(const uint16_t idxRow, const uint16_t idxCol)
 {
-    assert(t_row > idxRow && "Index out of range");
-    assert(t_col > idxCol && "Index out of range");
-
     uint16_t irow, icol, cnt;
-    t_type elem[row * col]{0};
-    uint16_t rowSize = t_row - idxRow;
-    uint16_t colSize = t_col - idxCol;
+    m_type elem[row * col] = {
+        0,
+    };
+    uint16_t rowSize = m_row - idxRow;
+    uint16_t colSize = m_col - idxCol;
 
-    if (idxRow >= t_row) return Matrix<row, col, t_type>(elem);
-    if (idxCol >= t_col) return Matrix<row, col, t_type>(elem);
-    if (rowSize > row) rowSize = row;
-    if (colSize > col) colSize = col;
+    if (idxRow >= m_row)
+        return dtMatrix<row, col, m_type>(elem);
+    if (idxCol >= m_col)
+        return dtMatrix<row, col, m_type>(elem);
+    if (rowSize > row)
+        rowSize = row;
+    if (colSize > col)
+        colSize = col;
 
     for (irow = 0; irow < rowSize; ++irow)
     {
         for (cnt = colSize >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4)
         {
-            elem[irow * col + icol] = m_elem[(irow + idxRow) * t_col + idxCol + icol];
-            elem[irow * col + icol + 1] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 1];
-            elem[irow * col + icol + 2] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 2];
-            elem[irow * col + icol + 3] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 3];
+            elem[irow * col + icol] = m_elem[(irow + idxRow) * m_col + idxCol + icol];
+            elem[irow * col + icol + 1] = m_elem[(irow + idxRow) * m_col + idxCol + icol + 1];
+            elem[irow * col + icol + 2] = m_elem[(irow + idxRow) * m_col + idxCol + icol + 2];
+            elem[irow * col + icol + 3] = m_elem[(irow + idxRow) * m_col + idxCol + icol + 3];
         }
         for (cnt = colSize % 4; cnt > 0u; cnt--, icol++)
         {
-            elem[irow * col + icol] = m_elem[(irow + idxRow) * t_col + idxCol + icol];
+            elem[irow * col + icol] = m_elem[(irow + idxRow) * m_col + idxCol + icol];
         }
     }
 
-    return Matrix<row, col, t_type>(elem);
+    return dtMatrix<row, col, m_type>(elem);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<0, 0, t_type> Matrix<t_row, t_col, t_type>::GetBlock(const uint16_t idxRow, const uint16_t idxCol, const uint16_t row, const uint16_t col)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_col, m_type> dtMatrix<m_row, m_col, m_type>::GetRowVec(const uint16_t idxRow) const
 {
-    assert(t_row > idxRow && "Index out of range");
-    assert(t_col > idxCol && "Index out of range");
+    m_type vec[m_col];
+    uint16_t cnt;
+    uint16_t icol = 0;
 
-    uint16_t irow, icol, cnt;
-    uint16_t rowSize = t_row - idxRow;
-    uint16_t colSize = t_col - idxCol;
-    Matrix<0, 0, t_type> mat(row, col);
-
-    if (rowSize > row) rowSize = row;
-    if (colSize > col) colSize = col;
-
-    for (irow = 0; irow < rowSize; ++irow)
+    for (cnt = m_col >> 2u; cnt > 0u; cnt--, icol += 4)
     {
-        for (cnt = colSize >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4)
-        {
-            mat.m_elem[irow * col + icol] = m_elem[(irow + idxRow) * t_col + idxCol + icol];
-            mat.m_elem[irow * col + icol + 1] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 1];
-            mat.m_elem[irow * col + icol + 2] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 2];
-            mat.m_elem[irow * col + icol + 3] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 3];
-        }
-        for (cnt = colSize % 4; cnt > 0u; cnt--, icol++)
-        {
-            mat.m_elem[irow * col + icol] = m_elem[(irow + idxRow) * t_col + idxCol + icol];
-        }
+        vec[icol] = m_elem[idxRow * m_col + icol];
+        vec[icol + 1] = m_elem[idxRow * m_col + icol + 1];
+        vec[icol + 2] = m_elem[idxRow * m_col + icol + 2];
+        vec[icol + 3] = m_elem[idxRow * m_col + icol + 3];
     }
 
-    return mat;
+    for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
+    {
+        vec[icol] = m_elem[idxRow * m_col + icol];
+    }
+
+    return dtVector<m_col, m_type>(vec);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_row, m_type> dtMatrix<m_row, m_col, m_type>::GetColVec(const uint16_t idxCol) const
+{
+    m_type vec[m_row];
+    uint16_t cnt;
+    uint16_t irow = 0;
+
+    for (cnt = m_row >> 2u; cnt > 0u; cnt--, irow += 4)
+    {
+        vec[irow] = m_elem[irow * m_col + idxCol];
+        vec[irow + 1] = m_elem[(irow + 1) * m_col + idxCol];
+        vec[irow + 2] = m_elem[(irow + 2) * m_col + idxCol];
+        vec[irow + 3] = m_elem[(irow + 3) * m_col + idxCol];
+    }
+
+    for (cnt = m_row % 4u; cnt > 0u; cnt--, irow++)
+    {
+        vec[irow] = m_elem[irow * m_col + idxCol];
+    }
+
+    return dtVector<m_row, m_type>(vec);
+}
+
+template <uint16_t m_row, uint16_t m_col, typename m_type>
 template <uint16_t row, uint16_t col>
-inline int8_t Matrix<t_row, t_col, t_type>::GetBlock(const uint16_t idxRow, const uint16_t idxCol, Matrix<row, col, t_type> &m)
+inline int8_t dtMatrix<m_row, m_col, m_type>::GetBlock(const uint16_t idxRow, const uint16_t idxCol, dtMatrix<row, col, m_type> &m)
 {
-    assert(t_row > idxRow && "Index out of range");
-    assert(t_col > idxCol && "Index out of range");
-
     uint16_t irow, icol, cnt;
-    uint16_t rowSize = t_row - idxRow;
-    uint16_t colSize = t_col - idxCol;
+    uint16_t rowSize = m_row - idxRow;
+    uint16_t colSize = m_col - idxCol;
 
-    if (idxRow >= t_row) return -1;
-    if (idxCol >= t_col) return -1;
-    if (rowSize > row) rowSize = row;
-    if (colSize > col) colSize = col;
+    if (idxRow >= m_row)
+        return -1;
+    if (idxCol >= m_col)
+        return -1;
+    if (rowSize > row)
+        rowSize = row;
+    if (colSize > col)
+        colSize = col;
 
     for (irow = 0; irow < rowSize; ++irow)
     {
         for (cnt = colSize >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4)
         {
-            m.m_elem[irow * col + icol] = m_elem[(irow + idxRow) * t_col + idxCol + icol];
-            m.m_elem[irow * col + icol + 1] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 1];
-            m.m_elem[irow * col + icol + 2] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 2];
-            m.m_elem[irow * col + icol + 3] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 3];
+            m.m_elem[irow * col + icol] = m_elem[(irow + idxRow) * m_col + idxCol + icol];
+            m.m_elem[irow * col + icol + 1] = m_elem[(irow + idxRow) * m_col + idxCol + icol + 1];
+            m.m_elem[irow * col + icol + 2] = m_elem[(irow + idxRow) * m_col + idxCol + icol + 2];
+            m.m_elem[irow * col + icol + 3] = m_elem[(irow + idxRow) * m_col + idxCol + icol + 3];
         }
         for (cnt = colSize % 4; cnt > 0u; cnt--, icol++)
         {
-            m.m_elem[irow * col + icol] = m_elem[(irow + idxRow) * t_col + idxCol + icol];
+            m.m_elem[irow * col + icol] = m_elem[(irow + idxRow) * m_col + idxCol + icol];
         }
     }
 
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t Matrix<t_row, t_col, t_type>::GetBlock(const uint16_t idxRow, const uint16_t idxCol, Matrix<0, 0, t_type> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtMatrix<m_row, m_col, m_type>::GetRowVec(const uint16_t idxRow, dtVector<m_col, m_type> &v) const
 {
-    assert(m.m_elem != nullptr && "Memory has not been allocated");
-    assert(t_row > idxRow && "Index out of range");
-    assert(t_col > idxCol && "Index out of range");
-
-    uint16_t irow, icol, cnt;
-    uint16_t rowSize = t_row - idxRow;
-    uint16_t colSize = t_col - idxCol;
-
-    if (idxRow >= t_row) return -1;
-    if (idxCol >= t_col) return -1;
-    if (rowSize > m.m_row) rowSize = m.m_row;
-    if (colSize > m.m_col) colSize = m.m_col;
-
-    for (irow = 0; irow < rowSize; ++irow)
-    {
-        for (cnt = colSize >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4)
-        {
-            m.m_elem[irow * m.m_col + icol] = m_elem[(irow + idxRow) * t_col + idxCol + icol];
-            m.m_elem[irow * m.m_col + icol + 1] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 1];
-            m.m_elem[irow * m.m_col + icol + 2] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 2];
-            m.m_elem[irow * m.m_col + icol + 3] = m_elem[(irow + idxRow) * t_col + idxCol + icol + 3];
-        }
-        for (cnt = colSize % 4; cnt > 0u; cnt--, icol++)
-        {
-            m.m_elem[irow * m.m_col + icol] = m_elem[(irow + idxRow) * t_col + idxCol + icol];
-        }
-    }
-
-    return 0;
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<t_col, t_type> Matrix<t_row, t_col, t_type>::GetRowVec(const uint16_t idxRow) const
-{
-    assert(t_row > idxRow && "Index out of range");
-
-    t_type vec[t_col];
     uint16_t cnt;
     uint16_t icol = 0;
 
-    for (cnt = t_col >> 2u; cnt > 0u; cnt--, icol += 4)
+    for (cnt = m_col >> 2u; cnt > 0u; cnt--, icol += 4)
     {
-        vec[icol] = m_elem[idxRow * t_col + icol];
-        vec[icol + 1] = m_elem[idxRow * t_col + icol + 1];
-        vec[icol + 2] = m_elem[idxRow * t_col + icol + 2];
-        vec[icol + 3] = m_elem[idxRow * t_col + icol + 3];
+        v.m_elem[icol] = m_elem[idxRow * m_col + icol];
+        v.m_elem[icol + 1] = m_elem[idxRow * m_col + icol + 1];
+        v.m_elem[icol + 2] = m_elem[idxRow * m_col + icol + 2];
+        v.m_elem[icol + 3] = m_elem[idxRow * m_col + icol + 3];
     }
 
-    for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
+    for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
     {
-        vec[icol] = m_elem[idxRow * t_col + icol];
-    }
-
-    return Vector<t_col, t_type>(vec);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<t_row, t_type> Matrix<t_row, t_col, t_type>::GetColVec(const uint16_t idxCol) const
-{
-    assert(t_col > idxCol && "Index out of range");
-
-    t_type vec[t_row];
-    uint16_t cnt;
-    uint16_t irow = 0;
-
-    for (cnt = t_row >> 2u; cnt > 0u; cnt--, irow += 4)
-    {
-        vec[irow] = m_elem[irow * t_col + idxCol];
-        vec[irow + 1] = m_elem[(irow + 1) * t_col + idxCol];
-        vec[irow + 2] = m_elem[(irow + 2) * t_col + idxCol];
-        vec[irow + 3] = m_elem[(irow + 3) * t_col + idxCol];
-    }
-
-    for (cnt = t_row % 4u; cnt > 0u; cnt--, irow++)
-    {
-        vec[irow] = m_elem[irow * t_col + idxCol];
-    }
-
-    return Vector<t_row, t_type>(vec);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<0, t_type> Matrix<t_row, t_col, t_type>::GetRowVec(const uint16_t idxRow, const uint16_t col) const
-{
-    assert(t_row > idxRow && "Index out of range");
-
-    uint16_t cnt;
-    uint16_t icol = 0;
-    uint16_t colSize = (t_col < col) ? t_col : col;
-    Vector<0, t_type> vec(col);
-
-    for (cnt = colSize >> 2u; cnt > 0u; cnt--, icol += 4)
-    {
-        vec.m_elem[icol] = m_elem[idxRow * t_col + icol];
-        vec.m_elem[icol + 1] = m_elem[idxRow * t_col + icol + 1];
-        vec.m_elem[icol + 2] = m_elem[idxRow * t_col + icol + 2];
-        vec.m_elem[icol + 3] = m_elem[idxRow * t_col + icol + 3];
-    }
-
-    for (cnt = colSize % 4u; cnt > 0u; cnt--, icol++)
-    {
-        vec.m_elem[icol] = m_elem[idxRow * t_col + icol];
-    }
-
-    return vec;
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<0, t_type> Matrix<t_row, t_col, t_type>::GetColVec(const uint16_t idxCol, const uint16_t row) const
-{
-    assert(t_col > idxCol && "Index out of range");
-
-    uint16_t cnt;
-    uint16_t irow = 0;
-    uint16_t rowSize = (t_row < row) ? t_row : row;
-    Vector<0, t_type> vec(row);
-
-    for (cnt = rowSize >> 2u; cnt > 0u; cnt--, irow += 4)
-    {
-        vec.m_elem[irow] = m_elem[irow * t_col + idxCol];
-        vec.m_elem[irow + 1] = m_elem[(irow + 1) * t_col + idxCol];
-        vec.m_elem[irow + 2] = m_elem[(irow + 2) * t_col + idxCol];
-        vec.m_elem[irow + 3] = m_elem[(irow + 3) * t_col + idxCol];
-    }
-
-    for (cnt = rowSize % 4u; cnt > 0u; cnt--, irow++)
-    {
-        vec.m_elem[irow] = m_elem[irow * t_col + idxCol];
-    }
-
-    return vec;
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t Matrix<t_row, t_col, t_type>::GetRowVec(const uint16_t idxRow, Vector<t_col, t_type> &v) const
-{
-    assert(t_row > idxRow && "Index out of range");
-
-    uint16_t cnt;
-    uint16_t icol = 0;
-
-    for (cnt = t_col >> 2u; cnt > 0u; cnt--, icol += 4)
-    {
-        v.m_elem[icol] = m_elem[idxRow * t_col + icol];
-        v.m_elem[icol + 1] = m_elem[idxRow * t_col + icol + 1];
-        v.m_elem[icol + 2] = m_elem[idxRow * t_col + icol + 2];
-        v.m_elem[icol + 3] = m_elem[idxRow * t_col + icol + 3];
-    }
-
-    for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
-    {
-        v.m_elem[icol] = m_elem[idxRow * t_col + icol];
+        v.m_elem[icol] = m_elem[idxRow * m_col + icol];
     }
 
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t Matrix<t_row, t_col, t_type>::GetColVec(const uint16_t idxCol, Vector<t_row, t_type> &v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline int8_t dtMatrix<m_row, m_col, m_type>::GetColVec(const uint16_t idxCol, dtVector<m_row, m_type> &v) const
 {
-    assert(t_col > idxCol && "Index out of range");
-
     uint16_t cnt;
     uint16_t irow = 0;
 
-    for (cnt = t_row >> 2u; cnt > 0u; cnt--, irow += 4)
+    for (cnt = m_row >> 2u; cnt > 0u; cnt--, irow += 4)
     {
-        v.m_elem[irow] = m_elem[irow * t_col + idxCol];
-        v.m_elem[irow + 1] = m_elem[(irow + 1) * t_col + idxCol];
-        v.m_elem[irow + 2] = m_elem[(irow + 2) * t_col + idxCol];
-        v.m_elem[irow + 3] = m_elem[(irow + 3) * t_col + idxCol];
+        v.m_elem[irow] = m_elem[irow * m_col + idxCol];
+        v.m_elem[irow + 1] = m_elem[(irow + 1) * m_col + idxCol];
+        v.m_elem[irow + 2] = m_elem[(irow + 2) * m_col + idxCol];
+        v.m_elem[irow + 3] = m_elem[(irow + 3) * m_col + idxCol];
     }
 
-    for (cnt = t_row % 4u; cnt > 0u; cnt--, irow++)
+    for (cnt = m_row % 4u; cnt > 0u; cnt--, irow++)
     {
-        v.m_elem[irow] = m_elem[irow * t_col + idxCol];
-    }
-
-    return 0;
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t Matrix<t_row, t_col, t_type>::GetRowVec(const uint16_t idxRow, Vector<0, t_type> &v) const
-{
-    assert(t_row > idxRow && "Index out of range");
-    assert(v.m_elem != nullptr && "Memory has not been allocated");
-
-    uint16_t cnt;
-    uint16_t icol = 0;
-    uint16_t colSize = (t_col < v.m_row) ? t_col : v.m_row;
-
-    for (cnt = colSize >> 2u; cnt > 0u; cnt--, icol += 4)
-    {
-        v.m_elem[icol] = m_elem[idxRow * t_col + icol];
-        v.m_elem[icol + 1] = m_elem[idxRow * t_col + icol + 1];
-        v.m_elem[icol + 2] = m_elem[idxRow * t_col + icol + 2];
-        v.m_elem[icol + 3] = m_elem[idxRow * t_col + icol + 3];
-    }
-
-    for (cnt = colSize % 4u; cnt > 0u; cnt--, icol++)
-    {
-        v.m_elem[icol] = m_elem[idxRow * t_col + icol];
+        v.m_elem[irow] = m_elem[irow * m_col + idxCol];
     }
 
     return 0;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline int8_t Matrix<t_row, t_col, t_type>::GetColVec(const uint16_t idxCol, Vector<0, t_type> &v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCscMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::GetCscMat() const
 {
-    assert(t_col > idxCol && "Index out of range");
-    assert(v.m_elem != nullptr && "Memory has not been allocated");
-
-    uint16_t cnt;
-    uint16_t irow = 0;
-    uint16_t rowSize = (t_row < v.m_row) ? t_row : v.m_row;
-
-    for (cnt = rowSize >> 2u; cnt > 0u; cnt--, irow += 4)
-    {
-        v.m_elem[irow] = m_elem[irow * t_col + idxCol];
-        v.m_elem[irow + 1] = m_elem[(irow + 1) * t_col + idxCol];
-        v.m_elem[irow + 2] = m_elem[(irow + 2) * t_col + idxCol];
-        v.m_elem[irow + 3] = m_elem[(irow + 3) * t_col + idxCol];
-    }
-
-    for (cnt = rowSize % 4u; cnt > 0u; cnt--, irow++)
-    {
-        v.m_elem[irow] = m_elem[irow * t_col + idxCol];
-    }
-
-    return 0;
+    return dtCscMatrix<m_row, m_col, m_type>(*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline CscMatrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::GetCscMat() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_col, m_row, m_type> dtMatrix<m_row, m_col, m_type>::Transpose() const
 {
-    return CscMatrix<t_row, t_col, t_type>(*this);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_col, t_row, t_type> Matrix<t_row, t_col, t_type>::Transpose() const
-{
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
     uint16_t cnt;
     uint16_t irow, icol;
 
-    for (irow = 0; irow < t_row; ++irow)
+    for (irow = 0; irow < m_row; ++irow)
     {
-        for (cnt = t_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
+        for (cnt = m_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
         {
-            mat[irow + t_row * icol] = m_elem[irow * t_col + icol];
-            mat[irow + t_row * (icol + 1)] = m_elem[irow * t_col + icol + 1];
-            mat[irow + t_row * (icol + 2)] = m_elem[irow * t_col + icol + 2];
-            mat[irow + t_row * (icol + 3)] = m_elem[irow * t_col + icol + 3];
+            mat[irow + m_row * icol] = m_elem[irow * m_col + icol];
+            mat[irow + m_row * (icol + 1)] = m_elem[irow * m_col + icol + 1];
+            mat[irow + m_row * (icol + 2)] = m_elem[irow * m_col + icol + 2];
+            mat[irow + m_row * (icol + 3)] = m_elem[irow * m_col + icol + 3];
         }
 
-        for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
+        for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
         {
-            mat[irow + t_row * icol] = m_elem[irow * t_col + icol];
+            mat[irow + m_row * icol] = m_elem[irow * m_col + icol];
         }
     }
 
-    return Matrix<t_col, t_row, t_type>(mat);
+    return dtMatrix<m_col, m_row, m_type>(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline t_type Matrix<t_row, t_col, t_type>::Trace() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type dtMatrix<m_row, m_col, m_type>::Trace() const
 {
     int cnt, i;
-    uint16_t num = (t_row > t_col) ? t_col : t_row;
-    uint16_t offset = t_col + 1;
-    t_type sum = 0;
+    uint16_t num = (m_row > m_col) ? m_col : m_row;
+    uint16_t offset = m_col + 1;
+    m_type sum = 0;
 
     // for (uint16_t i = 0; i < num; i++)
     //     sum += m_elem[i * offset];
@@ -951,13 +720,13 @@ inline t_type Matrix<t_row, t_col, t_type>::Trace() const
     return sum;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline t_type Matrix<t_row, t_col, t_type>::GetNorm() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type dtMatrix<m_row, m_col, m_type>::GetNorm() const
 {
     uint16_t cnt, i = 0;
-    t_type sqSum = 0;
+    m_type sqSum = 0;
 
-    for (cnt = (t_row * t_col) >> 2u; cnt > 0u; cnt--, i += 4)
+    for (cnt = (m_row * m_col) >> 2u; cnt > 0u; cnt--, i += 4)
     {
         sqSum += m_elem[i] * m_elem[i];
         sqSum += m_elem[i + 1] * m_elem[i + 1];
@@ -965,21 +734,21 @@ inline t_type Matrix<t_row, t_col, t_type>::GetNorm() const
         sqSum += m_elem[i + 3] * m_elem[i + 3];
     }
 
-    for (cnt = (t_row * t_col) % 4u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 4u; cnt > 0u; cnt--, i++)
     {
-        sqSum += m_elem[i] * m_elem[i];
+        sqSum += m_elem[i];
     }
 
     return std::sqrt(sqSum);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline t_type Matrix<t_row, t_col, t_type>::GetSqNorm() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type dtMatrix<m_row, m_col, m_type>::GetSqNorm() const
 {
     uint16_t cnt, i = 0;
-    t_type sqSum = 0;
+    m_type sqSum = 0;
 
-    for (cnt = (t_row * t_col) >> 2u; cnt > 0u; cnt--, i += 4)
+    for (cnt = (m_row * m_col) >> 2u; cnt > 0u; cnt--, i += 4)
     {
         sqSum += m_elem[i] * m_elem[i];
         sqSum += m_elem[i + 1] * m_elem[i + 1];
@@ -987,136 +756,83 @@ inline t_type Matrix<t_row, t_col, t_type>::GetSqNorm() const
         sqSum += m_elem[i + 3] * m_elem[i + 3];
     }
 
-    for (cnt = (t_row * t_col) % 4u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 4u; cnt > 0u; cnt--, i++)
     {
-        sqSum += m_elem[i] * m_elem[i];
+        sqSum += m_elem[i];
     }
 
     return sqSum;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline t_type Matrix<t_row, t_col, t_type>::GetLpNorm(const int p) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline m_type dtMatrix<m_row, m_col, m_type>::Determinant() const
 {
-    uint16_t cnt, i = 0;
-    t_type powSum = 0;
-
-    for (cnt = (t_row * t_col) >> 2u; cnt > 0u; cnt--, i += 4)
-    {
-        powSum += std::pow(std::abs(m_elem[i]), (t_type)p);
-        powSum += std::pow(std::abs(m_elem[i + 1]), (t_type)p);
-        powSum += std::pow(std::abs(m_elem[i + 2]), (t_type)p);
-        powSum += std::pow(std::abs(m_elem[i + 3]), (t_type)p);
-    }
-
-    for (cnt = (t_row * t_col) % 4u; cnt > 0u; cnt--, i++)
-    {
-        powSum += std::pow(std::abs(m_elem[i]), (t_type)p);
-    }
-
-    return std::pow(powSum, (t_type)1 / p);
+    return dtPartialPivLU<m_row, m_col, m_type>(*this).Determinant();
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline t_type Matrix<t_row, t_col, t_type>::Determinant() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtNoPivLU<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::NoPivLU() const
 {
-    return PartialPivLU<t_row, t_col, t_type>(*this).Determinant();
+    return dtNoPivLU<m_row, m_col, m_type>(*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline NoPivLU<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::GetNoPivLU() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtPartialPivLU<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::PartialPivLU() const
 {
-    return NoPivLU<t_row, t_col, t_type>(*this);
+    return dtPartialPivLU<m_row, m_col, m_type>(*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline PartialPivLU<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::GetPartialPivLU() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtLLT<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::LLT() const
 {
-    return PartialPivLU<t_row, t_col, t_type>(*this);
+    return dtLLT<m_row, m_col, m_type>(*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline FullPivLU<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::GetFullPivLU() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtLDLT<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::LDLT() const
 {
-    return FullPivLU<t_row, t_col, t_type>(*this);
+    return dtLDLT<m_row, m_col, m_type>(*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline LLT<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::GetLLT() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtQR<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::QR() const
 {
-    return LLT<t_row, t_col, t_type>(*this);
+    return dtQR<m_row, m_col, m_type>(*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline LDLT<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::GetLDLT() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtSVD<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::SVD() const
 {
-    return LDLT<t_row, t_col, t_type>(*this);
+    return dtSVD<m_row, m_col, m_type>(*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline QR<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::GetQR() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::Inv(int8_t *isOk) const
 {
-    return QR<t_row, t_col, t_type>(*this);
+    return dtPartialPivLU<m_row, m_col, m_type>(*this).Inverse(isOk);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline SVD<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::GetSVD() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_col, m_row, m_type> dtMatrix<m_row, m_col, m_type>::PInv(int8_t *isOk, m_type tolerance) const
 {
-    return SVD<t_row, t_col, t_type>(*this);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::Inv(int8_t *isOk) const
-{
-    return PartialPivLU<t_row, t_col, t_type>(*this).Inverse(isOk);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::FInv(int8_t *isOk) const
-{
-    return FullPivLU<t_row, t_col, t_type>(*this).Inverse(isOk);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_col, t_row, t_type> Matrix<t_row, t_col, t_type>::PInv(int8_t *isOk, t_type tolerance) const
-{
-    return SVD<t_row, t_col, t_type>(*this).Inverse(isOk, tolerance);
-}
-
-/* Member access operators */
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline t_type &Matrix<t_row, t_col, t_type>::operator()(uint16_t irow, uint16_t icol)
-{
-    assert(irow < t_row && "Index out of range");
-    assert(icol < t_col && "Index out of range");
-
-    return m_elem[irow * t_col + icol];
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline const t_type &Matrix<t_row, t_col, t_type>::operator()(uint16_t irow, uint16_t icol) const
-{
-    assert(irow < t_row && "Index out of range");
-    assert(icol < t_col && "Index out of range");
-
-    return m_elem[irow * t_col + icol];
+    return dtSVD<m_row, m_col, m_type>(*this).Inverse(isOk, tolerance);
 }
 
 /* Assignment operators */
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator=(const Matrix<t_row, t_col, t_type> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator=(const dtMatrix<m_row, m_col, m_type> &m)
 {
-    memcpy(m_elem, m.m_elem, sizeof(t_type) * t_row * t_col);
+    memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
 
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(const Matrix<t_row, t_col, t_type> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator+=(const dtMatrix<m_row, m_col, m_type> &m)
 {
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         m_elem[i] += m.m_elem[i];
         m_elem[i + 2] += m.m_elem[i + 2];
@@ -1128,7 +844,7 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(co
         m_elem[i + 7] += m.m_elem[i + 7];
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         m_elem[i] += m.m_elem[i];
     }
@@ -1136,12 +852,12 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(const Matrix<t_row, t_col, t_type> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator-=(const dtMatrix<m_row, m_col, m_type> &m)
 {
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         m_elem[i] -= m.m_elem[i];
         m_elem[i + 2] -= m.m_elem[i + 2];
@@ -1153,7 +869,7 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(co
         m_elem[i + 7] -= m.m_elem[i + 7];
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         m_elem[i] -= m.m_elem[i];
     }
@@ -1161,86 +877,16 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator=(const Matrix<0, 0, t_type> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator=(const dtMatrix3<m_type, m_row, m_col> &m)
 {
-    assert(m.m_elem != nullptr && "Memory has not been allocated");
-    assert(t_row == m.m_row && "Row dimensions do not matched");
-    assert(t_col == m.m_col && "Col dimensions do not matched");
-
-    memcpy(m_elem, m.m_elem, sizeof(t_type) * t_row * t_col);
+    memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
 
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(const Matrix<0, 0, t_type> &m)
-{
-    assert(m.m_elem != nullptr && "Memory has not been allocated");
-    assert(t_row == m.m_row && "Row dimensions do not matched");
-    assert(t_col == m.m_col && "Col dimensions do not matched");
-
-    uint16_t cnt, i = 0;
-
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
-    {
-        m_elem[i] += m.m_elem[i];
-        m_elem[i + 2] += m.m_elem[i + 2];
-        m_elem[i + 4] += m.m_elem[i + 4];
-        m_elem[i + 6] += m.m_elem[i + 6];
-        m_elem[i + 1] += m.m_elem[i + 1];
-        m_elem[i + 3] += m.m_elem[i + 3];
-        m_elem[i + 5] += m.m_elem[i + 5];
-        m_elem[i + 7] += m.m_elem[i + 7];
-    }
-
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
-    {
-        m_elem[i] += m.m_elem[i];
-    }
-
-    return (*this);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(const Matrix<0, 0, t_type> &m)
-{
-    assert(m.m_elem != nullptr && "Memory has not been allocated");
-    assert(t_row == m.m_row && "Row dimensions do not matched");
-    assert(t_col == m.m_col && "Col dimensions do not matched");
-
-    uint16_t cnt, i = 0;
-
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
-    {
-        m_elem[i] -= m.m_elem[i];
-        m_elem[i + 2] -= m.m_elem[i + 2];
-        m_elem[i + 4] -= m.m_elem[i + 4];
-        m_elem[i + 6] -= m.m_elem[i + 6];
-        m_elem[i + 1] -= m.m_elem[i + 1];
-        m_elem[i + 3] -= m.m_elem[i + 3];
-        m_elem[i + 5] -= m.m_elem[i + 5];
-        m_elem[i + 7] -= m.m_elem[i + 7];
-    }
-
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
-    {
-        m_elem[i] -= m.m_elem[i];
-    }
-
-    return (*this);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator=(const Matrix3<t_type, t_row, t_col> &m)
-{
-    memcpy(m_elem, m.m_elem, sizeof(t_type) * t_row * t_col);
-
-    return (*this);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(const Matrix3<t_type, t_row, t_col> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator+=(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     m_elem[0] += m.m_elem[0];
     m_elem[1] += m.m_elem[1];
@@ -1255,8 +901,8 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(const Matrix3<t_type, t_row, t_col> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator-=(const dtMatrix3<m_type, m_row, m_col> &m)
 {
     m_elem[0] -= m.m_elem[0];
     m_elem[1] -= m.m_elem[1];
@@ -1271,16 +917,16 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator=(const Rotation<t_type, t_row, t_col> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator=(const dtRotation<m_type, m_row, m_col> &m)
 {
-    memcpy(m_elem, m.m_elem, sizeof(t_type) * t_row * t_col);
+    memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
 
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(const Rotation<t_type, t_row, t_col> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator+=(const dtRotation<m_type, m_row, m_col> &m)
 {
     m_elem[0] += m.m_elem[0];
     m_elem[1] += m.m_elem[1];
@@ -1295,8 +941,8 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(const Rotation<t_type, t_row, t_col> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator-=(const dtRotation<m_type, m_row, m_col> &m)
 {
     m_elem[0] -= m.m_elem[0];
     m_elem[1] -= m.m_elem[1];
@@ -1311,8 +957,8 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator=(const Transform<t_type, t_row, t_col> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator=(const dtTransform<m_type, m_row, m_col> &m)
 {
     m_elem[0] = m.m_R.m_elem[0];
     m_elem[1] = m.m_R.m_elem[1];
@@ -1334,8 +980,8 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator=(con
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(const Transform<t_type, t_row, t_col> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator+=(const dtTransform<m_type, m_row, m_col> &m)
 {
     m_elem[0] += m.m_R.m_elem[0];
     m_elem[1] += m.m_R.m_elem[1];
@@ -1354,8 +1000,8 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(const Transform<t_type, t_row, t_col> &m)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator-=(const dtTransform<m_type, m_row, m_col> &m)
 {
     m_elem[0] -= m.m_R.m_elem[0];
     m_elem[1] -= m.m_R.m_elem[1];
@@ -1374,12 +1020,12 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator=(const t_type s)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator=(const m_type s)
 {
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         m_elem[i] = s;
         m_elem[i + 2] = s;
@@ -1391,7 +1037,7 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator=(con
         m_elem[i + 7] = s;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         m_elem[i] = s;
     }
@@ -1399,12 +1045,12 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator=(con
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(const t_type s)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator+=(const m_type s)
 {
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         m_elem[i] += s;
         m_elem[i + 2] += s;
@@ -1416,7 +1062,7 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(co
         m_elem[i + 7] += s;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         m_elem[i] += s;
     }
@@ -1424,12 +1070,12 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator+=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(const t_type s)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator-=(const m_type s)
 {
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         m_elem[i] -= s;
         m_elem[i + 2] -= s;
@@ -1441,7 +1087,7 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(co
         m_elem[i + 7] -= s;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         m_elem[i] -= s;
     }
@@ -1449,12 +1095,12 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator-=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator*=(const t_type s)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator*=(const m_type s)
 {
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         m_elem[i] *= s;
         m_elem[i + 2] *= s;
@@ -1466,7 +1112,7 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator*=(co
         m_elem[i + 7] *= s;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         m_elem[i] *= s;
     }
@@ -1474,20 +1120,22 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator*=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator/=(const t_type s)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> &dtMatrix<m_row, m_col, m_type>::operator/=(const m_type s)
 {
-    t_type scalar = s;
+    m_type scalar = s;
 
-    if (std::abs(scalar) < std::numeric_limits<t_type>::epsilon())
+    if (std::abs(scalar) < std::numeric_limits<m_type>::epsilon())
     {
-        if (scalar < 0) scalar = -std::numeric_limits<t_type>::epsilon();
-        else scalar = std::numeric_limits<t_type>::epsilon();
+        if (scalar < 0)
+            scalar = -std::numeric_limits<m_type>::epsilon();
+        else
+            scalar = std::numeric_limits<m_type>::epsilon();
     }
 
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         m_elem[i] /= scalar;
         m_elem[i + 2] /= scalar;
@@ -1499,7 +1147,7 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator/=(co
         m_elem[i + 7] /= scalar;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         m_elem[i] /= scalar;
     }
@@ -1507,21 +1155,21 @@ inline Matrix<t_row, t_col, t_type> &Matrix<t_row, t_col, t_type>::operator/=(co
     return (*this);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline CommaInit<t_row * t_col, t_type> Matrix<t_row, t_col, t_type>::operator<<(const t_type s)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtCommaInit<m_row * m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator<<(const m_type s)
 {
     m_elem[0] = s;
-    return CommaInit<t_row * t_col, t_type>(m_elem);
+    return dtCommaInit<m_row * m_col, m_type>(m_elem);
 }
 
 /* Arithmetic operators */
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-() const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator-() const
 {
+    m_type mat[m_row * m_col];
     uint16_t cnt, i = 0;
-    t_type mat[t_row * t_col];
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         mat[i] = -m_elem[i];
         mat[i + 2] = -m_elem[i + 2];
@@ -1533,21 +1181,21 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-() co
         mat[i + 7] = -m_elem[i + 7];
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         mat[i] = -m_elem[i];
     }
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(const Matrix<t_row, t_col, t_type> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator+(const dtMatrix<m_row, m_col, m_type> &m) const
 {
+    m_type mat[m_row * m_col];
     uint16_t cnt, i = 0;
-    t_type mat[t_row * t_col];
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         mat[i] = m_elem[i] + m.m_elem[i];
         mat[i + 2] = m_elem[i + 2] + m.m_elem[i + 2];
@@ -1559,21 +1207,21 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(cons
         mat[i + 7] = m_elem[i + 7] + m.m_elem[i + 7];
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         mat[i] = m_elem[i] + m.m_elem[i];
     }
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(const Matrix<t_row, t_col, t_type> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator-(const dtMatrix<m_row, m_col, m_type> &m) const
 {
+    m_type mat[m_row * m_col];
     uint16_t cnt, i = 0;
-    t_type mat[t_row * t_col];
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         mat[i] = m_elem[i] - m.m_elem[i];
         mat[i + 2] = m_elem[i + 2] - m.m_elem[i + 2];
@@ -1585,78 +1233,18 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(cons
         mat[i + 7] = m_elem[i + 7] - m.m_elem[i + 7];
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         mat[i] = m_elem[i] - m.m_elem[i];
     }
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(const Matrix<0, 0, t_type> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator+(const dtMatrix3<m_type, m_row, m_col> &m) const
 {
-    assert(m.m_elem != nullptr && "Memory has not been allocated");
-    assert(t_row == m.m_row && "Row dimensions do not matched");
-    assert(t_col == m.m_col && "Col dimensions do not matched");
-
-    uint16_t cnt, i = 0;
-    t_type mat[t_row * t_col];
-
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
-    {
-        mat[i] = m_elem[i] + m.m_elem[i];
-        mat[i + 2] = m_elem[i + 2] + m.m_elem[i + 2];
-        mat[i + 4] = m_elem[i + 4] + m.m_elem[i + 4];
-        mat[i + 6] = m_elem[i + 6] + m.m_elem[i + 6];
-        mat[i + 1] = m_elem[i + 1] + m.m_elem[i + 1];
-        mat[i + 3] = m_elem[i + 3] + m.m_elem[i + 3];
-        mat[i + 5] = m_elem[i + 5] + m.m_elem[i + 5];
-        mat[i + 7] = m_elem[i + 7] + m.m_elem[i + 7];
-    }
-
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
-    {
-        mat[i] = m_elem[i] + m.m_elem[i];
-    }
-
-    return Matrix(mat);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(const Matrix<0, 0, t_type> &m) const
-{
-    assert(m.m_elem != nullptr && "Memory has not been allocated");
-    assert(t_row == m.m_row && "Row dimensions do not matched");
-    assert(t_col == m.m_col && "Col dimensions do not matched");
-
-    uint16_t cnt, i = 0;
-    t_type mat[t_row * t_col];
-
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
-    {
-        mat[i] = m_elem[i] - m.m_elem[i];
-        mat[i + 2] = m_elem[i + 2] - m.m_elem[i + 2];
-        mat[i + 4] = m_elem[i + 4] - m.m_elem[i + 4];
-        mat[i + 6] = m_elem[i + 6] - m.m_elem[i + 6];
-        mat[i + 1] = m_elem[i + 1] - m.m_elem[i + 1];
-        mat[i + 3] = m_elem[i + 3] - m.m_elem[i + 3];
-        mat[i + 5] = m_elem[i + 5] - m.m_elem[i + 5];
-        mat[i + 7] = m_elem[i + 7] - m.m_elem[i + 7];
-    }
-
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
-    {
-        mat[i] = m_elem[i] - m.m_elem[i];
-    }
-
-    return Matrix(mat);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(const Matrix3<t_type, t_row, t_col> &m) const
-{
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
 
     mat[0] = m_elem[0] + m.m_elem[0];
     mat[1] = m_elem[1] + m.m_elem[1];
@@ -1668,13 +1256,13 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(cons
     mat[7] = m_elem[7] + m.m_elem[7];
     mat[8] = m_elem[8] + m.m_elem[8];
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(const Matrix3<t_type, t_row, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator-(const dtMatrix3<m_type, m_row, m_col> &m) const
 {
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
 
     mat[0] = m_elem[0] - m.m_elem[0];
     mat[1] = m_elem[1] - m.m_elem[1];
@@ -1686,13 +1274,13 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(cons
     mat[7] = m_elem[7] - m.m_elem[7];
     mat[8] = m_elem[8] - m.m_elem[8];
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(const Rotation<t_type, t_row, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator+(const dtRotation<m_type, m_row, m_col> &m) const
 {
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
 
     mat[0] = m_elem[0] + m.m_elem[0];
     mat[1] = m_elem[1] + m.m_elem[1];
@@ -1704,13 +1292,13 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(cons
     mat[7] = m_elem[7] + m.m_elem[7];
     mat[8] = m_elem[8] + m.m_elem[8];
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(const Rotation<t_type, t_row, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator-(const dtRotation<m_type, m_row, m_col> &m) const
 {
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
 
     mat[0] = m_elem[0] - m.m_elem[0];
     mat[1] = m_elem[1] - m.m_elem[1];
@@ -1722,13 +1310,13 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(cons
     mat[7] = m_elem[7] - m.m_elem[7];
     mat[8] = m_elem[8] - m.m_elem[8];
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(const Transform<t_type, t_row, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator+(const dtTransform<m_type, m_row, m_col> &m) const
 {
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
 
     mat[0] = m_elem[0] + m.m_R.m_elem[0];
     mat[1] = m_elem[1] + m.m_R.m_elem[1];
@@ -1747,13 +1335,13 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(cons
     mat[14] = m_elem[14];
     mat[15] = m_elem[15] + 1;
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(const Transform<t_type, t_row, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator-(const dtTransform<m_type, m_row, m_col> &m) const
 {
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
 
     mat[0] = m_elem[0] - m.m_R.m_elem[0];
     mat[1] = m_elem[1] - m.m_R.m_elem[1];
@@ -1772,16 +1360,16 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(cons
     mat[14] = m_elem[14];
     mat[15] = m_elem[15] - 1;
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(const t_type s) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator+(const m_type s) const
 {
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         mat[i] = m_elem[i] + s;
         mat[i + 2] = m_elem[i + 2] + s;
@@ -1793,21 +1381,21 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator+(cons
         mat[i + 7] = m_elem[i + 7] + s;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         mat[i] = m_elem[i] + s;
     }
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(const t_type s) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator-(const m_type s) const
 {
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         mat[i] = m_elem[i] - s;
         mat[i + 2] = m_elem[i + 2] - s;
@@ -1819,21 +1407,21 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator-(cons
         mat[i + 7] = m_elem[i + 7] - s;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         mat[i] = m_elem[i] - s;
     }
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator*(const t_type s) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator*(const m_type s) const
 {
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         mat[i] = m_elem[i] * s;
         mat[i + 2] = m_elem[i + 2] * s;
@@ -1845,28 +1433,30 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator*(cons
         mat[i + 7] = m_elem[i + 7] * s;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         mat[i] = m_elem[i] * s;
     }
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator/(const t_type s) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator/(const m_type s) const
 {
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
     uint16_t cnt, i = 0;
-    t_type scalar = s;
+    m_type scalar = s;
 
-    if (std::abs(scalar) < std::numeric_limits<t_type>::epsilon())
+    if (std::abs(scalar) < std::numeric_limits<m_type>::epsilon())
     {
-        if (scalar < 0) scalar = -std::numeric_limits<t_type>::epsilon();
-        else scalar = std::numeric_limits<t_type>::epsilon();
+        if (scalar < 0)
+            scalar = -std::numeric_limits<m_type>::epsilon();
+        else
+            scalar = std::numeric_limits<m_type>::epsilon();
     }
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
         mat[i] = m_elem[i] / scalar;
         mat[i + 2] = m_elem[i + 2] / scalar;
@@ -1878,117 +1468,94 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator/(cons
         mat[i + 7] = m_elem[i + 7] / scalar;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
         mat[i] = m_elem[i] / scalar;
     }
 
-    return Matrix(mat);
+    return dtMatrix(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
+template <uint16_t m_row, uint16_t m_col, typename m_type>
 template <uint16_t col>
-inline Matrix<t_row, col, t_type> Matrix<t_row, t_col, t_type>::operator*(const Matrix<t_col, col, t_type> &m) const
+inline dtMatrix<m_row, col, m_type> dtMatrix<m_row, m_col, m_type>::operator*(const dtMatrix<m_col, col, m_type> &m) const
 {
-    t_type mat[t_row * col]{0};
+    m_type mat[m_row * col] = {
+        0,
+    };
     uint16_t cnt;
     uint16_t irow, icol, i;
 
-    for (irow = 0; irow < t_row; ++irow)
+    for (irow = 0; irow < m_row; ++irow)
     {
         for (icol = 0; icol < col; ++icol)
         {
-            for (cnt = t_col >> 2u, i = 0; cnt > 0u; cnt--, i += 4u)
+            for (cnt = m_col >> 2u, i = 0; cnt > 0u; cnt--, i += 4u)
             {
-                mat[irow * col + icol] += m_elem[irow * t_col + i] * m.m_elem[i * col + icol];
-                mat[irow * col + icol] += m_elem[irow * t_col + i + 1] * m.m_elem[(i + 1) * col + icol];
-                mat[irow * col + icol] += m_elem[irow * t_col + i + 2] * m.m_elem[(i + 2) * col + icol];
-                mat[irow * col + icol] += m_elem[irow * t_col + i + 3] * m.m_elem[(i + 3) * col + icol];
+                mat[irow * col + icol] += m_elem[irow * m_col + i] * m.m_elem[i * col + icol];
+                mat[irow * col + icol] += m_elem[irow * m_col + i + 1] * m.m_elem[(i + 1) * col + icol];
+                mat[irow * col + icol] += m_elem[irow * m_col + i + 2] * m.m_elem[(i + 2) * col + icol];
+                mat[irow * col + icol] += m_elem[irow * m_col + i + 3] * m.m_elem[(i + 3) * col + icol];
             }
 
-            for (cnt = t_col % 4u; cnt > 0u; cnt--, i++)
+            for (cnt = m_col % 4u; cnt > 0u; cnt--, i++)
             {
-                mat[irow * col + icol] += m_elem[irow * t_col + i] * m.m_elem[i * col + icol];
+                mat[irow * col + icol] += m_elem[irow * m_col + i] * m.m_elem[i * col + icol];
             }
         }
     }
 
-    return Matrix<t_row, col, t_type>(mat);
+    return dtMatrix<m_row, col, m_type>(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<0, 0, t_type> Matrix<t_row, t_col, t_type>::operator*(const Matrix<0, 0, t_type> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator*(const dtMatrix3<m_type, m_col, m_col> &m) const
 {
-    assert(t_col == m.m_row && "Dimensions do not matched");
+    m_type mat[m_row * m_col] = {
+        0,
+    };
 
-    uint16_t cnt;
-    uint16_t irow, icol, i;
-    Matrix<0, 0, t_type> mat(t_row, m.m_col);
-
-    for (irow = 0; irow < t_row; ++irow)
+    for (uint16_t irow = 0; irow < m_row; ++irow)
     {
-        for (icol = 0; icol < m.m_col; ++icol)
+        for (uint16_t icol = 0; icol < m_col; ++icol)
         {
-            for (cnt = t_col >> 2u, i = 0; cnt > 0u; cnt--, i += 4u)
-            {
-                mat[irow * m.m_col + icol] += m_elem[irow * t_col + i] * m.m_elem[i * m.m_col + icol];
-                mat[irow * m.m_col + icol] += m_elem[irow * t_col + i + 1] * m.m_elem[(i + 1) * m.m_col + icol];
-                mat[irow * m.m_col + icol] += m_elem[irow * t_col + i + 2] * m.m_elem[(i + 2) * m.m_col + icol];
-                mat[irow * m.m_col + icol] += m_elem[irow * t_col + i + 3] * m.m_elem[(i + 3) * m.m_col + icol];
-            }
-
-            for (cnt = t_col % 4u; cnt > 0u; cnt--, i++)
-            {
-                mat[irow * m.m_col + icol] += m_elem[irow * t_col + i] * m.m_elem[i * m.m_col + icol];
-            }
+            mat[irow * m_col + icol] += m_elem[irow * m_col] * m.m_elem[icol];
+            mat[irow * m_col + icol] += m_elem[irow * m_col + 1] * m.m_elem[3 + icol];
+            mat[irow * m_col + icol] += m_elem[irow * m_col + 2] * m.m_elem[6 + icol];
         }
     }
 
-    return mat;
+    return dtMatrix<m_row, m_col, m_type>(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator*(const Matrix3<t_type, t_col, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator*(const dtRotation<m_type, m_col, m_col> &m) const
 {
-    t_type mat[t_row * t_col]{0};
+    m_type mat[m_row * m_col] = {
+        0,
+    };
 
-    for (uint16_t irow = 0; irow < t_row; ++irow)
+    for (uint16_t irow = 0; irow < m_row; ++irow)
     {
-        for (uint16_t icol = 0; icol < t_col; ++icol)
+        for (uint16_t icol = 0; icol < m_col; ++icol)
         {
-            mat[irow * t_col + icol] += m_elem[irow * t_col] * m.m_elem[icol];
-            mat[irow * t_col + icol] += m_elem[irow * t_col + 1] * m.m_elem[3 + icol];
-            mat[irow * t_col + icol] += m_elem[irow * t_col + 2] * m.m_elem[6 + icol];
+            mat[irow * m_col + icol] += m_elem[irow * m_col] * m.m_elem[icol];
+            mat[irow * m_col + icol] += m_elem[irow * m_col + 1] * m.m_elem[3 + icol];
+            mat[irow * m_col + icol] += m_elem[irow * m_col + 2] * m.m_elem[6 + icol];
         }
     }
 
-    return Matrix<t_row, t_col, t_type>(mat);
+    return dtMatrix<m_row, m_col, m_type>(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator*(const Rotation<t_type, t_col, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator*(const dtTransform<m_type, m_col, m_col> &m) const
 {
-    t_type mat[t_row * t_col]{0};
+    m_type mat[m_row * m_col] = {
+        0,
+    };
 
-    for (uint16_t irow = 0; irow < t_row; ++irow)
-    {
-        for (uint16_t icol = 0; icol < t_col; ++icol)
-        {
-            mat[irow * t_col + icol] += m_elem[irow * t_col] * m.m_elem[icol];
-            mat[irow * t_col + icol] += m_elem[irow * t_col + 1] * m.m_elem[3 + icol];
-            mat[irow * t_col + icol] += m_elem[irow * t_col + 2] * m.m_elem[6 + icol];
-        }
-    }
-
-    return Matrix<t_row, t_col, t_type>(mat);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator*(const Transform<t_type, t_col, t_col> &m) const
-{
-    t_type mat[t_row * t_col]{0};
-
-    for (uint16_t irow = 0; irow < t_row * 4; irow += 4)
+    for (uint16_t irow = 0; irow < m_row * 4; irow += 4)
     {
         for (uint16_t icol = 0; icol < 3; ++icol)
         {
@@ -2004,81 +1571,56 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator*(cons
             m_elem[irow + 3];
     }
 
-    return Matrix<t_row, t_col, t_type>(mat);
+    return dtMatrix<m_row, m_col, m_type>(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<t_row, t_type> Matrix<t_row, t_col, t_type>::operator*(const Vector<t_col, t_type> &v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_row, m_type> dtMatrix<m_row, m_col, m_type>::operator*(const dtVector<m_col, m_type> &v) const
 {
-    t_type vec[t_row]{0};
+    m_type vec[m_row] = {
+        0,
+    };
     uint16_t cnt;
     uint16_t irow, icol;
 
-    for (irow = 0; irow < t_row; ++irow)
+    for (irow = 0; irow < m_row; ++irow)
     {
-        for (cnt = t_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
+        for (cnt = m_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
         {
-            vec[irow] += m_elem[irow * t_col + icol] * v.m_elem[icol];
-            vec[irow] += m_elem[irow * t_col + icol + 1] * v.m_elem[icol + 1];
-            vec[irow] += m_elem[irow * t_col + icol + 2] * v.m_elem[icol + 2];
-            vec[irow] += m_elem[irow * t_col + icol + 3] * v.m_elem[icol + 3];
+            vec[irow] += m_elem[irow * m_col + icol] * v.m_elem[icol];
+            vec[irow] += m_elem[irow * m_col + icol + 1] * v.m_elem[icol + 1];
+            vec[irow] += m_elem[irow * m_col + icol + 2] * v.m_elem[icol + 2];
+            vec[irow] += m_elem[irow * m_col + icol + 3] * v.m_elem[icol + 3];
         }
 
-        for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
-            vec[irow] += m_elem[irow * t_col + icol] * v.m_elem[icol];
+        for (cnt = m_col % 4u; cnt > 0u; cnt--, icol++)
+            vec[irow] += m_elem[irow * m_col + icol] * v.m_elem[icol];
     }
 
-    return Vector<t_row, t_type>(vec);
+    return dtVector<m_row, m_type>(vec);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<t_row, t_type> Matrix<t_row, t_col, t_type>::operator*(const Vector<0, t_type> &v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_row, m_type> dtMatrix<m_row, m_col, m_type>::operator*(const dtVector3<m_type, m_col> &v) const
 {
-    assert(v.m_elem != nullptr && "Memory has not been allocated");
-    assert(t_col == v.m_row && "Check dimensions");
+    m_type vec[m_row];
 
-    t_type vec[t_row]{0};
-    uint16_t cnt;
-    uint16_t irow, icol;
-
-    for (irow = 0; irow < t_row; ++irow)
-    {
-        for (cnt = t_col >> 2u, icol = 0; cnt > 0u; cnt--, icol += 4u)
-        {
-            vec[irow] += m_elem[irow * t_col + icol] * v.m_elem[icol];
-            vec[irow] += m_elem[irow * t_col + icol + 1] * v.m_elem[icol + 1];
-            vec[irow] += m_elem[irow * t_col + icol + 2] * v.m_elem[icol + 2];
-            vec[irow] += m_elem[irow * t_col + icol + 3] * v.m_elem[icol + 3];
-        }
-
-        for (cnt = t_col % 4u; cnt > 0u; cnt--, icol++)
-            vec[irow] += m_elem[irow * t_col + icol] * v.m_elem[icol];
-    }
-
-    return Vector<t_row, t_type>(vec);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<t_row, t_type> Matrix<t_row, t_col, t_type>::operator*(const Vector3<t_type, t_col> &v) const
-{
-    t_type vec[t_row];
-
-    for (uint16_t irow = 0; irow < t_row; ++irow)
+    for (uint16_t irow = 0; irow < m_row; ++irow)
     {
         vec[irow] = m_elem[irow * 3] * v.m_elem[0];
         vec[irow] += m_elem[irow * 3 + 1] * v.m_elem[1];
         vec[irow] += m_elem[irow * 3 + 2] * v.m_elem[2];
     }
 
-    return Vector<t_row, t_type>(vec);
+    return dtVector<m_row, m_type>(vec);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<t_row, t_type> Matrix<t_row, t_col, t_type>::operator*(const Vector4<t_type, t_col> &v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_row, m_type> dtMatrix<m_row, m_col, m_type>::operator*(const dtVector4<m_type, m_col> &v) const
 {
-    t_type vec[t_row];
+    m_type vec[m_row];
 
-    for (uint16_t irow = 0; irow < t_row; ++irow)
+    for (uint16_t irow = 0; irow < m_row; ++irow)
     {
         vec[irow] = m_elem[irow * 4] * v.m_elem[0];
         vec[irow] += m_elem[irow * 4 + 1] * v.m_elem[1];
@@ -2086,15 +1628,15 @@ inline Vector<t_row, t_type> Matrix<t_row, t_col, t_type>::operator*(const Vecto
         vec[irow] += m_elem[irow * 4 + 3] * v.m_elem[3];
     }
 
-    return Vector<t_row, t_type>(vec);
+    return dtVector<m_row, m_type>(vec);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Vector<t_row, t_type> Matrix<t_row, t_col, t_type>::operator*(const Vector6<t_type, t_col> &v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtVector<m_row, m_type> dtMatrix<m_row, m_col, m_type>::operator*(const dtVector6<m_type, m_col> &v) const
 {
-    t_type vec[t_row];
+    m_type vec[m_row];
 
-    for (uint16_t irow = 0; irow < t_row; ++irow)
+    for (uint16_t irow = 0; irow < m_row; ++irow)
     {
         vec[irow] = m_elem[irow * 6] * v.m_elem[0];
         vec[irow] += m_elem[irow * 6 + 1] * v.m_elem[1];
@@ -2104,16 +1646,16 @@ inline Vector<t_row, t_type> Matrix<t_row, t_col, t_type>::operator*(const Vecto
         vec[irow] += m_elem[irow * 6 + 5] * v.m_elem[5];
     }
 
-    return Vector<t_row, t_type>(vec);
+    return dtVector<m_row, m_type>(vec);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator&(const Vector<t_col, t_type> &v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator&(const dtVector<m_col, m_type> &v) const
 { // matrix3 * [v]x, []x is skew-symmetric matrix
-    static_assert(t_row == 3, "This method is only for 3 x 3 matrix");
-    static_assert(t_col == 3, "This method is only for 3 x 3 matrix");
+    static_assert(m_row == 3, "This method is only for 3 x 3 matrix");
+    static_assert(m_col == 3, "This method is only for 3 x 3 matrix");
 
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
 
     mat[0] = m_elem[1] * v.m_elem[2] - m_elem[2] * v.m_elem[1];
     mat[1] = m_elem[2] * v.m_elem[0] - m_elem[0] * v.m_elem[2];
@@ -2127,18 +1669,16 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator&(cons
     mat[7] = m_elem[8] * v.m_elem[0] - m_elem[6] * v.m_elem[2];
     mat[8] = m_elem[6] * v.m_elem[1] - m_elem[7] * v.m_elem[0];
 
-    return Matrix<t_row, t_col, t_type>(mat);
+    return dtMatrix<m_row, m_col, m_type>(mat);
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator&(const Vector<0, t_type> &v) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline dtMatrix<m_row, m_col, m_type> dtMatrix<m_row, m_col, m_type>::operator&(const dtVector3<m_type, m_col> &v) const
 { // matrix3 * [v]x, []x is skew-symmetric matrix
-    static_assert(t_row == 3, "This method is only for 3 x 3 matrix");
-    static_assert(t_col == 3, "This method is only for 3 x 3 matrix");
-    assert(v.m_row == 3 && "This method is only for 3 x 3 matrix");
-    assert(v.m_elem != nullptr && "Memory has not been allocated");
+    static_assert(m_row == 3, "This method is only for 3 x 3 matrix");
+    static_assert(m_col == 3, "This method is only for 3 x 3 matrix");
 
-    t_type mat[t_row * t_col];
+    m_type mat[m_row * m_col];
 
     mat[0] = m_elem[1] * v.m_elem[2] - m_elem[2] * v.m_elem[1];
     mat[1] = m_elem[2] * v.m_elem[0] - m_elem[0] * v.m_elem[2];
@@ -2152,274 +1692,281 @@ inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator&(cons
     mat[7] = m_elem[8] * v.m_elem[0] - m_elem[6] * v.m_elem[2];
     mat[8] = m_elem[6] * v.m_elem[1] - m_elem[7] * v.m_elem[0];
 
-    return Matrix<t_row, t_col, t_type>(mat);
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline Matrix<t_row, t_col, t_type> Matrix<t_row, t_col, t_type>::operator&(const Vector3<t_type, t_col> &v) const
-{ // matrix3 * [v]x, []x is skew-symmetric matrix
-    static_assert(t_row == 3, "This method is only for 3 x 3 matrix");
-    static_assert(t_col == 3, "This method is only for 3 x 3 matrix");
-
-    t_type mat[t_row * t_col];
-
-    mat[0] = m_elem[1] * v.m_elem[2] - m_elem[2] * v.m_elem[1];
-    mat[1] = m_elem[2] * v.m_elem[0] - m_elem[0] * v.m_elem[2];
-    mat[2] = m_elem[0] * v.m_elem[1] - m_elem[1] * v.m_elem[0];
-
-    mat[3] = m_elem[4] * v.m_elem[2] - m_elem[5] * v.m_elem[1];
-    mat[4] = m_elem[5] * v.m_elem[0] - m_elem[3] * v.m_elem[2];
-    mat[5] = m_elem[3] * v.m_elem[1] - m_elem[4] * v.m_elem[0];
-
-    mat[6] = m_elem[7] * v.m_elem[2] - m_elem[8] * v.m_elem[1];
-    mat[7] = m_elem[8] * v.m_elem[0] - m_elem[6] * v.m_elem[2];
-    mat[8] = m_elem[6] * v.m_elem[1] - m_elem[7] * v.m_elem[0];
-
-    return Matrix<t_row, t_col, t_type>(mat);
+    return dtMatrix<m_row, m_col, m_type>(mat);
 }
 
 /* Comparison operators */
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator==(const Matrix<t_row, t_col, t_type> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline bool dtMatrix<m_row, m_col, m_type>::operator==(const dtMatrix<m_row, m_col, m_type> &m) const
 {
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
-        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 2] - m.m_elem[i + 2]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 4] - m.m_elem[i + 4]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 6] - m.m_elem[i + 6]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 1] - m.m_elem[i + 1]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 3] - m.m_elem[i + 3]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 5] - m.m_elem[i + 5]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 7] - m.m_elem[i + 7]) > m_tolerance) return false;
+        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 2] - m.m_elem[i + 2]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 4] - m.m_elem[i + 4]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 6] - m.m_elem[i + 6]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 1] - m.m_elem[i + 1]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 3] - m.m_elem[i + 3]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 5] - m.m_elem[i + 5]) > m_tolerance)
+            return false;
+        if (std::abs(m_elem[i + 7] - m.m_elem[i + 7]) > m_tolerance)
+            return false;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
-        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance) return false;
+        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance)
+            return false;
     }
 
     return true;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator!=(const Matrix<t_row, t_col, t_type> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline bool dtMatrix<m_row, m_col, m_type>::operator!=(const dtMatrix<m_row, m_col, m_type> &m) const
 {
     uint16_t cnt, i = 0;
 
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
+    for (cnt = (m_row * m_col) >> 3u; cnt > 0u; cnt--, i += 8)
     {
-        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 2] - m.m_elem[i + 2]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 4] - m.m_elem[i + 4]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 6] - m.m_elem[i + 6]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 1] - m.m_elem[i + 1]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 3] - m.m_elem[i + 3]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 5] - m.m_elem[i + 5]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 7] - m.m_elem[i + 7]) > m_tolerance) return true;
+        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 2] - m.m_elem[i + 2]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 4] - m.m_elem[i + 4]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 6] - m.m_elem[i + 6]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 1] - m.m_elem[i + 1]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 3] - m.m_elem[i + 3]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 5] - m.m_elem[i + 5]) > m_tolerance)
+            return true;
+        if (std::abs(m_elem[i + 7] - m.m_elem[i + 7]) > m_tolerance)
+            return true;
     }
 
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
+    for (cnt = (m_row * m_col) % 8u; cnt > 0u; cnt--, i++)
     {
-        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance) return true;
+        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance)
+            return true;
     }
 
     return false;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator==(const Matrix<0, 0, t_type> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline bool dtMatrix<m_row, m_col, m_type>::operator==(const dtMatrix3<m_type, m_row, m_col> &m) const
 {
-    assert(t_row == m.m_row && "Row Dimensions do not matched");
-    assert(t_col == m.m_col && "Col Dimensions do not matched");
-
-    uint16_t cnt, i = 0;
-
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
-    {
-        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 2] - m.m_elem[i + 2]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 4] - m.m_elem[i + 4]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 6] - m.m_elem[i + 6]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 1] - m.m_elem[i + 1]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 3] - m.m_elem[i + 3]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 5] - m.m_elem[i + 5]) > m_tolerance) return false;
-        if (std::abs(m_elem[i + 7] - m.m_elem[i + 7]) > m_tolerance) return false;
-    }
-
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
-    {
-        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance) return false;
-    }
+    if (std::abs(m_elem[0] - m.m_elem[0]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[1] - m.m_elem[1]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[2] - m.m_elem[2]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[3] - m.m_elem[3]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[4] - m.m_elem[4]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[5] - m.m_elem[5]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[6] - m.m_elem[6]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[7] - m.m_elem[7]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[8] - m.m_elem[8]) > m_tolerance)
+        return false;
 
     return true;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator!=(const Matrix<0, 0, t_type> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline bool dtMatrix<m_row, m_col, m_type>::operator!=(const dtMatrix3<m_type, m_row, m_col> &m) const
 {
-    assert(t_row == m.m_row && "Row Dimensions do not matched");
-    assert(t_col == m.m_col && "Col Dimensions do not matched");
-
-    uint16_t cnt, i = 0;
-
-    for (cnt = (t_row * t_col) >> 3u; cnt > 0u; cnt--, i += 8)
-    {
-        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 2] - m.m_elem[i + 2]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 4] - m.m_elem[i + 4]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 6] - m.m_elem[i + 6]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 1] - m.m_elem[i + 1]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 3] - m.m_elem[i + 3]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 5] - m.m_elem[i + 5]) > m_tolerance) return true;
-        if (std::abs(m_elem[i + 7] - m.m_elem[i + 7]) > m_tolerance) return true;
-    }
-
-    for (cnt = (t_row * t_col) % 8u; cnt > 0u; cnt--, i++)
-    {
-        if (std::abs(m_elem[i] - m.m_elem[i]) > m_tolerance) return true;
-    }
+    if (std::abs(m_elem[0] - m.m_elem[0]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[1] - m.m_elem[1]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[2] - m.m_elem[2]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[3] - m.m_elem[3]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[4] - m.m_elem[4]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[5] - m.m_elem[5]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[6] - m.m_elem[6]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[7] - m.m_elem[7]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[8] - m.m_elem[8]) > m_tolerance)
+        return true;
 
     return false;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator==(const Matrix3<t_type, t_row, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline bool dtMatrix<m_row, m_col, m_type>::operator==(const dtRotation<m_type, m_row, m_col> &m) const
 {
-    if (std::abs(m_elem[0] - m.m_elem[0]) > m_tolerance) return false;
-    if (std::abs(m_elem[1] - m.m_elem[1]) > m_tolerance) return false;
-    if (std::abs(m_elem[2] - m.m_elem[2]) > m_tolerance) return false;
-    if (std::abs(m_elem[3] - m.m_elem[3]) > m_tolerance) return false;
-    if (std::abs(m_elem[4] - m.m_elem[4]) > m_tolerance) return false;
-    if (std::abs(m_elem[5] - m.m_elem[5]) > m_tolerance) return false;
-    if (std::abs(m_elem[6] - m.m_elem[6]) > m_tolerance) return false;
-    if (std::abs(m_elem[7] - m.m_elem[7]) > m_tolerance) return false;
-    if (std::abs(m_elem[8] - m.m_elem[8]) > m_tolerance) return false;
+    if (std::abs(m_elem[0] - m.m_elem[0]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[1] - m.m_elem[1]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[2] - m.m_elem[2]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[3] - m.m_elem[3]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[4] - m.m_elem[4]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[5] - m.m_elem[5]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[6] - m.m_elem[6]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[7] - m.m_elem[7]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[8] - m.m_elem[8]) > m_tolerance)
+        return false;
 
     return true;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator!=(const Matrix3<t_type, t_row, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline bool dtMatrix<m_row, m_col, m_type>::operator!=(const dtRotation<m_type, m_row, m_col> &m) const
 {
-    if (std::abs(m_elem[0] - m.m_elem[0]) > m_tolerance) return true;
-    if (std::abs(m_elem[1] - m.m_elem[1]) > m_tolerance) return true;
-    if (std::abs(m_elem[2] - m.m_elem[2]) > m_tolerance) return true;
-    if (std::abs(m_elem[3] - m.m_elem[3]) > m_tolerance) return true;
-    if (std::abs(m_elem[4] - m.m_elem[4]) > m_tolerance) return true;
-    if (std::abs(m_elem[5] - m.m_elem[5]) > m_tolerance) return true;
-    if (std::abs(m_elem[6] - m.m_elem[6]) > m_tolerance) return true;
-    if (std::abs(m_elem[7] - m.m_elem[7]) > m_tolerance) return true;
-    if (std::abs(m_elem[8] - m.m_elem[8]) > m_tolerance) return true;
+    if (std::abs(m_elem[0] - m.m_elem[0]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[1] - m.m_elem[1]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[2] - m.m_elem[2]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[3] - m.m_elem[3]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[4] - m.m_elem[4]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[5] - m.m_elem[5]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[6] - m.m_elem[6]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[7] - m.m_elem[7]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[8] - m.m_elem[8]) > m_tolerance)
+        return true;
 
     return false;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator==(const Rotation<t_type, t_row, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline bool dtMatrix<m_row, m_col, m_type>::operator==(const dtTransform<m_type, m_row, m_col> &m) const
 {
-    if (std::abs(m_elem[0] - m.m_elem[0]) > m_tolerance) return false;
-    if (std::abs(m_elem[1] - m.m_elem[1]) > m_tolerance) return false;
-    if (std::abs(m_elem[2] - m.m_elem[2]) > m_tolerance) return false;
-    if (std::abs(m_elem[3] - m.m_elem[3]) > m_tolerance) return false;
-    if (std::abs(m_elem[4] - m.m_elem[4]) > m_tolerance) return false;
-    if (std::abs(m_elem[5] - m.m_elem[5]) > m_tolerance) return false;
-    if (std::abs(m_elem[6] - m.m_elem[6]) > m_tolerance) return false;
-    if (std::abs(m_elem[7] - m.m_elem[7]) > m_tolerance) return false;
-    if (std::abs(m_elem[8] - m.m_elem[8]) > m_tolerance) return false;
+    if (std::abs(m_elem[0] - m.m_R.m_elem[0]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[1] - m.m_R.m_elem[1]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[2] - m.m_R.m_elem[2]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[3] - m.m_p.m_elem[0]) > m_tolerance)
+        return false;
+
+    if (std::abs(m_elem[4] - m.m_R.m_elem[3]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[5] - m.m_R.m_elem[4]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[6] - m.m_R.m_elem[5]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[7] - m.m_p.m_elem[1]) > m_tolerance)
+        return false;
+
+    if (std::abs(m_elem[8] - m.m_R.m_elem[6]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[9] - m.m_R.m_elem[7]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[10] - m.m_R.m_elem[8]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[11] - m.m_p.m_elem[2]) > m_tolerance)
+        return false;
+
+    if (std::abs(m_elem[12]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[13]) > m_tolerance)
+        return false;
+    if (std::abs(m_elem[14]) > m_tolerance)
+        return false;
+    if (std::abs(1 - m_elem[15]) > m_tolerance)
+        return false;
 
     return true;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator!=(const Rotation<t_type, t_row, t_col> &m) const
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline bool dtMatrix<m_row, m_col, m_type>::operator!=(const dtTransform<m_type, m_row, m_col> &m) const
 {
-    if (std::abs(m_elem[0] - m.m_elem[0]) > m_tolerance) return true;
-    if (std::abs(m_elem[1] - m.m_elem[1]) > m_tolerance) return true;
-    if (std::abs(m_elem[2] - m.m_elem[2]) > m_tolerance) return true;
-    if (std::abs(m_elem[3] - m.m_elem[3]) > m_tolerance) return true;
-    if (std::abs(m_elem[4] - m.m_elem[4]) > m_tolerance) return true;
-    if (std::abs(m_elem[5] - m.m_elem[5]) > m_tolerance) return true;
-    if (std::abs(m_elem[6] - m.m_elem[6]) > m_tolerance) return true;
-    if (std::abs(m_elem[7] - m.m_elem[7]) > m_tolerance) return true;
-    if (std::abs(m_elem[8] - m.m_elem[8]) > m_tolerance) return true;
+    if (std::abs(m_elem[0] - m.m_R.m_elem[0]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[1] - m.m_R.m_elem[1]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[2] - m.m_R.m_elem[2]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[3] - m.m_p.m_elem[0]) > m_tolerance)
+        return true;
+
+    if (std::abs(m_elem[4] - m.m_R.m_elem[3]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[5] - m.m_R.m_elem[4]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[6] - m.m_R.m_elem[5]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[7] - m.m_p.m_elem[1]) > m_tolerance)
+        return true;
+
+    if (std::abs(m_elem[8] - m.m_R.m_elem[6]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[9] - m.m_R.m_elem[7]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[10] - m.m_R.m_elem[8]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[11] - m.m_p.m_elem[2]) > m_tolerance)
+        return true;
+
+    if (std::abs(m_elem[12]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[13]) > m_tolerance)
+        return true;
+    if (std::abs(m_elem[14]) > m_tolerance)
+        return true;
+    if (std::abs(1 - m_elem[15]) > m_tolerance)
+        return true;
 
     return false;
 }
 
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator==(const Transform<t_type, t_row, t_col> &m) const
-{
-    if (std::abs(m_elem[0] - m.m_R.m_elem[0]) > m_tolerance) return false;
-    if (std::abs(m_elem[1] - m.m_R.m_elem[1]) > m_tolerance) return false;
-    if (std::abs(m_elem[2] - m.m_R.m_elem[2]) > m_tolerance) return false;
-    if (std::abs(m_elem[3] - m.m_p.m_elem[0]) > m_tolerance) return false;
-
-    if (std::abs(m_elem[4] - m.m_R.m_elem[3]) > m_tolerance) return false;
-    if (std::abs(m_elem[5] - m.m_R.m_elem[4]) > m_tolerance) return false;
-    if (std::abs(m_elem[6] - m.m_R.m_elem[5]) > m_tolerance) return false;
-    if (std::abs(m_elem[7] - m.m_p.m_elem[1]) > m_tolerance) return false;
-
-    if (std::abs(m_elem[8] - m.m_R.m_elem[6]) > m_tolerance) return false;
-    if (std::abs(m_elem[9] - m.m_R.m_elem[7]) > m_tolerance) return false;
-    if (std::abs(m_elem[10] - m.m_R.m_elem[8]) > m_tolerance) return false;
-    if (std::abs(m_elem[11] - m.m_p.m_elem[2]) > m_tolerance) return false;
-
-    if (std::abs(m_elem[12]) > m_tolerance) return false;
-    if (std::abs(m_elem[13]) > m_tolerance) return false;
-    if (std::abs(m_elem[14]) > m_tolerance) return false;
-    if (std::abs(1 - m_elem[15]) > m_tolerance) return false;
-
-    return true;
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline bool Matrix<t_row, t_col, t_type>::operator!=(const Transform<t_type, t_row, t_col> &m) const
-{
-    if (std::abs(m_elem[0] - m.m_R.m_elem[0]) > m_tolerance) return true;
-    if (std::abs(m_elem[1] - m.m_R.m_elem[1]) > m_tolerance) return true;
-    if (std::abs(m_elem[2] - m.m_R.m_elem[2]) > m_tolerance) return true;
-    if (std::abs(m_elem[3] - m.m_p.m_elem[0]) > m_tolerance) return true;
-
-    if (std::abs(m_elem[4] - m.m_R.m_elem[3]) > m_tolerance) return true;
-    if (std::abs(m_elem[5] - m.m_R.m_elem[4]) > m_tolerance) return true;
-    if (std::abs(m_elem[6] - m.m_R.m_elem[5]) > m_tolerance) return true;
-    if (std::abs(m_elem[7] - m.m_p.m_elem[1]) > m_tolerance) return true;
-
-    if (std::abs(m_elem[8] - m.m_R.m_elem[6]) > m_tolerance) return true;
-    if (std::abs(m_elem[9] - m.m_R.m_elem[7]) > m_tolerance) return true;
-    if (std::abs(m_elem[10] - m.m_R.m_elem[8]) > m_tolerance) return true;
-    if (std::abs(m_elem[11] - m.m_p.m_elem[2]) > m_tolerance) return true;
-
-    if (std::abs(m_elem[12]) > m_tolerance) return true;
-    if (std::abs(m_elem[13]) > m_tolerance) return true;
-    if (std::abs(m_elem[14]) > m_tolerance) return true;
-    if (std::abs(1 - m_elem[15]) > m_tolerance) return true;
-
-    return false;
-}
-
-template <uint16_t t_row, uint16_t t_col, typename t_type>
-inline void Matrix<t_row, t_col, t_type>::Print(const char endChar)
+template <uint16_t m_row, uint16_t m_col, typename m_type>
+inline void dtMatrix<m_row, m_col, m_type>::Print(const char endChar)
 {
 #if defined(ARDUINO)
-    for (uint16_t irow = 0; irow < t_row; irow++)
+    for (uint16_t irow = 0; irow < m_row; irow++)
     {
-        for (uint16_t icol = 0; icol < t_col; icol++)
+        for (uint16_t icol = 0; icol < m_col; icol++)
         {
-            Serial.printf("%7.3f ", (t_type)(m_elem[irow * t_col + icol]));
+            Serial.printf("%7.4f ", (m_type)(m_elem[irow * m_col + icol]));
         }
         Serial.write('\n');
     }
     Serial.write(endChar);
 #else
-    for (uint16_t irow = 0; irow < t_row; irow++)
+    for (uint16_t irow = 0; irow < m_row; irow++)
     {
-        for (uint16_t icol = 0; icol < t_col; icol++)
+        for (uint16_t icol = 0; icol < m_col; icol++)
         {
-            printf("%10.6f ", (t_type)(m_elem[irow * t_col + icol]));
+            printf("%7.7f ", (m_type)(m_elem[irow * m_col + icol]));
         }
         printf("\n");
     }
@@ -2430,7 +1977,7 @@ inline void Matrix<t_row, t_col, t_type>::Print(const char endChar)
 //-- Template Function ------------------------------------------------------//
 // scalar * matrix
 template <uint16_t row, uint16_t col, typename type>
-inline Matrix<row, col, type> operator*(const type s, const Matrix<row, col, type> &m)
+inline dtMatrix<row, col, type> operator*(const type s, const dtMatrix<row, col, type> &m)
 {
     type mat[row * col];
     uint16_t cnt, i = 0;
@@ -2452,10 +1999,9 @@ inline Matrix<row, col, type> operator*(const type s, const Matrix<row, col, typ
         mat[i] = m.m_elem[i] * s;
     }
 
-    return Matrix<row, col, type>(mat);
+    return dtMatrix<row, col, type>(mat);
 }
 
-} // namespace Math
-} // namespace dt
+} // namespace dtMath
 
 #endif // DTMATH_DTMATRIX_TPP_
