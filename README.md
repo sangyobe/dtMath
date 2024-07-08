@@ -1,10 +1,7 @@
 
-
-
 # Introduction
 
-This project is a converted project of dtMath_VS to use cmake. You can clone or fetch this library.
-
+dtMath is a linear algebra library. It is simple and fast. It is header-only C++ library.
 
 
 ## Structure
@@ -17,17 +14,6 @@ This project is a converted project of dtMath_VS to use cmake. You can clone or 
 │   ├── ProjectOptions.cmake
 │   └── TargetAddRpath.cmake
 ├── CMakeLists.txt
-├── doc
-│   ├── notes on quaternions_Simo Sarkka.pdf
-│   ├── quaternion computation_Neil Dantam.pdf
-│   └── quaternion kinematics for the error-state kalman filter_Joan Sola.pdf
-├── extlib
-│   ├── googletest
-│   ├── osqp
-│   ├── osqp.dll
-│   ├── osqp.lib
-│   ├── qdldl.dll
-│   └── qdldl.lib
 ├── README.md
 ├── test
 │   ├── CMakeLists.txt
@@ -75,7 +61,7 @@ This project is a converted project of dtMath_VS to use cmake. You can clone or 
 │       ├── testVector6.h
 │       ├── testVector.cpp
 │       └── testVector.h
-└── user
+└── include
     ├── dtMath
     │   ├── dtCARE.h
     │   ├── dtCARE.tpp
@@ -121,24 +107,6 @@ This project is a converted project of dtMath_VS to use cmake. You can clone or 
     │   ├── dtVector6.tpp
     │   ├── dtVector.h
     │   └── dtVector.tpp
-    ├── robotics
-    │   ├── djBezier.h
-    │   ├── djBezierOri.h
-    │   ├── djBezierOri.tpp
-    │   ├── djBezier.tpp
-    │   ├── dtBezier.h
-    │   ├── dtBezier.tpp
-    │   ├── dtGaitCPG.h
-    │   ├── dtGaitCPG.tpp
-    │   ├── dtGaitPlanner.h
-    │   ├── dtGaitPlanner.tpp
-    │   ├── dtStanceBezier.h
-    │   ├── dtStanceBezier.tpp
-    │   ├── dtSwingBezier.h
-    │   └── dtSwingBezier.tpp
-    └── utility
-        ├── dhTimeCheck.cpp
-        ├── dhTimeCheck.h
-        ├── dtGnuPlot.h
-        └── dtGnuPlot.tpp
+    └──
+
 ```
