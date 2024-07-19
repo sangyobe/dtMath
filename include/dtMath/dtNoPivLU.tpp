@@ -1,6 +1,6 @@
 /*!
 \file       dtNoPivLU.h
-\brief      dtMath, LU Decomposition without pivoting(Doolittle form) class
+\brief      dtMath, LU Decomposition without pivoting(Doolittle form) class, A = LU
 \author     Dong-hyun Lee, phenom8305@gmail.com
 \author     Joonhee Jo, allusivejune@gmail.com
 \author     Who is next author?
@@ -14,20 +14,21 @@
 
 #include "dtNoPivLU.h"
 
-namespace dtMath
+namespace dt
+{
+namespace Math
 {
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline dtNoPivLU<m_row, m_col, m_type>::dtNoPivLU()
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline NoPivLU<t_row, t_col, t_type>::NoPivLU() : m_isOk(0)
 {
-    memset(m_elem, 0, sizeof(m_type) * m_row * m_col);
-    m_isOk = 0;
+    memset(m_elem, 0, sizeof(t_type) * t_row * t_col);
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline dtNoPivLU<m_row, m_col, m_type>::dtNoPivLU(const m_type *element, const size_t n_byte)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline NoPivLU<t_row, t_col, t_type>::NoPivLU(const t_type *element, const size_t n_byte)
 {
-    if ((sizeof(m_type) * m_row * m_col) != n_byte)
+    if ((sizeof(t_type) * t_row * t_col) != n_byte)
         m_isOk = 0;
     else
     {
@@ -36,53 +37,53 @@ inline dtNoPivLU<m_row, m_col, m_type>::dtNoPivLU(const m_type *element, const s
     }
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline dtNoPivLU<m_row, m_col, m_type>::dtNoPivLU(const dtMatrix<m_row, m_col, m_type> &m)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline NoPivLU<t_row, t_col, t_type>::NoPivLU(const Matrix<t_row, t_col, t_type> &m)
 {
-    memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
+    memcpy(m_elem, m.m_elem, sizeof(t_type) * t_row * t_col);
     Compute();
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline dtNoPivLU<m_row, m_col, m_type>::dtNoPivLU(const dtMatrix3<m_type, m_row, m_col> &m)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline NoPivLU<t_row, t_col, t_type>::NoPivLU(const Matrix3<t_type, t_row, t_col> &m)
 {
-    memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
+    memcpy(m_elem, m.m_elem, sizeof(t_type) * t_row * t_col);
     Compute();
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute()
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline int8_t NoPivLU<t_row, t_col, t_type>::Compute()
 {
-    if (m_row != m_col)
+    if (t_row != t_col)
     {
         m_isOk = 0;
         return -1;
     }
 
     int x, i, j, k;
-    m_type *pMx, *pMi, *pMk;
+    t_type *pMx, *pMi, *pMk;
 
-    for (x = 0, pMx = m_elem; x < m_row; pMx += m_col, x++)
+    for (x = 0, pMx = m_elem; x < t_row; pMx += t_col, x++)
     {
         /* find the uppper triangular matrix element for row x */
-        for (j = x; j < m_col; j++)
+        for (j = x; j < t_col; j++)
         {
             // U(x,j) = A(x,j) - sum of (L(x,k) * U(k,j))
-            for (k = 0, pMk = m_elem; k < x; pMk += m_col, k++)
+            for (k = 0, pMk = m_elem; k < x; pMk += t_col, k++)
                 *(pMx + j) -= *(pMx + k) * *(pMk + j); // in-place
         }
 
-        if (std::abs(*(pMx + x)) <= std::numeric_limits<m_type>::epsilon())
+        if (std::abs(*(pMx + x)) <= std::numeric_limits<t_type>::epsilon())
         {
             m_isOk = 0;
             return -1; // matrix is singular, if Diagonal is 0
         }
 
         /* find the lower triangular matrix element for col x */
-        for (i = x + 1, pMi = pMx + m_row; i < m_row; pMi += m_row, i++)
+        for (i = x + 1, pMi = pMx + t_row; i < t_row; pMi += t_row, i++)
         {
             // L(i,x) = [A(i,x) - sum of (L(i,k) * U(k,x))] / Uxx
-            for (k = 0, pMk = m_elem; k < x; pMk += m_row, k++)
+            for (k = 0, pMk = m_elem; k < x; pMk += t_row, k++)
                 *(pMi + x) -= *(pMi + k) * *(pMk + x);
             *(pMi + x) /= *(pMx + x);
         }
@@ -92,10 +93,10 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute()
     return 0;
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute(const m_type *element, const size_t n_byte)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline int8_t NoPivLU<t_row, t_col, t_type>::Compute(const t_type *element, const size_t n_byte)
 {
-    if ((sizeof(m_type) * m_row * m_col) != n_byte)
+    if ((sizeof(t_type) * t_row * t_col) != n_byte)
     {
         m_isOk = 0;
         return -1;
@@ -105,65 +106,61 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute(const m_type *element, co
     return Compute();
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute(const dtMatrix<m_row, m_col, m_type> &m)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline int8_t NoPivLU<t_row, t_col, t_type>::Compute(const Matrix<t_row, t_col, t_type> &m)
 {
-    memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
+    memcpy(m_elem, m.m_elem, sizeof(t_type) * t_row * t_col);
     return Compute();
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t dtNoPivLU<m_row, m_col, m_type>::Compute(const dtMatrix3<m_type, m_row, m_col> &m)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline int8_t NoPivLU<t_row, t_col, t_type>::Compute(const Matrix3<t_type, t_row, t_col> &m)
 {
-    memcpy(m_elem, m.m_elem, sizeof(m_type) * m_row * m_col);
+    memcpy(m_elem, m.m_elem, sizeof(t_type) * t_row * t_col);
     return Compute();
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::GetMatrix() const
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline Matrix<t_row, t_col, t_type> NoPivLU<t_row, t_col, t_type>::GetMatrix() const
 {
-    return dtMatrix<m_row, m_col, m_type>(m_elem);
+    return Matrix<t_row, t_col, t_type>(m_elem);
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::GetMatrixL() const
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline Matrix<t_row, t_col, t_type> NoPivLU<t_row, t_col, t_type>::GetMatrixL() const
 {
-    int i, j;
-    m_type L[m_row * m_col] = {
-        0,
-    };
+    uint16_t i, j;
+    t_type L[t_row * t_col]{0};
 
     /* Set diagonal elements as 1 */
-    for (i = 0; i < m_row; i++)
+    for (i = 0; i < t_row; i++)
     {
-        L[i * (m_col + 1)] = 1;
+        L[i * (t_col + 1)] = 1;
     }
 
     /* Update remaining matrix from m_elem to L*/
-    for (i = 1; i < m_row; i++)
+    for (i = 1; i < t_row; i++)
         for (j = 0; j < i; j++)
-            L[i * m_col + j] = m_elem[i * m_col + j];
+            L[i * t_col + j] = m_elem[i * t_col + j];
 
-    return dtMatrix<m_row, m_col, m_type>(L);
+    return Matrix<t_row, t_col, t_type>(L);
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::GetMatrixU() const
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline Matrix<t_row, t_col, t_type> NoPivLU<t_row, t_col, t_type>::GetMatrixU() const
 {
-    int i, j;
-    m_type U[m_row * m_col] = {
-        0,
-    };
+    uint16_t i, j;
+    t_type U[t_row * t_col]{0};
 
-    for (i = 0; i < m_row; i++)
-        for (j = i; j < m_col; j++)
-            U[i * m_col + j] = m_elem[i * m_col + j];
+    for (i = 0; i < t_row; i++)
+        for (j = i; j < t_col; j++)
+            U[i * t_col + j] = m_elem[i * t_col + j];
 
-    return dtMatrix<m_row, m_col, m_type>(U);
+    return Matrix<t_row, t_col, t_type>(U);
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t dtNoPivLU<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline int8_t NoPivLU<t_row, t_col, t_type>::Solve(const Vector<t_row, t_type> &b, Vector<t_col, t_type> &x)
 {
     // Solve, Ax = LUx = b
     // where L is a lower triangular matrix with an all diagonal element is 1
@@ -172,15 +169,18 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_typ
     // Ly = b is solved by forward substitution for y
     // Ux = y is solved by backward substitution for x
 
-    int i, k;
-    m_type *pMi;
-
     if (!m_isOk)
+    {
+        assert(false && "The matrix is not decomposed into LU");
         return -1;
+    }
+
+    int i, k;
+    t_type *pMi;
 
     /* Solve Ly = b */
     // Solve the unit lower triangular (forward substitution), here x is y
-    for (i = 0, pMi = m_elem; i < m_row; pMi += m_col, i++)
+    for (i = 0, pMi = m_elem; i < t_row; pMi += t_col, i++)
     {
         x.m_elem[i] = b.m_elem[i];
         for (k = 0; k < i; k++)
@@ -189,12 +189,12 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_typ
 
     /* Solve Ux = y */
     // Solve the upper triangular (backward substitution)
-    for (i = m_row - 1, pMi = m_elem + (m_row - 1) * m_col; i >= 0; i--, pMi -= m_col)
+    for (i = t_row - 1, pMi = m_elem + (t_row - 1) * t_col; i >= 0; i--, pMi -= t_col)
     {
-        for (k = i + 1; k < m_col; k++)
+        for (k = i + 1; k < t_col; k++)
             x.m_elem[i] -= *(pMi + k) * x.m_elem[k];
 
-        // if (std::abs(*(pMi + k)) <= std::numeric_limits<m_type>::epsilon()) return -1; // The matrix U is singular
+        // if (std::abs(*(pMi + k)) <= std::numeric_limits<t_type>::epsilon()) return -1; // The matrix U is singular
 
         x.m_elem[i] /= *(pMi + i);
     }
@@ -202,32 +202,28 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_typ
     return 0;
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline dtVector<m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::Solve(const dtVector<m_row, m_type> &b, int8_t *isOk)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline Vector<t_col, t_type> NoPivLU<t_row, t_col, t_type>::Solve(const Vector<t_row, t_type> &b, int8_t *isOk)
 {
     // Solve, Ax = LUx = b
     // define Ux = y
     // Ly = b is solved by forward substitution for y
     // Ux = y is solved by backward substitution for x
 
-    int i, k;
-    m_type *pMi;
-    m_type x[m_col] = {
-        0,
-    };
-
-    if (isOk)
-        *isOk = 1;
-
-    if (!m_isOk && isOk)
+    if (!m_isOk)
     {
-        *isOk = 0;
-        return dtVector<m_col, m_type>();
+        assert(m_isOk && "The matrix is not decomposed into LU");
+        if (isOk) *isOk = 0;
+        return Vector<t_col, t_type>();
     }
+
+    int i, k;
+    t_type *pMi;
+    t_type x[t_col]{0};
 
     /* Solve Ly = b */
     // Unit Lower Triangular Solve (forward substitution)
-    for (i = 0, pMi = m_elem; i < m_row; i++, pMi += m_col)
+    for (i = 0, pMi = m_elem; i < t_row; i++, pMi += t_col)
     {
         x[i] = b.m_elem[i];
         for (k = 0; k < i; k++)
@@ -236,55 +232,55 @@ inline dtVector<m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::Solve(const dtVe
 
     /* Solve Ux = y */
     // Upper Triangular Solve (backward substitution)
-    for (i = m_row - 1, pMi = m_elem + (m_row - 1) * m_col; i >= 0; i--, pMi -= m_col)
+    for (i = t_row - 1, pMi = m_elem + (t_row - 1) * t_col; i >= 0; i--, pMi -= t_col)
     {
-        for (k = i + 1; k < m_col; k++)
+        for (k = i + 1; k < t_col; k++)
             x[i] -= *(pMi + k) * x[k];
 
-        // if (std::abs(*(pU + k)) <= std::numeric_limits<m_type>::epsilon()) m_isOk = 0; // The matrix U is singular
+        // if (std::abs(*(pU + k)) <= std::numeric_limits<t_type>::epsilon()) m_isOk = 0; // The matrix U is singular
 
         x[i] /= *(pMi + i);
     }
 
-    return dtVector<m_col, m_type>(x);
+    if (isOk) *isOk = 1;
+    return Vector<t_col, t_type>(x);
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t dtNoPivLU<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_type> &inv)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline int8_t NoPivLU<t_row, t_col, t_type>::Inverse(Matrix<t_row, t_col, t_type> &inv)
 {
-    int i, j, k;
-    m_type *pMi;
-    m_type *pInvMi, *pInvMj, *pInvMk;
-    m_type sum;
-    m_type invL[m_row * m_col] = {
-        0,
-    };
-    m_type invU[m_row * m_col] = {
-        0,
-    };
-
     if (!m_isOk)
+    {
+        assert(m_isOk && "The matrix is not decomposed into LU");
         return -1;
+    }
+
+    int i, j, k;
+    t_type *pMi;
+    t_type *pInvMi, *pInvMj, *pInvMk;
+    t_type sum;
+    t_type invL[t_row * t_col]{0};
+    t_type invU[t_row * t_col]{0};
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
-    for (i = 0; i < m_row; i++)
-        invL[i * (m_col + 1)] = 1;
+    for (i = 0; i < t_row; i++)
+        invL[i * (t_col + 1)] = 1;
 
     /* Inverse of Lower triangular matrix */
     // Invert the subdiagonal part of the matrix L row by row where
     // the diagonal elements are assumed to be 1.
-    pMi = m_elem + m_col;
-    pInvMi = invL + m_col;
-    for (i = 1; i < m_row; i++, pMi += m_col, pInvMi += m_col)
+    pMi = m_elem + t_col;
+    pInvMi = invL + t_col;
+    for (i = 1; i < t_row; i++, pMi += t_col, pInvMi += t_col)
     {
         pInvMj = invL;
-        for (j = 0; j < i; j++, pInvMj += m_col)
+        for (j = 0; j < i; j++, pInvMj += t_col)
         {
             *(pInvMi + j) = -*(pMi + j);
 
-            pInvMk = pInvMj + m_col;
-            for (k = j + 1; k < i; k++, pInvMk += m_col)
+            pInvMk = pInvMj + t_col;
+            for (k = j + 1; k < i; k++, pInvMk += t_col)
             {
                 *(pInvMi + j) -= *(pMi + k) * *(pInvMk + j);
             }
@@ -295,23 +291,23 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_
     // Invert the diagonal elements of the upper triangular matrix U.
     pMi = m_elem;
     pInvMk = invU;
-    for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
+    for (k = 0; k < t_row; k++, pMi += (t_col + 1), pInvMk += (t_col + 1))
     {
-        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // if (std::abs(*pMi) <= std::numeric_limits<t_type>::epsilon()) return -1;
         // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
     // Invert the remaining upper triangular matrix U.
-    pMi = m_elem + m_col * (m_row - 2);
-    pInvMi = invU + m_col * (m_row - 2);
-    for (i = m_row - 2; i >= 0; i--, pMi -= m_col, pInvMi -= m_col)
+    pMi = m_elem + t_col * (t_row - 2);
+    pInvMi = invU + t_col * (t_row - 2);
+    for (i = t_row - 2; i >= 0; i--, pMi -= t_col, pInvMi -= t_col)
     {
-        for (j = m_col - 1; j > i; j--)
+        for (j = t_col - 1; j > i; j--)
         {
             sum = 0;
-            pInvMk = pInvMi + m_col;
-            for (k = i + 1; k <= j; k++, pInvMk += m_col)
+            pInvMk = pInvMi + t_col;
+            for (k = i + 1; k <= j; k++, pInvMk += t_col)
             {
                 sum += *(pMi + k) * *(pInvMk + j);
             }
@@ -320,50 +316,49 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::Inverse(dtMatrix<m_row, m_col, m_
     }
 
     /* Inv(A) = inv(U) * inv(L) */
-    for (i = 0; i < m_row; i++)
-        for (j = 0; j < m_col; j++)
-            for (k = 0; k < m_col; k++)
-                inv.m_elem[i * m_col + j] += invU[i * m_col + k] * invL[k * m_col + j];
+    for (i = 0; i < t_row; i++)
+        for (j = 0; j < t_col; j++)
+            for (k = 0; k < t_col; k++)
+                inv.m_elem[i * t_col + j] += invU[i * t_col + k] * invL[k * t_col + j];
 
     return 0;
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t dtNoPivLU<m_row, m_col, m_type>::Inverse(dtMatrix3<m_type, m_row, m_col> &inv)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline int8_t NoPivLU<t_row, t_col, t_type>::Inverse(Matrix3<t_type, t_row, t_col> &inv)
 {
-    int i, j, k;
-    m_type *pMi;
-    m_type *pInvMi, *pInvMj, *pInvMk;
-    m_type sum;
-    m_type invL[m_row * m_col] = {
-        0,
-    };
-    m_type invU[m_row * m_col] = {
-        0,
-    };
-
     if (!m_isOk)
+    {
+        assert(m_isOk && "The matrix is not decomposed into LU");
         return -1;
+    }
+
+    int i, j, k;
+    t_type *pMi;
+    t_type *pInvMi, *pInvMj, *pInvMk;
+    t_type sum;
+    t_type invL[t_row * t_col]{0};
+    t_type invU[t_row * t_col]{0};
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
-    for (i = 0; i < m_row; i++)
-        invL[i * (m_col + 1)] = 1;
+    for (i = 0; i < t_row; i++)
+        invL[i * (t_col + 1)] = 1;
 
     /* Inverse of Lower triangular matrix */
     // Invert the subdiagonal part of the matrix L row by row where
     // the diagonal elements are assumed to be 1.
-    pMi = m_elem + m_col;
-    pInvMi = invL + m_col;
-    for (i = 1; i < m_row; i++, pMi += m_col, pInvMi += m_col)
+    pMi = m_elem + t_col;
+    pInvMi = invL + t_col;
+    for (i = 1; i < t_row; i++, pMi += t_col, pInvMi += t_col)
     {
         pInvMj = invL;
-        for (j = 0; j < i; j++, pInvMj += m_col)
+        for (j = 0; j < i; j++, pInvMj += t_col)
         {
             *(pInvMi + j) = -*(pMi + j);
 
-            pInvMk = pInvMj + m_col;
-            for (k = j + 1; k < i; k++, pInvMk += m_col)
+            pInvMk = pInvMj + t_col;
+            for (k = j + 1; k < i; k++, pInvMk += t_col)
             {
                 *(pInvMi + j) -= *(pMi + k) * *(pInvMk + j);
             }
@@ -374,23 +369,23 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::Inverse(dtMatrix3<m_type, m_row, 
     // Invert the diagonal elements of the upper triangular matrix U.
     pMi = m_elem;
     pInvMk = invU;
-    for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
+    for (k = 0; k < t_row; k++, pMi += (t_col + 1), pInvMk += (t_col + 1))
     {
-        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // if (std::abs(*pMi) <= std::numeric_limits<t_type>::epsilon()) return -1;
         // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
     // Invert the remaining upper triangular matrix U.
-    pMi = m_elem + m_col * (m_row - 2);
-    pInvMi = invU + m_col * (m_row - 2);
-    for (i = m_row - 2; i >= 0; i--, pMi -= m_col, pInvMi -= m_col)
+    pMi = m_elem + t_col * (t_row - 2);
+    pInvMi = invU + t_col * (t_row - 2);
+    for (i = t_row - 2; i >= 0; i--, pMi -= t_col, pInvMi -= t_col)
     {
-        for (j = m_col - 1; j > i; j--)
+        for (j = t_col - 1; j > i; j--)
         {
             sum = 0;
-            pInvMk = pInvMi + m_col;
-            for (k = i + 1; k <= j; k++, pInvMk += m_col)
+            pInvMk = pInvMi + t_col;
+            for (k = i + 1; k <= j; k++, pInvMk += t_col)
             {
                 sum += *(pMi + k) * *(pInvMk + j);
             }
@@ -399,56 +394,50 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::Inverse(dtMatrix3<m_type, m_row, 
     }
 
     /* Inv(A) = inv(U) * inv(L) */
-    for (i = 0; i < m_row; i++)
-        for (j = 0; j < m_col; j++)
-            for (k = 0; k < m_col; k++)
-                inv.m_elem[i * m_col + j] += invU[i * m_col + k] * invL[k * m_col + j];
+    for (i = 0; i < t_row; i++)
+        for (j = 0; j < t_col; j++)
+            for (k = 0; k < t_col; k++)
+                inv.m_elem[i * t_col + j] += invU[i * t_col + k] * invL[k * t_col + j];
 
     return 0;
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::Inverse(int8_t *isOk)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline Matrix<t_row, t_col, t_type> NoPivLU<t_row, t_col, t_type>::Inverse(int8_t *isOk)
 {
-    int i, j, k;
-    m_type *pMi;
-    m_type *pInvMi, *pInvMj, *pInvMk;
-    m_type sum;
-    m_type invL[m_row * m_col] = {
-        0,
-    };
-    m_type invU[m_row * m_col] = {
-        0,
-    };
-
-    if (isOk)
-        *isOk = 1;
-
-    if (!m_isOk && isOk)
+    if (!m_isOk)
     {
-        *isOk = 0;
-        return dtMatrix<m_row, m_col, m_type>();
+        assert(m_isOk && "The matrix is not decomposed into LU");
+        if (isOk) *isOk = 0;
+        return Matrix<t_row, t_col, t_type>();
     }
+
+    int i, j, k;
+    t_type *pMi;
+    t_type *pInvMi, *pInvMj, *pInvMk;
+    t_type sum;
+    t_type invL[t_row * t_col]{0};
+    t_type invU[t_row * t_col]{0};
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
-    for (i = 0; i < m_row; i++)
-        invL[i * (m_col + 1)] = 1;
+    for (i = 0; i < t_row; i++)
+        invL[i * (t_col + 1)] = 1;
 
     /* Inverse of Lower triangular matrix */
     // Invert the subdiagonal part of the matrix L row by row where
     // the diagonal elements are assumed to be 1.
-    pMi = m_elem + m_col;
-    pInvMi = invL + m_col;
-    for (i = 1; i < m_row; i++, pMi += m_col, pInvMi += m_col)
+    pMi = m_elem + t_col;
+    pInvMi = invL + t_col;
+    for (i = 1; i < t_row; i++, pMi += t_col, pInvMi += t_col)
     {
         pInvMj = invL;
-        for (j = 0; j < i; j++, pInvMj += m_col)
+        for (j = 0; j < i; j++, pInvMj += t_col)
         {
             *(pInvMi + j) = -*(pMi + j);
 
-            pInvMk = pInvMj + m_col;
-            for (k = j + 1; k < i; k++, pInvMk += m_col)
+            pInvMk = pInvMj + t_col;
+            for (k = j + 1; k < i; k++, pInvMk += t_col)
             {
                 *(pInvMi + j) -= *(pMi + k) * *(pInvMk + j);
             }
@@ -459,23 +448,23 @@ inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::Inverse(i
     // Invert the diagonal elements of the upper triangular matrix U.
     pMi = m_elem;
     pInvMk = invU;
-    for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
+    for (k = 0; k < t_row; k++, pMi += (t_col + 1), pInvMk += (t_col + 1))
     {
-        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // if (std::abs(*pMi) <= std::numeric_limits<t_type>::epsilon()) return -1;
         // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
     // Invert the remaining upper triangular matrix U.
-    pMi = m_elem + m_col * (m_row - 2);
-    pInvMi = invU + m_col * (m_row - 2);
-    for (i = m_row - 2; i >= 0; i--, pMi -= m_col, pInvMi -= m_col)
+    pMi = m_elem + t_col * (t_row - 2);
+    pInvMi = invU + t_col * (t_row - 2);
+    for (i = t_row - 2; i >= 0; i--, pMi -= t_col, pInvMi -= t_col)
     {
-        for (j = m_col - 1; j > i; j--)
+        for (j = t_col - 1; j > i; j--)
         {
             sum = 0;
-            pInvMk = pInvMi + m_col;
-            for (k = i + 1; k <= j; k++, pInvMk += m_col)
+            pInvMk = pInvMi + t_col;
+            for (k = i + 1; k <= j; k++, pInvMk += t_col)
             {
                 sum += *(pMi + k) * *(pInvMk + j);
             }
@@ -484,51 +473,51 @@ inline dtMatrix<m_row, m_col, m_type> dtNoPivLU<m_row, m_col, m_type>::Inverse(i
     }
 
     /* Inv(A) = inv(U) * inv(L) */
-    memset(m_inv, 0, sizeof(m_type) * m_row * m_col);
-    for (i = 0; i < m_row; i++)
-        for (j = 0; j < m_col; j++)
-            for (k = 0; k < m_col; k++)
-                m_inv[i * m_col + j] += invU[i * m_col + k] * invL[k * m_col + j];
+    memset(m_inv, 0, sizeof(t_type) * t_row * t_col);
+    for (i = 0; i < t_row; i++)
+        for (j = 0; j < t_col; j++)
+            for (k = 0; k < t_col; k++)
+                m_inv[i * t_col + j] += invU[i * t_col + k] * invL[k * t_col + j];
 
-    return dtMatrix<m_row, m_col, m_type>(m_inv);
+    if (isOk) *isOk = 1;
+    return Matrix<t_row, t_col, t_type>(m_inv);
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline int8_t dtNoPivLU<m_row, m_col, m_type>::InverseArray(m_type *inv)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline int8_t NoPivLU<t_row, t_col, t_type>::InverseArray(t_type *inv)
 {
-    int i, j, k;
-    m_type *pMi;
-    m_type *pInvMi, *pInvMj, *pInvMk;
-    m_type sum;
-    m_type invL[m_row * m_col] = {
-        0,
-    };
-    m_type invU[m_row * m_col] = {
-        0,
-    };
-
     if (!m_isOk)
+    {
+        assert(m_isOk && "The matrix is not decomposed into LU");
         return -1;
+    }
+
+    int i, j, k;
+    t_type *pMi;
+    t_type *pInvMi, *pInvMj, *pInvMk;
+    t_type sum;
+    t_type invL[t_row * t_col]{0};
+    t_type invU[t_row * t_col]{0};
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
-    for (i = 0; i < m_row; i++)
-        invL[i * (m_col + 1)] = 1;
+    for (i = 0; i < t_row; i++)
+        invL[i * (t_col + 1)] = 1;
 
     /* Inverse of Lower triangular matrix */
     // Invert the subdiagonal part of the matrix L row by row where
     // the diagonal elements are assumed to be 1.
-    pMi = m_elem + m_col;
-    pInvMi = invL + m_col;
-    for (i = 1; i < m_row; i++, pMi += m_col, pInvMi += m_col)
+    pMi = m_elem + t_col;
+    pInvMi = invL + t_col;
+    for (i = 1; i < t_row; i++, pMi += t_col, pInvMi += t_col)
     {
         pInvMj = invL;
-        for (j = 0; j < i; j++, pInvMj += m_col)
+        for (j = 0; j < i; j++, pInvMj += t_col)
         {
             *(pInvMi + j) = -*(pMi + j);
 
-            pInvMk = pInvMj + m_col;
-            for (k = j + 1; k < i; k++, pInvMk += m_col)
+            pInvMk = pInvMj + t_col;
+            for (k = j + 1; k < i; k++, pInvMk += t_col)
             {
                 *(pInvMi + j) -= *(pMi + k) * *(pInvMk + j);
             }
@@ -539,23 +528,23 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::InverseArray(m_type *inv)
     // Invert the diagonal elements of the upper triangular matrix U.
     pMi = m_elem;
     pInvMk = invU;
-    for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
+    for (k = 0; k < t_row; k++, pMi += (t_col + 1), pInvMk += (t_col + 1))
     {
-        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // if (std::abs(*pMi) <= std::numeric_limits<t_type>::epsilon()) return -1;
         // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
     // Invert the remaining upper triangular matrix U.
-    pMi = m_elem + m_col * (m_row - 2);
-    pInvMi = invU + m_col * (m_row - 2);
-    for (i = m_row - 2; i >= 0; i--, pMi -= m_col, pInvMi -= m_col)
+    pMi = m_elem + t_col * (t_row - 2);
+    pInvMi = invU + t_col * (t_row - 2);
+    for (i = t_row - 2; i >= 0; i--, pMi -= t_col, pInvMi -= t_col)
     {
-        for (j = m_col - 1; j > i; j--)
+        for (j = t_col - 1; j > i; j--)
         {
             sum = 0;
-            pInvMk = pInvMi + m_col;
-            for (k = i + 1; k <= j; k++, pInvMk += m_col)
+            pInvMk = pInvMi + t_col;
+            for (k = i + 1; k <= j; k++, pInvMk += t_col)
             {
                 sum += *(pMi + k) * *(pInvMk + j);
             }
@@ -564,57 +553,51 @@ inline int8_t dtNoPivLU<m_row, m_col, m_type>::InverseArray(m_type *inv)
     }
 
     /* Inv(A) = inv(U) * inv(L) */
-    for (i = 0; i < m_row; i++)
-        for (j = 0; j < m_col; j++)
-            for (k = 0; k < m_col; k++)
-                inv[i * m_col + j] += invU[i * m_col + k] * invL[k * m_col + j];
+    for (i = 0; i < t_row; i++)
+        for (j = 0; j < t_col; j++)
+            for (k = 0; k < t_col; k++)
+                inv[i * t_col + j] += invU[i * t_col + k] * invL[k * t_col + j];
 
     return 0;
 }
 
-template <uint16_t m_row, uint16_t m_col, typename m_type>
-inline m_type *dtNoPivLU<m_row, m_col, m_type>::InverseArray(int8_t *isOk)
+template <uint16_t t_row, uint16_t t_col, typename t_type>
+inline t_type *NoPivLU<t_row, t_col, t_type>::InverseArray(int8_t *isOk)
 {
-    int i, j, k;
-    m_type *pMi;
-    m_type *pInvMi, *pInvMj, *pInvMk;
-    m_type sum;
-    m_type invL[m_row * m_col] = {
-        0,
-    };
-    m_type invU[m_row * m_col] = {
-        0,
-    };
-    memset(m_inv, 0, sizeof(m_type) * m_row * m_col);
-
-    if (isOk)
-        *isOk = 1;
-
-    if (!m_isOk && isOk)
+    if (!m_isOk)
     {
-        *isOk = 0;
-        return m_inv;
+        assert(m_isOk && "The matrix is not decomposed into LU");
+        if (isOk) *isOk = 0;
+        return nullptr;
     }
+
+    int i, j, k;
+    t_type *pMi;
+    t_type *pInvMi, *pInvMj, *pInvMk;
+    t_type sum;
+    t_type invL[t_row * t_col]{0};
+    t_type invU[t_row * t_col]{0};
+    memset(m_inv, 0, sizeof(t_type) * t_row * t_col);
 
     /* Initialization */
     // Set the diagonal elements of the lower triangular matrix as "1"
-    for (i = 0; i < m_row; i++)
-        invL[i * (m_col + 1)] = 1;
+    for (i = 0; i < t_row; i++)
+        invL[i * (t_col + 1)] = 1;
 
     /* Inverse of Lower triangular matrix */
     // Invert the subdiagonal part of the matrix L row by row where
     // the diagonal elements are assumed to be 1.
-    pMi = m_elem + m_col;
-    pInvMi = invL + m_col;
-    for (i = 1; i < m_row; i++, pMi += m_col, pInvMi += m_col)
+    pMi = m_elem + t_col;
+    pInvMi = invL + t_col;
+    for (i = 1; i < t_row; i++, pMi += t_col, pInvMi += t_col)
     {
         pInvMj = invL;
-        for (j = 0; j < i; j++, pInvMj += m_col)
+        for (j = 0; j < i; j++, pInvMj += t_col)
         {
             *(pInvMi + j) = -*(pMi + j);
 
-            pInvMk = pInvMj + m_col;
-            for (k = j + 1; k < i; k++, pInvMk += m_col)
+            pInvMk = pInvMj + t_col;
+            for (k = j + 1; k < i; k++, pInvMk += t_col)
             {
                 *(pInvMi + j) -= *(pMi + k) * *(pInvMk + j);
             }
@@ -625,23 +608,23 @@ inline m_type *dtNoPivLU<m_row, m_col, m_type>::InverseArray(int8_t *isOk)
     // Invert the diagonal elements of the upper triangular matrix U.
     pMi = m_elem;
     pInvMk = invU;
-    for (k = 0; k < m_row; k++, pMi += (m_col + 1), pInvMk += (m_col + 1))
+    for (k = 0; k < t_row; k++, pMi += (t_col + 1), pInvMk += (t_col + 1))
     {
-        // if (std::abs(*pMi) <= std::numeric_limits<m_type>::epsilon()) return -1;
+        // if (std::abs(*pMi) <= std::numeric_limits<t_type>::epsilon()) return -1;
         // else *pInvMk = 1 / *pMi;
         *pInvMk = 1 / *pMi;
     }
 
     // Invert the remaining upper triangular matrix U.
-    pMi = m_elem + m_col * (m_row - 2);
-    pInvMi = invU + m_col * (m_row - 2);
-    for (i = m_row - 2; i >= 0; i--, pMi -= m_col, pInvMi -= m_col)
+    pMi = m_elem + t_col * (t_row - 2);
+    pInvMi = invU + t_col * (t_row - 2);
+    for (i = t_row - 2; i >= 0; i--, pMi -= t_col, pInvMi -= t_col)
     {
-        for (j = m_col - 1; j > i; j--)
+        for (j = t_col - 1; j > i; j--)
         {
             sum = 0;
-            pInvMk = pInvMi + m_col;
-            for (k = i + 1; k <= j; k++, pInvMk += m_col)
+            pInvMk = pInvMi + t_col;
+            for (k = i + 1; k <= j; k++, pInvMk += t_col)
             {
                 sum += *(pMi + k) * *(pInvMk + j);
             }
@@ -650,14 +633,16 @@ inline m_type *dtNoPivLU<m_row, m_col, m_type>::InverseArray(int8_t *isOk)
     }
 
     /* Inv(A) = inv(U) * inv(L) */
-    for (i = 0; i < m_row; i++)
-        for (j = 0; j < m_col; j++)
-            for (k = 0; k < m_col; k++)
-                m_inv[i * m_col + j] += invU[i * m_col + k] * invL[k * m_col + j];
+    for (i = 0; i < t_row; i++)
+        for (j = 0; j < t_col; j++)
+            for (k = 0; k < t_col; k++)
+                m_inv[i * t_col + j] += invU[i * t_col + k] * invL[k * t_col + j];
 
+    if (isOk) *isOk = 1;
     return m_inv;
 }
 
-} // namespace dtMath
+} // namespace Math
+} // namespace dt
 
 #endif // DTMATH_DTNO_PIV_LU_TPP_

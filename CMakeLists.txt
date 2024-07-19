@@ -11,9 +11,9 @@ cmake_minimum_required(VERSION 3.13)
 
 project(dtMath
     LANGUAGES CXX
-	VERSION 1.2.0
-	DESCRIPTION "A math library."
-	HOMEPAGE_URL "https://gitlabee.hmg-corp.io/rlab/art/ctrlpart/project/arch/03-art-framework/dtmath.git"
+    VERSION 1.4.0
+    DESCRIPTION "A math library."
+    HOMEPAGE_URL "https://gitlabee.hmg-corp.io/rlab/art/ctrlpart/project/arch/03-art-framework/dtmath.git"
 )
 set(PROJECT_NAMESPACE ${PROJECT_NAME})
 
@@ -59,7 +59,6 @@ endif()
 install(DIRECTORY ./include/dtMath
         DESTINATION ${CMAKE_INSTALL_PREFIX}/include
 )
-
 
 # --------------------------------------------------------
 # Finalize configuration and print options

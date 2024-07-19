@@ -25,187 +25,269 @@
 #include <cmath>
 #include <limits>
 
-namespace dtMath
+namespace dt
+{
+namespace Math
 {
 
-template <uint16_t m_size, typename m_type> class dtCommaInit;
-template <uint16_t m_row, typename m_type> class dtVector;
-template <typename m_type, uint16_t m_row> class dtVector3;
-template <typename m_type, uint16_t m_row> class dtVector4;
-template <typename m_type, uint16_t m_row> class dtVector6;
-template <typename m_type, uint16_t m_row, uint16_t m_col> class dtMatrix3;
-template <typename m_type, uint16_t m_row, uint16_t m_col> class dtRotation;
-template <typename m_type, uint16_t m_row, uint16_t m_col> class dtTransform;
-template <uint16_t m_row, uint16_t m_col, typename m_type> class dtNoPivLU;
-template <uint16_t m_row, uint16_t m_col, typename m_type> class dtPartialPivLU;
-template <uint16_t m_row, uint16_t m_col, typename m_type> class dtLLT;
-template <uint16_t m_row, uint16_t m_col, typename m_type> class dtLDLT;
-template <uint16_t m_row, uint16_t m_col, typename m_type> class dtQR;
-template <uint16_t m_row, uint16_t m_col, typename m_type> class dtSVD;
+template <uint16_t m_size, typename t_type> class CommaInit;
+template <uint16_t t_row, typename t_type> class Vector;
+template <typename t_type, uint16_t t_row> class Vector3;
+template <typename t_type, uint16_t t_row> class Vector4;
+template <typename t_type, uint16_t t_row> class Quaternion;
+template <typename t_type, uint16_t t_row> class Vector6;
+template <typename t_type, uint16_t t_row, uint16_t t_col> class Matrix3;
+template <typename t_type, uint16_t t_row, uint16_t t_col> class Rotation;
+template <typename t_type, uint16_t t_row, uint16_t t_col> class Transform;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class NoPivLU;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class PartialPivLU;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class FullPivLU;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class LLT;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class LDLT;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class QR;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class SVD;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class CscMatrix;
 
-template <uint16_t m_row, uint16_t m_col, typename m_type = double>
-class dtMatrix
+template <uint16_t t_row, uint16_t t_col, typename t_type = float>
+class Matrix
 {
 private:
-    m_type m_tolerance = std::numeric_limits<m_type>::epsilon();
-    m_type m_elem[m_row * m_col];
-    dtMatrix(const m_type *element);
+    t_type m_tolerance = std::numeric_limits<t_type>::epsilon();
+    t_type m_elem[t_row * t_col];
+    Matrix(const t_type *element);
 
 public:
-    dtMatrix();
-    dtMatrix(const m_type *element, const size_t n_byte);
-    dtMatrix(const char c, const m_type *element, const size_t n_byte = m_row * m_col * sizeof(m_type)); // JhJo(230424) : modified to handle default n_byte as matrix size.
-    dtMatrix(const dtMatrix &m);
-    ~dtMatrix() {}
+    Matrix();
+    Matrix(const t_type *element, const size_t n_byte);
+    Matrix(const char c, const t_type *element, const size_t n_byte); // JhJo(230424) : modified to handle default n_byte as matrix size.
+    Matrix(const Matrix &m);
+    ~Matrix() {}
 
     void SetZero();
     void SetIdentity();
-    void SetDiagonal(const m_type *element, const size_t n_byte);
-    void SetFill(const m_type value);
-    void SetElement(const m_type *element, const size_t n_byte = m_row * m_col * sizeof(m_type)); // JhJo(230524) : modified to handle default n_byte as matrix size.
-    template <uint16_t row, uint16_t col>
-    void SetBlock(const uint16_t idxRow, const uint16_t idxCol, const dtMatrix<row, col, m_type> &m);
-    void SetBlock(const uint16_t idxRow, const uint16_t idxCol, const dtMatrix3<m_type, 3, 3> &m);
-    void SetBlock(const uint16_t idxRow, const uint16_t idxCol, const dtRotation<m_type, 3, 3> &m);
-    template <uint16_t col>
-    void SetRowVec(const uint16_t idxRow, const dtVector<col, m_type> &v);
-    void SetRowVec(const uint16_t idxRow, const dtVector3<m_type, 3> &v);
-    void SetRowVec(const uint16_t idxRow, const dtVector4<m_type, 4> &v);
-    void SetRowVec(const uint16_t idxRow, const dtVector6<m_type, 6> &v);
-    void SetRowVec(const uint16_t idxRow, const m_type *v, const size_t n_byte);
-    void SetRowVec(const uint16_t idxRow, const m_type v);
+    void SetDiagonal(const t_type *element, const size_t n_byte);
+    void SetDiagonal(const t_type value);
     template <uint16_t row>
-    void SetColVec(const uint16_t idxCol, const dtVector<row, m_type> &v);
-    void SetColVec(const uint16_t idxCol, const dtVector3<m_type, 3> &v);
-    void SetColVec(const uint16_t idxCol, const dtVector4<m_type, 4> &v);
-    void SetColVec(const uint16_t idxCol, const dtVector6<m_type, 6> &v);
-    void SetColVec(const uint16_t idxCol, const m_type *v, const size_t n_byte);
-    void SetColVec(const uint16_t idxCol, const m_type v);
+    void SetDiagonal(const Vector<row, t_type> &v);
+    void SetDiagonal(const Vector<0, t_type> &v);
+    void SetDiagonal(const Vector3<t_type, 3> &v);
+    void SetDiagonal(const Vector4<t_type, 4> &v);
+    void SetDiagonal(const Vector6<t_type, 6> &v);
+    void SetDiagonal(const Quaternion<t_type, 4> &v);
+    void SetFill(const t_type value);
+    void SetFillRow(const uint16_t idxRow, const t_type value);
+    void SetFillCol(const uint16_t idxCol, const t_type value);
+    void SetElement(const t_type *element, const size_t n_byte);
+    template <uint16_t row, uint16_t col>
+    void SetBlock(const uint16_t idxRow, const uint16_t idxCol, const Matrix<row, col, t_type> &m, const uint16_t jdxRow = 0, const uint16_t jdxCol = 0, const int16_t rSize = row, const int16_t cSize = col);
+    void SetBlock(const uint16_t idxRow, const uint16_t idxCol, const Matrix<0, 0, t_type> &m, const uint16_t jdxRow = 0, const uint16_t jdxCol = 0, int16_t rSize = -1, int16_t cSize = -1);
+    void SetBlock(const uint16_t idxRow, const uint16_t idxCol, const Matrix3<t_type, 3, 3> &m);
+    void SetBlock(const uint16_t idxRow, const uint16_t idxCol, const Rotation<t_type, 3, 3> &m);
+    template <uint16_t col>
+    void SetRowVec(const uint16_t idxRow, const uint16_t idxCol, const Vector<col, t_type> &v, const uint16_t jdx = 0, const int16_t size = col);
+    void SetRowVec(const uint16_t idxRow, const uint16_t idxCol, const Vector<0, t_type> &v, const uint16_t jdx = 0, int16_t size = -1);
+    void SetRowVec(const uint16_t idxRow, const uint16_t idxCol, const Vector3<t_type, 3> &v, const uint16_t jdx = 0, const int16_t size = 3);
+    void SetRowVec(const uint16_t idxRow, const uint16_t idxCol, const Vector4<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4);
+    void SetRowVec(const uint16_t idxRow, const uint16_t idxCol, const Quaternion<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4);
+    void SetRowVec(const uint16_t idxRow, const uint16_t idxCol, const Vector6<t_type, 6> &v, const uint16_t jdx = 0, const int16_t size = 6);
+    void SetRowVec(const uint16_t idxRow, const uint16_t idxCol, const t_type *v, const size_t n_byte);
+    template <uint16_t row>
+    void SetColVec(const uint16_t idxRow, const uint16_t idxCol, const Vector<row, t_type> &v, const uint16_t jdx = 0, const int16_t size = row);
+    void SetColVec(const uint16_t idxRow, const uint16_t idxCol, const Vector<0, t_type> &v, const uint16_t jdx = 0, int16_t size = -1);
+    void SetColVec(const uint16_t idxRow, const uint16_t idxCol, const Vector3<t_type, 3> &v, const uint16_t jdx = 0, const int16_t size = 3);
+    void SetColVec(const uint16_t idxRow, const uint16_t idxCol, const Vector4<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4);
+    void SetColVec(const uint16_t idxRow, const uint16_t idxCol, const Quaternion<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4);
+    void SetColVec(const uint16_t idxRow, const uint16_t idxCol, const Vector6<t_type, 6> &v, const uint16_t jdx = 0, const int16_t size = 6);
+    void SetColVec(const uint16_t idxRow, const uint16_t idxCol, const t_type *v, const size_t n_byte);
     void SetSwapRowVec(const uint16_t idxRow1, const uint16_t idxRow2);
     void SetSwapColVec(const uint16_t idxCol1, const uint16_t idxCol2);
 
-    const m_type *const GetElementsAddr() const;
-    uint16_t GetRowSize() const { return m_row; } // size of row
-    uint16_t GetColSize() const { return m_col; } // size of colum
+    const t_type *const GetElementsAddr() const;
+    uint16_t GetRowSize() const { return t_row; } // size of row
+    uint16_t GetColSize() const { return t_col; } // size of colum
+    template <uint16_t row>
+    void GetDiagonal(Vector<row, t_type> &v);
+    void GetDiagonal(Vector<0, t_type> &v);
+    void GetDiagonal(Vector3<t_type, 3> &v);
+    void GetDiagonal(Vector4<t_type, 4> &v);
+    void GetDiagonal(Vector6<t_type, 6> &v);
+    void GetDiagonal(Quaternion<t_type, 4> &v);
+    template <uint16_t row>
+    Vector<row, t_type> GetDiagonal();
+    Vector<0, t_type> GetDiagonalVec0();
+    Vector3<t_type, 3> GetDiagonalVec3();
+    Vector4<t_type, 4> GetDiagonalVec4();
+    Vector6<t_type, 6> GetDiagonalVec6();
+    Quaternion<t_type, 4> GetDiagonalQuat();
     template <uint16_t row, uint16_t col>
-    dtMatrix<row, col, m_type> GetBlock(const uint16_t idxRow, const uint16_t idxCol);
-    dtVector<m_col, m_type> GetRowVec(const uint16_t idxRow) const;
-    dtVector<m_row, m_type> GetColVec(const uint16_t idxCol) const;
+    Matrix<row, col, t_type> GetBlock(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdxRow = 0, const uint16_t jdxCol = 0, const int16_t rSize = row, const int16_t cSize = col);
+    Matrix<0, 0, t_type> GetBlock(const uint16_t idxRow, const uint16_t idxCol, const uint16_t row, const uint16_t col, const uint16_t jdxRow = 0, const uint16_t jdxCol = 0, int16_t rSize = -1, int16_t cSize = -1);
     template <uint16_t row, uint16_t col>
-    int8_t GetBlock(const uint16_t idxRow, const uint16_t idxCol, dtMatrix<row, col, m_type> &m);
-    int8_t GetRowVec(const uint16_t idxRow, dtVector<m_col, m_type> &v) const;
-    int8_t GetColVec(const uint16_t idxCol, dtVector<m_row, m_type> &v) const;
-    dtCscMatrix<m_row, m_col, m_type> GetCscMat() const; // Compressed Sparse Column Matrix
-    dtMatrix<m_col, m_row, m_type> Transpose() const;
+    int8_t GetBlock(const uint16_t idxRow, const uint16_t idxCol, Matrix<row, col, t_type> &m, const uint16_t jdxRow = 0, const uint16_t jdxCol = 0, const int16_t rSize = row, const int16_t cSize = col);
+    int8_t GetBlock(const uint16_t idxRow, const uint16_t idxCol, Matrix3<t_type, 3, 3> &m, const uint16_t jdxRow = 0, const uint16_t jdxCol = 0, const int16_t rSize = 3, const int16_t cSize = 3);
+    int8_t GetBlock(const uint16_t idxRow, const uint16_t idxCol, Matrix<0, 0, t_type> &m, const uint16_t jdxRow = 0, const uint16_t jdxCol = 0, int16_t rSize = -1, int16_t cSize = -1);
+    template <uint16_t col>
+    int8_t GetRowVec(const uint16_t idxRow, const uint16_t idxCol, Vector<col, t_type> &v, const uint16_t jdx = 0, const int16_t size = col) const;
+    int8_t GetRowVec(const uint16_t idxRow, const uint16_t idxCol, Vector<0, t_type> &v, const uint16_t jdx = 0, int16_t size = -1) const;
+    int8_t GetRowVec(const uint16_t idxRow, const uint16_t idxCol, Vector3<t_type, 3> &v, const uint16_t jdx = 0, const int16_t size = 3) const;
+    int8_t GetRowVec(const uint16_t idxRow, const uint16_t idxCol, Vector4<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4) const;
+    int8_t GetRowVec(const uint16_t idxRow, const uint16_t idxCol, Vector6<t_type, 6> &v, const uint16_t jdx = 0, const int16_t size = 6) const;
+    int8_t GetRowVec(const uint16_t idxRow, const uint16_t idxCol, Quaternion<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4) const;
+    template <uint16_t row>
+    int8_t GetColVec(const uint16_t idxRow, const uint16_t idxCol, Vector<row, t_type> &v, const uint16_t jdx = 0, const int16_t size = row) const;
+    int8_t GetColVec(const uint16_t idxRow, const uint16_t idxCol, Vector<0, t_type> &v, const uint16_t jdx = 0, int16_t size = -1) const;
+    int8_t GetColVec(const uint16_t idxRow, const uint16_t idxCol, Vector3<t_type, 3> &v, const uint16_t jdx = 0, const int16_t size = 3) const;
+    int8_t GetColVec(const uint16_t idxRow, const uint16_t idxCol, Vector4<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4) const;
+    int8_t GetColVec(const uint16_t idxRow, const uint16_t idxCol, Vector6<t_type, 6> &v, const uint16_t jdx = 0, const int16_t size = 6) const;
+    int8_t GetColVec(const uint16_t idxRow, const uint16_t idxCol, Quaternion<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4) const;
+    template <uint16_t col>
+    Vector<col, t_type> GetRowVec(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = col) const;
+    Vector<0, t_type> GetRowVec0(const uint16_t idxRow, const uint16_t idxCol, const uint16_t col, const uint16_t jdx = 0, int16_t size = -1) const;
+    Vector3<t_type, 3> GetRowVec3(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = 3) const;
+    Vector4<t_type, 4> GetRowVec4(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = 4) const;
+    Vector6<t_type, 6> GetRowVec6(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = 6) const;
+    Quaternion<t_type, 4> GetRowQuat(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = 4) const;
+    template <uint16_t row>
+    Vector<row, t_type> GetColVec(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = row) const;
+    Vector<0, t_type> GetColVec0(const uint16_t idxRow, const uint16_t idxCol, const uint16_t row, const uint16_t jdx = 0, const int16_t size = -1) const;
+    Vector3<t_type, 3> GetColVec3(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = 3) const;
+    Vector4<t_type, 4> GetColVec4(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = 4) const;
+    Vector6<t_type, 6> GetColVec6(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = 6) const;
+    Quaternion<t_type, 4> GetColQuat(const uint16_t idxRow, const uint16_t idxCol, const uint16_t jdx = 0, const int16_t size = 4) const;
 
-    m_type Trace() const;
-    m_type GetNorm() const;     // Frobenius Norm (Euclidean norm)
-    m_type GetSqNorm() const;   // Squared Frobenius Norm (Euclidean norm)
-    m_type Determinant() const; // From LU Decomposition
+    CscMatrix<t_row, t_col, t_type> GetCscMat() const; // Compressed Sparse Column Matrix
+    Matrix<t_col, t_row, t_type> Transpose() const;
 
-    dtNoPivLU<m_row, m_col, m_type> NoPivLU() const;
-    dtPartialPivLU<m_row, m_col, m_type> PartialPivLU() const;
-    dtLLT<m_row, m_col, m_type> LLT() const;
-    dtLDLT<m_row, m_col, m_type> LDLT() const;
-    dtQR<m_row, m_col, m_type> QR() const;
-    dtSVD<m_row, m_col, m_type> SVD() const;
+    t_type Trace() const;
+    t_type GetNorm() const;              // Frobenius Norm (Euclidean norm, L2 Norm)
+    t_type GetSqNorm() const;            // Squared Frobenius Norm (Euclidean norm, Squared L2 Norm)
+    t_type GetLpNorm(const int p) const; // Generalized Norm (Lp Norm)
+    t_type Determinant() const;          // From LU Decomposition
 
-    dtMatrix<m_row, m_col, m_type> Inv(int8_t *isOk = nullptr) const;
-    dtMatrix<m_col, m_row, m_type> PInv(int8_t *isOk = nullptr, m_type tolerance = std::numeric_limits<m_type>::epsilon()) const;
+    NoPivLU<t_row, t_col, t_type> GetNoPivLU() const;
+    PartialPivLU<t_row, t_col, t_type> GetPartialPivLU() const;
+    FullPivLU<t_row, t_col, t_type> GetFullPivLU() const;
+    LLT<t_row, t_col, t_type> GetLLT() const;
+    LDLT<t_row, t_col, t_type> GetLDLT() const;
+    QR<t_row, t_col, t_type> GetQR() const;
+    SVD<t_row, t_col, t_type> GetSVD() const;
+
+    Matrix<t_row, t_col, t_type> Inv(int8_t *isOk = nullptr) const;  // Inverse Using LU Partial Pivoting
+    Matrix<t_row, t_col, t_type> FInv(int8_t *isOk = nullptr) const; // Inverse Using LU Full Pivoting
+    Matrix<t_col, t_row, t_type> PInv(int8_t *isOk = nullptr, t_type tolerance = std::numeric_limits<t_type>::epsilon()) const;
+
+    t_type Max(uint16_t *irow = nullptr, uint16_t *icol = nullptr);
+    t_type Min(uint16_t *irow = nullptr, uint16_t *icol = nullptr);
+    t_type AbsMax(uint16_t *irow = nullptr, uint16_t *icol = nullptr);
+    t_type AbsMin(uint16_t *irow = nullptr, uint16_t *icol = nullptr);
 
     /* Member access operators */
-    // returns a row of modifiable elements
-    inline m_type &operator()(uint16_t irow, uint16_t icol) { dt_assert(irow <= m_row && icol <= m_col); return m_elem[irow * m_col + icol]; }
-    // returns a row of non-modifiable elements
-    inline const m_type &operator()(uint16_t irow, uint16_t icol) const { dt_assert(irow <= m_row && icol <= m_col); return m_elem[irow * m_col + icol]; }
+    t_type &operator()(uint16_t irow, uint16_t icol);             // returns a row of modifiable elements
+    const t_type &operator()(uint16_t irow, uint16_t icol) const; // returns a row of non-modifiable elements
 
     /* Assignment operators */
-    dtMatrix &operator=(const dtMatrix &m);                           // matrix  = matrix
-    dtMatrix &operator+=(const dtMatrix &m);                          // matrix += matrix
-    dtMatrix &operator-=(const dtMatrix &m);                          // matrix -= matrix
-    dtMatrix &operator=(const dtMatrix3<m_type, m_row, m_col> &m);    // matrix  = matrix3
-    dtMatrix &operator+=(const dtMatrix3<m_type, m_row, m_col> &m);   // matrix += matrix3
-    dtMatrix &operator-=(const dtMatrix3<m_type, m_row, m_col> &m);   // matrix -= matrix3
-    dtMatrix &operator=(const dtRotation<m_type, m_row, m_col> &m);   // matrix  = RotMat
-    dtMatrix &operator+=(const dtRotation<m_type, m_row, m_col> &m);  // matrix += RotMat
-    dtMatrix &operator-=(const dtRotation<m_type, m_row, m_col> &m);  // matrix -= RotMat
-    dtMatrix &operator=(const dtTransform<m_type, m_row, m_col> &m);  // matrix + Transform
-    dtMatrix &operator+=(const dtTransform<m_type, m_row, m_col> &m); // matrix + Transform
-    dtMatrix &operator-=(const dtTransform<m_type, m_row, m_col> &m); // matrix - Transform
-    dtMatrix &operator=(const m_type s);                              // matrix  = scalar, all elements set scalar
-    dtMatrix &operator+=(const m_type s);                             // matrix += scalar, matrix(i) += scalar
-    dtMatrix &operator-=(const m_type s);                             // matrix -= scalar, matrix(i) -= scalar
-    dtMatrix &operator*=(const m_type s);                             // matrix *= scalar
-    dtMatrix &operator/=(const m_type s);                             // matrix /= scalar
-    dtCommaInit<m_row * m_col, m_type> operator<<(const m_type s);    // Init first matrix elements
+    Matrix &operator=(const Matrix &m);                           // matrix  = matrix
+    Matrix &operator+=(const Matrix &m);                          // matrix += matrix
+    Matrix &operator-=(const Matrix &m);                          // matrix -= matrix
+    Matrix &operator=(const Matrix<0, 0, t_type> &m);             // matrix  = matrix
+    Matrix &operator+=(const Matrix<0, 0, t_type> &m);            // matrix += matrix
+    Matrix &operator-=(const Matrix<0, 0, t_type> &m);            // matrix -= matrix
+    Matrix &operator=(const Matrix3<t_type, t_row, t_col> &m);    // matrix  = matrix3
+    Matrix &operator+=(const Matrix3<t_type, t_row, t_col> &m);   // matrix += matrix3
+    Matrix &operator-=(const Matrix3<t_type, t_row, t_col> &m);   // matrix -= matrix3
+    Matrix &operator=(const Rotation<t_type, t_row, t_col> &m);   // matrix  = RotMat
+    Matrix &operator+=(const Rotation<t_type, t_row, t_col> &m);  // matrix += RotMat
+    Matrix &operator-=(const Rotation<t_type, t_row, t_col> &m);  // matrix -= RotMat
+    Matrix &operator=(const Transform<t_type, t_row, t_col> &m);  // matrix  = Transform
+    Matrix &operator+=(const Transform<t_type, t_row, t_col> &m); // matrix += Transform
+    Matrix &operator-=(const Transform<t_type, t_row, t_col> &m); // matrix -= Transform
+    Matrix &operator=(const t_type s);                            // matrix  = scalar, all elements set scalar
+    Matrix &operator+=(const t_type s);                           // matrix += scalar, matrix(i) += scalar
+    Matrix &operator-=(const t_type s);                           // matrix -= scalar, matrix(i) -= scalar
+    Matrix &operator*=(const t_type s);                           // matrix *= scalar
+    Matrix &operator/=(const t_type s);                           // matrix /= scalar
+    CommaInit<t_row * t_col, t_type> operator<<(const t_type s);  // Init first matrix elements
 
     /* Arithmetic operators */
-    dtMatrix operator-() const;                                           // minus sign
-    dtMatrix operator+(const dtMatrix &m) const;                          // matrix + matrix
-    dtMatrix operator-(const dtMatrix &m) const;                          // matrix - matrix
-    dtMatrix operator+(const dtMatrix3<m_type, m_row, m_col> &m) const;   // matrix + matrix3
-    dtMatrix operator-(const dtMatrix3<m_type, m_row, m_col> &m) const;   // matrix - matrix3
-    dtMatrix operator+(const dtRotation<m_type, m_row, m_col> &m) const;  // matrix + RotMat
-    dtMatrix operator-(const dtRotation<m_type, m_row, m_col> &m) const;  // matrix - RotMat
-    dtMatrix operator+(const dtTransform<m_type, m_row, m_col> &m) const; // matrix + Transform
-    dtMatrix operator-(const dtTransform<m_type, m_row, m_col> &m) const; // matrix - Transform
-    dtMatrix operator+(const m_type s) const;                             // matrix + scalar, matrix(i) + scalar
-    dtMatrix operator-(const m_type s) const;                             // matrix - scalar, matrix(i) - scalar
-    dtMatrix operator*(const m_type s) const;                             // matrix * scalar
-    dtMatrix operator/(const m_type s) const;                             // matrix / scalar
+    Matrix operator-() const;                                         // minus sign
+    Matrix operator+(const Matrix &m) const;                          // matrix + matrix
+    Matrix operator-(const Matrix &m) const;                          // matrix - matrix
+    Matrix operator+(const Matrix<0, 0, t_type> &m) const;            // matrix + matrix
+    Matrix operator-(const Matrix<0, 0, t_type> &m) const;            // matrix - matrix
+    Matrix operator+(const Matrix3<t_type, t_row, t_col> &m) const;   // matrix + matrix3
+    Matrix operator-(const Matrix3<t_type, t_row, t_col> &m) const;   // matrix - matrix3
+    Matrix operator+(const Rotation<t_type, t_row, t_col> &m) const;  // matrix + RotMat
+    Matrix operator-(const Rotation<t_type, t_row, t_col> &m) const;  // matrix - RotMat
+    Matrix operator+(const Transform<t_type, t_row, t_col> &m) const; // matrix + Transform
+    Matrix operator-(const Transform<t_type, t_row, t_col> &m) const; // matrix - Transform
+    Matrix operator+(const t_type s) const;                           // matrix + scalar, matrix(i) + scalar
+    Matrix operator-(const t_type s) const;                           // matrix - scalar, matrix(i) - scalar
+    Matrix operator*(const t_type s) const;                           // matrix * scalar
+    Matrix operator/(const t_type s) const;                           // matrix / scalar
 
     template <uint16_t col>
-    dtMatrix<m_row, col, m_type> operator*(const dtMatrix<m_col, col, m_type> &m) const;        // matrix * matrix
-    dtMatrix<m_row, m_col, m_type> operator*(const dtMatrix3<m_type, m_col, m_col> &m) const;   // matrix * matrix
-    dtMatrix<m_row, m_col, m_type> operator*(const dtRotation<m_type, m_col, m_col> &m) const;  // matrix * RotMat
-    dtMatrix<m_row, m_col, m_type> operator*(const dtTransform<m_type, m_col, m_col> &m) const; // matrix * Transform
-    dtVector<m_row, m_type> operator*(const dtVector<m_col, m_type> &v) const;                  // matrix * vector
-    dtVector<m_row, m_type> operator*(const dtVector3<m_type, m_col> &v) const;                 // matrix * vector3
-    dtVector<m_row, m_type> operator*(const dtVector4<m_type, m_col> &v) const;                 // matrix * vector4
-    dtVector<m_row, m_type> operator*(const dtVector6<m_type, m_col> &v) const;                 // matrix * vector6
-    dtMatrix<m_row, m_col, m_type> operator&(const dtVector<m_col, m_type> &v) const;           // matrix3 * [v]x, []x is skew-symmetric matrix
-    dtMatrix<m_row, m_col, m_type> operator&(const dtVector3<m_type, m_col> &v) const;          // matrix3 * [v]x, []x is skew-symmetric matrix
+    Matrix<t_row, col, t_type> operator*(const Matrix<t_col, col, t_type> &m) const;        // matrix * matrix
+    Matrix<0, 0, t_type> operator*(const Matrix<0, 0, t_type> &m) const;                    // matrix * matrix
+    Matrix<t_row, t_col, t_type> operator*(const Matrix3<t_type, t_col, t_col> &m) const;   // matrix * matrix
+    Matrix<t_row, t_col, t_type> operator*(const Rotation<t_type, t_col, t_col> &m) const;  // matrix * RotMat
+    Matrix<t_row, t_col, t_type> operator*(const Transform<t_type, t_col, t_col> &m) const; // matrix * Transform
+    Vector<t_row, t_type> operator*(const Vector<t_col, t_type> &v) const;                  // matrix * vector
+    Vector<t_row, t_type> operator*(const Vector<0, t_type> &v) const;                      // matrix * vector
+    Vector<t_row, t_type> operator*(const Vector3<t_type, t_col> &v) const;                 // matrix * vector3
+    Vector<t_row, t_type> operator*(const Vector4<t_type, t_col> &v) const;                 // matrix * vector4
+    Vector<t_row, t_type> operator*(const Vector6<t_type, t_col> &v) const;                 // matrix * vector6
+    Vector<t_row, t_type> operator*(const Quaternion<t_type, t_col> &v) const;              // matrix * quaternion
+    Matrix<t_row, t_col, t_type> operator&(const Vector<t_col, t_type> &v) const;           // matrix3 * [v]x, []x is skew-symmetric matrix
+    Matrix<t_row, t_col, t_type> operator&(const Vector<0, t_type> &v) const;               // matrix3 * [v]x, []x is skew-symmetric matrix
+    Matrix<t_row, t_col, t_type> operator&(const Vector3<t_type, t_col> &v) const;          // matrix3 * [v]x, []x is skew-symmetric matrix
 
     /* Comparison operators */
-    bool operator==(const dtMatrix &m) const;                          // (true or false) matrix1 == matrix
-    bool operator!=(const dtMatrix &m) const;                          // (true or false) matrix1 != matrix
-    bool operator==(const dtMatrix3<m_type, m_row, m_col> &m) const;   // (true or false) matrix == matrix3
-    bool operator!=(const dtMatrix3<m_type, m_row, m_col> &m) const;   // (true or false) matrix != matrix3
-    bool operator==(const dtRotation<m_type, m_row, m_col> &m) const;  // (true or false) matrix == RotMat
-    bool operator!=(const dtRotation<m_type, m_row, m_col> &m) const;  // (true or false) matrix != RotMat
-    bool operator==(const dtTransform<m_type, m_row, m_col> &m) const; // (true or false) matrix == Transform
-    bool operator!=(const dtTransform<m_type, m_row, m_col> &m) const; // (true or false) matrix != Transform
+    bool operator==(const Matrix &m) const;                          // (true or false) matrix1 == matrix
+    bool operator!=(const Matrix &m) const;                          // (true or false) matrix1 != matrix
+    bool operator==(const Matrix<0, 0, t_type> &m) const;            // (true or false) matrix1 == matrix
+    bool operator!=(const Matrix<0, 0, t_type> &m) const;            // (true or false) matrix1 != matrix
+    bool operator==(const Matrix3<t_type, t_row, t_col> &m) const;   // (true or false) matrix == matrix3
+    bool operator!=(const Matrix3<t_type, t_row, t_col> &m) const;   // (true or false) matrix != matrix3
+    bool operator==(const Rotation<t_type, t_row, t_col> &m) const;  // (true or false) matrix == RotMat
+    bool operator!=(const Rotation<t_type, t_row, t_col> &m) const;  // (true or false) matrix != RotMat
+    bool operator==(const Transform<t_type, t_row, t_col> &m) const; // (true or false) matrix == Transform
+    bool operator!=(const Transform<t_type, t_row, t_col> &m) const; // (true or false) matrix != Transform
 
     void Print(const char endChar = 0);
 
     /* Friend classes */
-    template <uint16_t row, uint16_t col, typename type> friend class dtMatrix;
-    template <uint16_t row, uint16_t col, typename type> friend class dtCscMatrix;
-    template <typename type, uint16_t row, uint16_t col> friend class dtMatrix3;
-    template <typename type, uint16_t row, uint16_t col> friend class dtRotation;
-    template <typename type, uint16_t row, uint16_t col> friend class dtTransform;
+    template <uint16_t row, uint16_t col, typename type> friend class Matrix;
+    template <uint16_t row, uint16_t col, typename type> friend class CscMatrix;
+    template <typename type, uint16_t row, uint16_t col> friend class Matrix3;
+    template <typename type, uint16_t row, uint16_t col> friend class Rotation;
+    template <typename type, uint16_t row, uint16_t col> friend class Transform;
 
-    template <uint16_t row, typename type> friend class dtVector;
-    template <typename type, uint16_t row> friend class dtVector3;
-    template <typename type, uint16_t row> friend class dtVector4;
-    template <typename type, uint16_t row> friend class dtVector6;
+    template <uint16_t row, typename type> friend class Vector;
+    template <typename type, uint16_t row> friend class Vector3;
+    template <typename type, uint16_t row> friend class Vector4;
+    template <typename type, uint16_t row> friend class Vector6;
+    template <typename type, uint16_t row> friend class Quaternion;
 
-    template <uint16_t row, uint16_t col, typename type> friend class dtLowerTriangular;
-    template <uint16_t row, uint16_t col, typename type> friend class dtUpperTriangular;
-    template <uint16_t row, uint16_t col, typename type> friend class dtNoPivLU;
-    template <uint16_t row, uint16_t col, typename type> friend class dtPartialPivLU;
-    template <uint16_t row, uint16_t col, typename type> friend class dtLLT;
-    template <uint16_t row, uint16_t col, typename type> friend class dtLDLT;
-    template <uint16_t row, uint16_t col, typename type> friend class dtQR;
-    template <uint16_t row, uint16_t col, typename type> friend class dtSVD;
+    template <uint16_t row, uint16_t col, typename type> friend class LowerMatrix;
+    template <uint16_t row, uint16_t col, typename type> friend class UpperMatrix;
+    template <uint16_t row, uint16_t col, typename type> friend class NoPivLU;
+    template <uint16_t row, uint16_t col, typename type> friend class PartialPivLU;
+    template <uint16_t row, uint16_t col, typename type> friend class FullPivLU;
+    template <uint16_t row, uint16_t col, typename type> friend class LLT;
+    template <uint16_t row, uint16_t col, typename type> friend class LDLT;
+    template <uint16_t row, uint16_t col, typename type> friend class QR;
+    template <uint16_t row, uint16_t col, typename type> friend class SVD;
 
     /* Friend template function */
     template <uint16_t row, uint16_t col, typename type>
-    friend dtMatrix<row, col, type> operator*(const type s, const dtMatrix<row, col, type> &m); // scalar * matrix
+    friend Matrix<row, col, type> operator*(const type s, const Matrix<row, col, type> &m); // scalar * matrix
 };
 
-} // namespace dtMath
+} // namespace Math
+} // namespace dt
 
 #include "dtMatrix.tpp"
+
+#include "dtMatrix0.h"
 
 #endif // DTMATH_DTMATRIX_H_

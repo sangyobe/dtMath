@@ -15,50 +15,52 @@
 
 #include "dtCARE.h"
 
-namespace dtMath
+namespace dt
+{
+namespace Math
 {
 
-template <uint16_t m_dimN, uint16_t m_dimM, typename m_type>
-inline dtCARE<m_dimN, m_dimM, m_type>::dtCARE()
+template <uint16_t t_dimN, uint16_t t_dimM, typename t_type>
+inline CARE<t_dimN, t_dimM, t_type>::CARE()
 {
     m_mEye.SetIdentity();
     m_maxIteration = 100;
-    m_tolerance = std::numeric_limits<m_type>::epsilon();
+    m_tolerance = std::numeric_limits<t_type>::epsilon();
     // m_tolerance = 1e-9;
 }
 
-template <uint16_t m_dimN, uint16_t m_dimM, typename m_type>
-inline void dtCARE<m_dimN, m_dimM, m_type>::SetSolveCriteria(m_type tolerance, uint16_t maxIteration)
+template <uint16_t t_dimN, uint16_t t_dimM, typename t_type>
+inline void CARE<t_dimN, t_dimM, t_type>::SetSolveCriteria(t_type tolerance, uint16_t maxIteration)
 {
     m_tolerance = tolerance;
     m_maxIteration = maxIteration;
 }
 
-template <uint16_t m_dimN, uint16_t m_dimM, typename m_type>
-inline dtMatrix<m_dimN, m_dimN, m_type> dtCARE<m_dimN, m_dimM, m_type>::Solve(
-    const dtMatrix<m_dimN, m_dimN, m_type> &A,
-    const dtMatrix<m_dimN, m_dimM, m_type> &B,
-    const dtMatrix<m_dimN, m_dimN, m_type> &Q,
-    const dtMatrix<m_dimM, m_dimM, m_type> &R)
+template <uint16_t t_dimN, uint16_t t_dimM, typename t_type>
+inline Matrix<t_dimN, t_dimN, t_type> CARE<t_dimN, t_dimM, t_type>::Solve(
+    const Matrix<t_dimN, t_dimN, t_type> &A,
+    const Matrix<t_dimN, t_dimM, t_type> &B,
+    const Matrix<t_dimN, t_dimN, t_type> &Q,
+    const Matrix<t_dimM, t_dimM, t_type> &R)
 {
     // Is Q Symmetric matrix?
     if (Q != Q.Transpose())
-        return dtMatrix<m_dimN, m_dimN, m_type>();
+        return Matrix<t_dimN, t_dimN, t_type>();
 
-    m_type relative_norm;
+    t_type relative_norm;
     uint16_t iteration = 0;
 
     // m_mH.SetBlock(0, 0, A);
-    // m_mH.SetBlock(0, m_dimN, B * R.LLT().Solve(B.Transpose()));
-    // m_mH.SetBlock(m_dimN, 0, Q);
-    // m_mH.SetBlock(m_dimN, m_dimN, -A.Transpose());
+    // m_mH.SetBlock(0, t_dimN, B * R.LLT().Solve(B.Transpose()));
+    // m_mH.SetBlock(t_dimN, 0, Q);
+    // m_mH.SetBlock(t_dimN, t_dimN, -A.Transpose());
     //
     // m_mZ = m_mH;
 
     m_mZ.SetBlock(0, 0, A);
-    m_mZ.SetBlock(0, m_dimN, B * R.LLT().Solve(B.Transpose()));
-    m_mZ.SetBlock(m_dimN, 0, Q);
-    m_mZ.SetBlock(m_dimN, m_dimN, -A.Transpose());
+    m_mZ.SetBlock(0, t_dimN, B * R.LLT().Solve(B.Transpose()));
+    m_mZ.SetBlock(t_dimN, 0, Q);
+    m_mZ.SetBlock(t_dimN, t_dimN, -A.Transpose());
 
     do
     {
@@ -67,7 +69,7 @@ inline dtMatrix<m_dimN, m_dimN, m_type> dtCARE<m_dimN, m_dimM, m_type>::Solve(
         // function. Linear Algebra Appl., 85:267?279, 1987
         // Added determinant scaling to improve convergence (converges in rough half
         // the iterations with this)
-        m_type ck = std::pow(std::abs(m_mZ.Determinant()), m_power);
+        t_type ck = std::pow(std::abs(m_mZ.Determinant()), m_power);
         m_mZ *= ck;
         m_mZ = m_mZ - (m_mZ - m_mZ.Inv()) * 0.5;
         relative_norm = (m_mZ - m_mZold).GetNorm();
@@ -75,45 +77,45 @@ inline dtMatrix<m_dimN, m_dimN, m_type> dtCARE<m_dimN, m_dimM, m_type>::Solve(
     } while ((iteration < m_maxIteration) && (relative_norm > m_tolerance));
 
     m_mZ.GetBlock(0, 0, m_mW11);
-    m_mZ.GetBlock(0, m_dimN, m_mW12);
-    m_mZ.GetBlock(m_dimN, 0, m_mW21);
-    m_mZ.GetBlock(m_dimN, m_dimN, m_mW22);
+    m_mZ.GetBlock(0, t_dimN, m_mW12);
+    m_mZ.GetBlock(t_dimN, 0, m_mW21);
+    m_mZ.GetBlock(t_dimN, t_dimN, m_mW22);
 
     m_mLhs.SetBlock(0, 0, m_mW12);
-    m_mLhs.SetBlock(m_dimN, 0, m_mW22 + m_mEye);
+    m_mLhs.SetBlock(t_dimN, 0, m_mW22 + m_mEye);
 
     m_mRhs.SetBlock(0, 0, m_mW11 + m_mEye);
-    m_mRhs.SetBlock(m_dimN, 0, m_mW21);
+    m_mRhs.SetBlock(t_dimN, 0, m_mW21);
 
     return m_mLhs.SVD().Solve(m_mRhs);
 }
 
-template <uint16_t m_dimN, uint16_t m_dimM, typename m_type>
-inline int8_t dtCARE<m_dimN, m_dimM, m_type>::Solve(
-    const dtMatrix<m_dimN, m_dimN, m_type> &A,
-    const dtMatrix<m_dimN, m_dimM, m_type> &B,
-    const dtMatrix<m_dimN, m_dimN, m_type> &Q,
-    const dtMatrix<m_dimM, m_dimM, m_type> &R,
-    dtMatrix<m_dimN, m_dimN, m_type> &X)
+template <uint16_t t_dimN, uint16_t t_dimM, typename t_type>
+inline int8_t CARE<t_dimN, t_dimM, t_type>::Solve(
+    const Matrix<t_dimN, t_dimN, t_type> &A,
+    const Matrix<t_dimN, t_dimM, t_type> &B,
+    const Matrix<t_dimN, t_dimN, t_type> &Q,
+    const Matrix<t_dimM, t_dimM, t_type> &R,
+    Matrix<t_dimN, t_dimN, t_type> &X)
 {
     // Is Q Symmetric matrix?
     if (Q != Q.Transpose())
         return -1;
 
-    m_type relative_norm;
+    t_type relative_norm;
     uint16_t iteration = 0;
 
     // m_mH.SetBlock(0, 0, A);
-    // m_mH.SetBlock(0, m_dimN, B * R.LLT().Solve(B.Transpose()));
-    // m_mH.SetBlock(m_dimN, 0, Q);
-    // m_mH.SetBlock(m_dimN, m_dimN, -A.Transpose());
+    // m_mH.SetBlock(0, t_dimN, B * R.LLT().Solve(B.Transpose()));
+    // m_mH.SetBlock(t_dimN, 0, Q);
+    // m_mH.SetBlock(t_dimN, t_dimN, -A.Transpose());
     //
     // m_mZ = m_mH;
 
     m_mZ.SetBlock(0, 0, A);
-    m_mZ.SetBlock(0, m_dimN, B * R.LLT().Solve(B.Transpose()));
-    m_mZ.SetBlock(m_dimN, 0, Q);
-    m_mZ.SetBlock(m_dimN, m_dimN, -A.Transpose());
+    m_mZ.SetBlock(0, t_dimN, B * R.LLT().Solve(B.Transpose()));
+    m_mZ.SetBlock(t_dimN, 0, Q);
+    m_mZ.SetBlock(t_dimN, t_dimN, -A.Transpose());
 
     do
     {
@@ -122,7 +124,7 @@ inline int8_t dtCARE<m_dimN, m_dimM, m_type>::Solve(
         // function. Linear Algebra Appl., 85:267?279, 1987
         // Added determinant scaling to improve convergence (converges in rough half
         // the iterations with this)
-        m_type ck = std::pow(std::abs(m_mZ.Determinant()), m_power);
+        t_type ck = std::pow(std::abs(m_mZ.Determinant()), m_power);
         m_mZ *= ck;
         m_mZ = m_mZ - (m_mZ - m_mZ.Inv()) * 0.5;
         relative_norm = (m_mZ - m_mZold).GetNorm();
@@ -130,19 +132,20 @@ inline int8_t dtCARE<m_dimN, m_dimM, m_type>::Solve(
     } while ((iteration < m_maxIteration) && (relative_norm > m_tolerance));
 
     m_mZ.GetBlock(0, 0, m_mW11);
-    m_mZ.GetBlock(0, m_dimN, m_mW12);
-    m_mZ.GetBlock(m_dimN, 0, m_mW21);
-    m_mZ.GetBlock(m_dimN, m_dimN, m_mW22);
+    m_mZ.GetBlock(0, t_dimN, m_mW12);
+    m_mZ.GetBlock(t_dimN, 0, m_mW21);
+    m_mZ.GetBlock(t_dimN, t_dimN, m_mW22);
 
     m_mLhs.SetBlock(0, 0, m_mW12);
-    m_mLhs.SetBlock(m_dimN, 0, m_mW22 + m_mEye);
+    m_mLhs.SetBlock(t_dimN, 0, m_mW22 + m_mEye);
 
     m_mRhs.SetBlock(0, 0, m_mW11 + m_mEye);
-    m_mRhs.SetBlock(m_dimN, 0, m_mW21);
+    m_mRhs.SetBlock(t_dimN, 0, m_mW21);
 
     return m_mLhs.SVD().Solve(m_mRhs, X);
 }
 
-} // namespace dtMath
+} // namespace Math
+} // namespace dt
 
 #endif // DTMATH_DTCARE_TPP_

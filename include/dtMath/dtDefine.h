@@ -19,7 +19,9 @@
 #include <Arduino.h>
 #endif
 
-namespace dtMath
+namespace dt
+{
+namespace Math
 {
 
 #ifndef M_PI
@@ -51,6 +53,9 @@ inline T dtDEG2RAD() { return T(0.01745329251994329576923690768489); }
 template <typename T>
 inline T dtRAD2DEG() { return T(57.295779513082320876798154814105); } // 180.0/M_PI
 
+template <typename T>
+inline int sgn(T val) { return (T(0) < val) - (val < T(0)); }
+
 #define X_AXIS (uint16_t)(0)
 #define Y_AXIS (uint16_t)(1)
 #define Z_AXIS (uint16_t)(2)
@@ -59,32 +64,5 @@ inline T dtRAD2DEG() { return T(57.295779513082320876798154814105); } // 180.0/M
 #define AXIS2(A1, A2) (uint16_t)(A2 << 4 | A1)
 #define AXIS1(A1) (uint16_t)(A1)
 
-} // namespace dtMath
-
-
-/**
- * dt_assert - macro with one argument that is used inside this for assertions. By default, it is basically defined to be assert, which aborts the program if the assertion is violated. Redefine this macro if you want to do something else, like throwing an exception.
- */
-// #include <cstdlib>     // for abort
-// #include <iostream>    // for std::cerr
-// #include <stdlib.h>    // for free
-// #include <execinfo.h>  // for backtrace
-// #define dt_assert(var) \
-//     do { \
-//         if (!(bool)(var)) { \
-//             std::cerr << "assertion failed: " << #var << " in function " << __PRETTY_FUNCTION__ << " at " << __FILE__ << ":" << __LINE__ << std::endl; \
-//             void *callstack[128]; \
-//             int i, nr_frames; \
-//             char **strs; \
-//             nr_frames = backtrace(callstack, sizeof(callstack)/sizeof(void *)); \
-//             strs = backtrace_symbols(callstack, nr_frames); \
-//             std::cerr << "[call stack trace]: \n"; \
-//             for (i = 0; i < nr_frames; i++) { \
-//                 std::cerr << "\t(" << i << ") " << strs[i] << std::endl; \
-//             } \
-//             free(strs); \
-//             abort(); \
-//         } \
-//     } while(false)
-
-#include "dtAssert.h"
+} // namespace Math
+} // namespace dt
