@@ -14,11 +14,13 @@
 
 #include "dtTransform.h"
 
-namespace dtMath
+namespace dt
+{
+namespace Math
 {
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtTransform<m_type, m_row, m_col>::dtTransform()
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Transform<t_type, t_row, t_col>::Transform()
 {
     m_dummy[0] = 0;
     m_dummy[1] = 0;
@@ -26,8 +28,8 @@ inline dtTransform<m_type, m_row, m_col>::dtTransform()
     m_dummy[3] = 1;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtTransform<m_type, m_row, m_col>::dtTransform(const dtRotation<m_type, 3, 3> &R, const dtVector3<m_type, 3> &p)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Transform<t_type, t_row, t_col>::Transform(const Rotation<t_type, 3, 3> &R, const Vector3<t_type, 3> &p)
 {
     m_R = R;
     m_p = p;
@@ -37,10 +39,10 @@ inline dtTransform<m_type, m_row, m_col>::dtTransform(const dtRotation<m_type, 3
     m_dummy[3] = 1;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtTransform<m_type, m_row, m_col>::dtTransform(const dtQuaternion<m_type, 4> &q, const dtVector3<m_type, 3> &p)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Transform<t_type, t_row, t_col>::Transform(const Quaternion<t_type, 4> &q, const Vector3<t_type, 3> &p)
 {
-    m_R = dtRotation<m_type, 3, 3>(q);
+    m_R = Rotation<t_type, 3, 3>(q);
     m_p = p;
     m_dummy[0] = 0;
     m_dummy[1] = 0;
@@ -48,10 +50,10 @@ inline dtTransform<m_type, m_row, m_col>::dtTransform(const dtQuaternion<m_type,
     m_dummy[3] = 1;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtTransform<m_type, m_row, m_col>::dtTransform(const uint16_t order, const dtVector3<m_type, 3> &e, const dtVector3<m_type, 3> &p)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Transform<t_type, t_row, t_col>::Transform(const uint16_t order, const Vector3<t_type, 3> &e, const Vector3<t_type, 3> &p)
 {
-    m_R = dtRotation<m_type, 3, 3>(order, e);
+    m_R = Rotation<t_type, 3, 3>(order, e);
     m_p = p;
     m_dummy[0] = 0;
     m_dummy[1] = 0;
@@ -59,8 +61,8 @@ inline dtTransform<m_type, m_row, m_col>::dtTransform(const uint16_t order, cons
     m_dummy[3] = 1;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtTransform<m_type, m_row, m_col>::dtTransform(const dtTransform &m)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Transform<t_type, t_row, t_col>::Transform(const Transform &m)
 {
     m_R = m.m_R;
     m_p = m.m_p;
@@ -70,109 +72,110 @@ inline dtTransform<m_type, m_row, m_col>::dtTransform(const dtTransform &m)
     m_dummy[3] = 1;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetZero()
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetZero()
 {
     m_R.SetZero();
     m_p.SetZero();
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetIdentity()
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetIdentity()
 {
     m_R.SetIdentity();
     m_p.SetZero();
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetElement(const dtVector3<m_type, 3> &p)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetElement(const Vector3<t_type, 3> &p)
 {
     m_p = p;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetElement(const dtRotation<m_type, 3, 3> &R)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetElement(const Rotation<t_type, 3, 3> &R)
 {
     m_R = R;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetElement(const dtQuaternion<m_type, 4> &q)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetElement(const Quaternion<t_type, 4> &q)
 {
-    m_R = dtRotation<m_type, 3, 3>(q);
+    m_R = Rotation<t_type, 3, 3>(q);
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetElement(const uint16_t order, const dtVector3<m_type, 3> &e)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetElement(const uint16_t order, const Vector3<t_type, 3> &e)
 {
-    m_R = dtRotation<m_type, 3, 3>(order, e);
+    m_R = Rotation<t_type, 3, 3>(order, e);
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetElement(const dtRotation<m_type, 3, 3> &R, const dtVector3<m_type, 3> &p)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetElement(const Rotation<t_type, 3, 3> &R, const Vector3<t_type, 3> &p)
 {
     m_R = R;
     m_p = p;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetElement(const dtQuaternion<m_type, 4> &q, const dtVector3<m_type, 3> &p)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetElement(const Quaternion<t_type, 4> &q, const Vector3<t_type, 3> &p)
 {
-    m_R = dtRotation<m_type, 3, 3>(q);
+    m_R = Rotation<t_type, 3, 3>(q);
     m_p = p;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetElement(const uint16_t order, const dtVector3<m_type, 3> &e, const dtVector3<m_type, 3> &p)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetElement(const uint16_t order, const Vector3<t_type, 3> &e, const Vector3<t_type, 3> &p)
 {
-    m_R = dtRotation<m_type, 3, 3>(order, e);
+    m_R = Rotation<t_type, 3, 3>(order, e);
     m_p = p;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::SetElement(const dtTransform &m)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::SetElement(const Transform &m)
 {
     m_R = m.m_R;
     m_p = m.m_p;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtVector6<m_type, 6> dtTransform<m_type, m_row, m_col>::GetError(const dtTransform &m) const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Vector6<t_type, 6> Transform<t_type, t_row, t_col>::GetError(const Transform &m) const
 {
-    // dtVector3<m_type, 3> pos_error = m_p - m.m_p;
-    // dtQuaternion<m_type, 4> qd(m_R);
-    // dtVector3<m_type, 3> ori_error = qd.GetOriErr(dtQuaternion<m_type, 4>(m.m_R));
+    // Vector3<t_type, 3> pos_error = m_p - m.m_p;
+    // Quaternion<t_type, 4> qd(m_R);
+    // Vector3<t_type, 3> ori_error = qd.GetOriErr(Quaternion<t_type, 4>(m.m_R));
     //
-    // return dtVector6<m_type, 6>(pos_error, ori_error);
+    // return Vector6<t_type, 6>(pos_error, ori_error);
 
-    return dtVector6<m_type, 6>(
+    return Vector6<t_type, 6>(
         m_p - m.m_p,
-        dtQuaternion<m_type, 4>(m_R).GetOriErr(dtQuaternion<m_type, 4>(m.m_R)));
+        Quaternion<t_type, 4>(m_R).GetOriErr(Quaternion<t_type, 4>(m.m_R)));
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtMatrix<m_col, m_row, m_type> dtTransform<m_type, m_row, m_col>::Transpose() const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Matrix<t_col, t_row, t_type> Transform<t_type, t_row, t_col>::Transpose() const
 {
-    m_type mat[m_col * m_row] = {
+    t_type mat[t_col * t_row] = {
         m_R.m_elem[0], m_R.m_elem[3], m_R.m_elem[6], 0,
         m_R.m_elem[1], m_R.m_elem[4], m_R.m_elem[7], 0,
         m_R.m_elem[2], m_R.m_elem[5], m_R.m_elem[8], 0,
-        m_p.m_elem[0], m_p.m_elem[1], m_p.m_elem[2], (m_type)(1)};
+        m_p.m_elem[0], m_p.m_elem[1], m_p.m_elem[2], (t_type)(1)};
 
-    return dtMatrix<m_col, m_row, m_type>(mat);
+    return Matrix<t_col, t_row, t_type>(mat);
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtTransform<m_type, m_row, m_col> dtTransform<m_type, m_row, m_col>::Inv() const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Transform<t_type, t_row, t_col> Transform<t_type, t_row, t_col>::Inv() const
 {
-    return dtTransform(m_R.Inv(), -(m_R.Inv() * m_p));
+    return Transform(m_R.Inv(), -(m_R.Inv() * m_p));
 }
 
 /* Member access operators */
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline m_type &dtTransform<m_type, m_row, m_col>::operator()(uint16_t irow, uint16_t icol)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline t_type &Transform<t_type, t_row, t_col>::operator()(uint16_t irow, uint16_t icol)
 {
-    dt_assert(irow <= m_row && icol <= m_col);
+    assert(irow < t_row && "Index out of range");
+    assert(icol < t_col && "Index out of range");
 
     if (irow < 3 && icol == 3)
         return m_p.m_elem[irow];
@@ -182,11 +185,12 @@ inline m_type &dtTransform<m_type, m_row, m_col>::operator()(uint16_t irow, uint
     return m_R.m_elem[irow * 3 + icol];
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline const m_type &dtTransform<m_type, m_row, m_col>::operator()(uint16_t irow, uint16_t icol) const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline const t_type &Transform<t_type, t_row, t_col>::operator()(uint16_t irow, uint16_t icol) const
 {
-    dt_assert(irow <= m_row && icol <= m_col);
-    
+    assert(irow < t_row && "Index out of range");
+    assert(icol < t_col && "Index out of range");
+
     if (irow < 3 && icol == 3)
         return m_p.m_elem[irow];
     else if (irow == 3)
@@ -196,8 +200,8 @@ inline const m_type &dtTransform<m_type, m_row, m_col>::operator()(uint16_t irow
 }
 
 /* Assignment operators */
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtTransform<m_type, m_row, m_col> &dtTransform<m_type, m_row, m_col>::operator=(const dtTransform &m)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Transform<t_type, t_row, t_col> &Transform<t_type, t_row, t_col>::operator=(const Transform &m)
 {
     m_R = m.m_R;
     m_p = m.m_p;
@@ -206,35 +210,35 @@ inline dtTransform<m_type, m_row, m_col> &dtTransform<m_type, m_row, m_col>::ope
 }
 
 /* Arithmetic operators */
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtMatrix<m_row, m_col, m_type> dtTransform<m_type, m_row, m_col>::operator+(const dtMatrix<m_row, m_col, m_type> &m) const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Matrix<t_row, t_col, t_type> Transform<t_type, t_row, t_col>::operator+(const Matrix<t_row, t_col, t_type> &m) const
 {
-    m_type mat[m_row * m_col] = {
+    t_type mat[t_row * t_col] = {
         m_R.m_elem[0] + m.m_elem[0], m_R.m_elem[1] + m.m_elem[1], m_R.m_elem[2] + m.m_elem[2], m_p.m_elem[0] + m.m_elem[3],
         m_R.m_elem[3] + m.m_elem[4], m_R.m_elem[4] + m.m_elem[5], m_R.m_elem[5] + m.m_elem[6], m_p.m_elem[1] + m.m_elem[7],
         m_R.m_elem[6] + m.m_elem[8], m_R.m_elem[7] + m.m_elem[9], m_R.m_elem[8] + m.m_elem[10], m_p.m_elem[2] + m.m_elem[11],
-        m.m_elem[12], m.m_elem[13], m.m_elem[14], (m_type)(1) + m.m_elem[15]};
+        m.m_elem[12], m.m_elem[13], m.m_elem[14], (t_type)(1) + m.m_elem[15]};
 
-    return dtMatrix<m_row, m_col, m_type>(mat);
+    return Matrix<t_row, t_col, t_type>(mat);
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtMatrix<m_row, m_col, m_type> dtTransform<m_type, m_row, m_col>::operator-(const dtMatrix<m_row, m_col, m_type> &m) const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Matrix<t_row, t_col, t_type> Transform<t_type, t_row, t_col>::operator-(const Matrix<t_row, t_col, t_type> &m) const
 {
-    m_type mat[m_row * m_col] = {
+    t_type mat[t_row * t_col] = {
         m_R.m_elem[0] - m.m_elem[0], m_R.m_elem[1] - m.m_elem[1], m_R.m_elem[2] - m.m_elem[2], m_p.m_elem[0] - m.m_elem[3],
         m_R.m_elem[3] - m.m_elem[4], m_R.m_elem[4] - m.m_elem[5], m_R.m_elem[5] - m.m_elem[6], m_p.m_elem[1] - m.m_elem[7],
         m_R.m_elem[6] - m.m_elem[8], m_R.m_elem[7] - m.m_elem[9], m_R.m_elem[8] - m.m_elem[10], m_p.m_elem[2] - m.m_elem[11],
-        -m.m_elem[12], -m.m_elem[13], -m.m_elem[14], (m_type)(1) - m.m_elem[15]};
+        -m.m_elem[12], -m.m_elem[13], -m.m_elem[14], (t_type)(1) - m.m_elem[15]};
 
-    return dtMatrix<m_row, m_col, m_type>(mat);
+    return Matrix<t_row, t_col, t_type>(mat);
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
+template <typename t_type, uint16_t t_row, uint16_t t_col>
 template <uint16_t col>
-inline dtMatrix<m_row, col, m_type> dtTransform<m_type, m_row, m_col>::operator*(const dtMatrix<m_row, col, m_type> &m) const
+inline Matrix<t_row, col, t_type> Transform<t_type, t_row, t_col>::operator*(const Matrix<t_row, col, t_type> &m) const
 {
-    m_type mat[m_row * col];
+    t_type mat[t_row * col];
 
     for (uint16_t irow = 0; irow < 3; ++irow)
     {
@@ -248,32 +252,38 @@ inline dtMatrix<m_row, col, m_type> dtTransform<m_type, m_row, m_col>::operator*
         }
     }
 
-    memcpy(&mat[3 * col], &m.m_elem[3 * col], sizeof(m_type) * col);
+    memcpy(&mat[3 * col], &m.m_elem[3 * col], sizeof(t_type) * col);
 
-    return dtMatrix<m_row, col, m_type>(mat);
+    return Matrix<t_row, col, t_type>(mat);
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtTransform<m_type, m_row, m_col> dtTransform<m_type, m_row, m_col>::operator*(const dtTransform &m) const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Transform<t_type, t_row, t_col> Transform<t_type, t_row, t_col>::operator*(const Transform &m) const
 {
-    return dtTransform(m_R * m.m_R, m_R * m.m_p + m_p);
+    return Transform(m_R * m.m_R, m_R * m.m_p + m_p);
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtVector3<m_type, 3> dtTransform<m_type, m_row, m_col>::operator*(const dtVector<3, m_type> &v) const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Vector3<t_type, 3> Transform<t_type, t_row, t_col>::operator*(const Vector<3, t_type> &v) const
 {
-    return dtVector3<m_type, 3>(m_R * v + m_p);
+    return Vector3<t_type, 3>(m_R * v + m_p);
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline dtVector3<m_type, 3> dtTransform<m_type, m_row, m_col>::operator*(const dtVector3<m_type, 3> &v) const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Vector3<t_type, 3> Transform<t_type, t_row, t_col>::operator*(const Vector<0, t_type> &v) const
 {
-    return dtVector3<m_type, 3>(m_R * v + m_p);
+    return Vector3<t_type, 3>(m_R * v + m_p);
+}
+
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline Vector3<t_type, 3> Transform<t_type, t_row, t_col>::operator*(const Vector3<t_type, 3> &v) const
+{
+    return Vector3<t_type, 3>(m_R * v + m_p);
 }
 
 /* Comparison operators */
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline bool dtTransform<m_type, m_row, m_col>::operator==(const dtTransform &m) const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline bool Transform<t_type, t_row, t_col>::operator==(const Transform &m) const
 {
     if (m_R != m.m_R)
         return false;
@@ -283,8 +293,8 @@ inline bool dtTransform<m_type, m_row, m_col>::operator==(const dtTransform &m) 
     return true;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline bool dtTransform<m_type, m_row, m_col>::operator!=(const dtTransform &m) const
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline bool Transform<t_type, t_row, t_col>::operator!=(const Transform &m) const
 {
     if (m_R != m.m_R)
         return true;
@@ -294,8 +304,8 @@ inline bool dtTransform<m_type, m_row, m_col>::operator!=(const dtTransform &m) 
     return false;
 }
 
-template <typename m_type, uint16_t m_row, uint16_t m_col>
-inline void dtTransform<m_type, m_row, m_col>::Print(const char endChar)
+template <typename t_type, uint16_t t_row, uint16_t t_col>
+inline void Transform<t_type, t_row, t_col>::Print(const char endChar)
 {
 #if defined(ARDUINO)
     for (uint16_t irow = 0; irow < 3; irow++)
@@ -316,8 +326,9 @@ inline void dtTransform<m_type, m_row, m_col>::Print(const char endChar)
 #endif
 }
 
-typedef dtTransform<> dtTMat;
+typedef Transform<> dtTMat;
 
-} // namespace dtMath
+} // namespace Math
+} // namespace dt
 
 #endif // DTMATH_DTTRANSFORM_TPP_

@@ -24,39 +24,41 @@
 #include <cmath>
 #include <limits>
 
-namespace dtMath
+namespace dt
+{
+namespace Math
 {
 
-template <uint16_t m_row, uint16_t m_col, typename m_type = float>
-class dtQR
+template <uint16_t t_row, uint16_t t_col, typename t_type> class Matrix;
+template <typename t_type, uint16_t t_row, uint16_t t_col> class Matrix3;
+
+template <uint16_t t_row, uint16_t t_col, typename t_type = float>
+class QR
 {
 private:
-    m_type m_elem[m_row * m_col];
-    m_type m_R[m_row * m_col] = {
-        0,
-    }; // Hn * ... * H2 * H1 * A
-    m_type m_Q[m_row * m_row] = {
-        0,
-    }; // Q = H1 * H2 * ... * Hn
+    t_type m_elem[t_row * t_col];
+    t_type m_R[t_row * t_col]; // Hn * ... * H2 * H1 * A
+    t_type m_Q[t_row * t_row]; // Q = H1 * H2 * ... * Hn
     int8_t m_isOk;
 
 public:
-    dtQR();
-    dtQR(const m_type *element, const size_t n_byte);
-    dtQR(const dtMatrix<m_row, m_col, m_type> &m);
-    dtQR(const dtMatrix3<m_type, m_row, m_col> &m);
+    QR();
+    QR(const t_type *element, const size_t n_byte);
+    QR(const Matrix<t_row, t_col, t_type> &m);
+    QR(const Matrix3<t_type, t_row, t_col> &m);
 
     int8_t Compute();
-    int8_t Compute(const m_type *element, const size_t n_byte); // Compute Q & R Matrix, Using Householder reflections
-    int8_t Compute(const dtMatrix<m_row, m_col, m_type> &m);    // Compute Q & R Matrix, Using Householder reflections
-    int8_t Compute(const dtMatrix3<m_type, m_row, m_col> &m);   // Compute Q & R Matrix, Using Householder reflections
+    int8_t Compute(const t_type *element, const size_t n_byte); // Compute Q & R Matrix, Using Householder reflections
+    int8_t Compute(const Matrix<t_row, t_col, t_type> &m);      // Compute Q & R Matrix, Using Householder reflections
+    int8_t Compute(const Matrix3<t_type, t_row, t_col> &m);     // Compute Q & R Matrix, Using Householder reflections
     int8_t IsOk() { return m_isOk; }
 
-    dtMatrix<m_row, m_row, m_type> GetMatrixQ() const; // return matrix Q, orthogonal matrix
-    dtMatrix<m_row, m_col, m_type> GetMatrixR() const; // return matrix R, Upper Triangular matrix
+    Matrix<t_row, t_row, t_type> GetMatrixQ() const; // return matrix Q, orthogonal matrix
+    Matrix<t_row, t_col, t_type> GetMatrixR() const; // return matrix R, Upper Triangular matrix
 };
 
-} // namespace dtMath
+} // namespace Math
+} // namespace dt
 
 #include "dtQR.tpp"
 

@@ -46,65 +46,58 @@ The singular values of A are the diagonal elements of the diagonal matrix S
 and correspond to the positive square roots of the eigenvalues of the matrix ATA.
 */
 
-namespace dtMath
+namespace dt
+{
+namespace Math
 {
 
-template <uint16_t m_row, uint16_t m_col, typename m_type = float>
-class dtSVD
+template <uint16_t t_row, typename t_type> class Vector;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class Matrix;
+template <typename t_type, uint16_t t_row, uint16_t t_col> class Matrix3;
+
+template <uint16_t t_row, uint16_t t_col, typename t_type = float>
+class SVD
 {
 private:
     const int MAX_ITERATION_COUNT = 30;
-    m_type m_A[m_row * m_col] = {
-        0,
-    };
-    m_type m_U[(m_row >= m_col) ? m_row * m_col : m_col * m_col] = {
-        0,
-    };
-    m_type m_S[(m_row >= m_col) ? m_col : m_row] = {
-        0,
-    };
-    m_type m_invS[(m_row >= m_col) ? m_col : m_row] = {
-        0,
-    };
-    m_type m_V[(m_row >= m_col) ? m_col * m_col : m_row * m_col] = {
-        0,
-    };
-    m_type m_superDiagonal[(m_row >= m_col) ? m_col : m_row] = {
-        0,
-    }; // This array is used to store the super-diagonal elements resulting from the Householder reduction of the matrix A to bidiagonal form.
-    m_type m_inv[m_row * m_col] = {
-        0,
-    };
-    int8_t m_isOk = 0;
+    t_type m_A[t_row * t_col];
+    t_type m_U[(t_row >= t_col) ? t_row * t_col : t_col * t_col];
+    t_type m_S[(t_row >= t_col) ? t_col : t_row];
+    t_type m_V[(t_row >= t_col) ? t_col * t_col : t_row * t_col];
+    // t_type m_superDiagonal[(t_row >= t_col) ? t_col : t_row]; // This array is used to store the super-diagonal elements resulting from the Householder reduction of the matrix A to bidiagonal form.
+    t_type m_superDiagonal[(t_row >= t_col) ? t_row : t_col]; // This array is used to store the super-diagonal elements resulting from the Householder reduction of the matrix A to bidiagonal form.
+    t_type m_inv[t_row * t_col];
+    int8_t m_isOk;  // SVD solved
+    int8_t m_isInv; // inverse matrix generated
 
 public:
-    dtSVD();
-    dtSVD(const m_type *element, const size_t n_byte);
-    dtSVD(const dtMatrix<m_row, m_col, m_type> &m);
-    dtSVD(const dtMatrix3<m_type, m_row, m_col> &m);
+    SVD();
+    SVD(const t_type *element, const size_t n_byte);
+    SVD(const Matrix<t_row, t_col, t_type> &m);
+    SVD(const Matrix3<t_type, t_row, t_col> &m);
 
-    int8_t Compute(const m_type *element, const size_t n_byte); // Compute Singular Value Decomposition
-    int8_t Compute(const dtMatrix<m_row, m_col, m_type> &m);    // Compute Singular Value Decomposition
-    int8_t Compute(const dtMatrix3<m_type, m_row, m_col> &m);   // Compute Singular Value Decomposition
+    int8_t Compute(const t_type *element, const size_t n_byte); // Compute Singular Value Decomposition
+    int8_t Compute(const Matrix<t_row, t_col, t_type> &m);      // Compute Singular Value Decomposition
+    int8_t Compute(const Matrix3<t_type, t_row, t_col> &m);     // Compute Singular Value Decomposition
     int8_t IsOk() { return m_isOk; }
 
-    dtMatrix<m_row, m_row, m_type> GetMatrixU() const; // return U matrix, m x m, left singular vectors of A
-    dtMatrix<m_row, m_col, m_type> GetMatrixS() const; // return S matrix, m x n, singular values of A
-    dtMatrix<m_col, m_col, m_type> GetMatrixV() const; // return V matrix, n x n, right singular vectors of A
+    Matrix<t_row, t_row, t_type> GetMatrixU() const; // return U matrix, m x m, left singular vectors of A
+    Matrix<t_row, t_col, t_type> GetMatrixS() const; // return S matrix, m x n, singular values of A
+    Matrix<t_col, t_col, t_type> GetMatrixV() const; // return V matrix, n x n, right singular vectors of A
 
     template <uint16_t col>
-    int8_t Solve(const dtMatrix<m_row, col, m_type> &b, dtMatrix<m_col, col, m_type> &x, m_type tolerance = 0); // Solve x = (USVT)^-1 * b
-    int8_t Solve(const dtVector<m_row, m_type> &b, dtVector<m_col, m_type> &x, m_type tolerance = 0);           // Solve x = (USVT)^-1 * b
+    int8_t Solve(const Matrix<t_row, col, t_type> &b, Matrix<t_col, col, t_type> &x, t_type tolerance = 0); // Solve x = (USVT)^-1 * b
+    int8_t Solve(const Vector<t_row, t_type> &b, Vector<t_col, t_type> &x, t_type tolerance = 0);           // Solve x = (USVT)^-1 * b
     template <uint16_t col>
-    dtMatrix<m_col, col, m_type> Solve(const dtMatrix<m_row, col, m_type> &b, int8_t *isOk = nullptr, m_type tolerance = 0); // Solve x = (USVT)^-1 * b
-    dtVector<m_col, m_type> Solve(const dtVector<m_row, m_type> &b, int8_t *isOk = nullptr, m_type tolerance = 0);           // Solve x = (USVT)^-1 * b
+    Matrix<t_col, col, t_type> Solve(const Matrix<t_row, col, t_type> &b, int8_t *isOk = nullptr, t_type tolerance = 0); // Solve x = (USVT)^-1 * b
+    Vector<t_col, t_type> Solve(const Vector<t_row, t_type> &b, int8_t *isOk = nullptr, t_type tolerance = 0);           // Solve x = (USVT)^-1 * b
 
-    int8_t Inverse(dtMatrix<m_col, m_row, m_type> &inv, m_type tolerance = 0);            // Inverse matrix of USVT matrix
-    int8_t Inverse(dtMatrix3<m_type, m_col, m_row> &inv, m_type tolerance = 0);           // Inverse matrix of USVT matrix
-    dtMatrix<m_col, m_row, m_type> Inverse(int8_t *isOk = nullptr, m_type tolerance = 0); // Inverse matrix of USVT matrix
+    int8_t Inverse(Matrix<t_col, t_row, t_type> &inv, t_type tolerance = 0);            // Inverse matrix of USVT matrix
+    int8_t Inverse(Matrix3<t_type, t_col, t_row> &inv, t_type tolerance = 0);           // Inverse matrix of USVT matrix
+    Matrix<t_col, t_row, t_type> Inverse(int8_t *isOk = nullptr, t_type tolerance = 0); // Inverse matrix of USVT matrix
 
-    int8_t InverseArray(m_type *inv, m_type tolerance = 0);             // Inverse array of USVT matrix
-    m_type *InverseArray(int8_t *isOk = nullptr, m_type tolerance = 0); // Inverse array of USVT matrix
+    int8_t InverseArray(t_type *inv, t_type tolerance = 0);             // Inverse array of USVT matrix
+    t_type *InverseArray(int8_t *isOk = nullptr, t_type tolerance = 0); // Inverse array of USVT matrix
 
 private:
     void HouseholdersReductionToBidiagonalForm_Mxn();
@@ -116,8 +109,10 @@ private:
     void SortByDecreasingSingularValues_mxN();
 };
 
-} // namespace dtMath
+} // namespace Math
+} // namespace dt
 
 #include "dtSVD.tpp"
+#include "dtSVD0.h"
 
 #endif // DTMATH_DTSVD_H_

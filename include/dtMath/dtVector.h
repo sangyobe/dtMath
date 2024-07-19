@@ -3,7 +3,7 @@
 \brief      dtMath, General Vector(m x 1) class
 \author     Dong-hyun Lee, phenom8305@gmail.com
 \author     Joonhee Jo, allusivejune@gmail.com
-\author     Who is next author?
+\author     Muhammad Zahak Jamal, zahakj@gmail.com
 \date       Last modified on 2023. 05. 02
 \version    1.1.0
 \warning    Do Not delete this comment for document history! This is minimal manners!
@@ -26,200 +26,259 @@
 #include <cmath>
 #include <limits>
 
-namespace dtMath
+namespace dt
+{
+namespace Math
 {
 
-template <uint16_t m_size, typename m_type> class dtCommaInit;
-template <typename m_type, uint16_t m_row> class dtVector3;
-template <typename m_type, uint16_t m_row> class dtVector4;
-template <typename m_type, uint16_t m_row> class dtVector6;
-template <uint16_t m_row, uint16_t m_col, typename m_type> class dtMatrix;
-template <uint16_t m_row, uint16_t m_col, typename m_type> class dtCscMatrix;
-template <typename m_type, uint16_t m_row, uint16_t m_col> class dtRotation;
-template <typename m_type, uint16_t m_row> class dtQuaternion;
+template <uint16_t m_size, typename t_type> class CommaInit;
+template <typename t_type, uint16_t t_row> class Vector3;
+template <typename t_type, uint16_t t_row> class Vector4;
+template <typename t_type, uint16_t t_row> class Vector6;
+template <typename t_type, uint16_t t_row> class Quaternion;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class Matrix;
+template <uint16_t t_row, uint16_t t_col, typename t_type> class CscMatrix;
+template <typename t_type, uint16_t t_row, uint16_t t_col> class Matrix3;
+template <typename t_type, uint16_t t_row, uint16_t t_col> class Rotation;
 
-template <uint16_t m_row, typename m_type = float>
-class dtVector
+template <uint16_t t_row, typename t_type = float>
+class Vector
 {
 private:
-    m_type m_tolerance = std::numeric_limits<m_type>::epsilon();
-    m_type m_elem[m_row];
-    dtVector(const m_type *element);
-    inline void CrossProduct(const m_type *v);
+    t_type m_tolerance = std::numeric_limits<t_type>::epsilon();
+    t_type m_elem[t_row];
+    Vector(const t_type *element);
+    inline void CrossProduct(const t_type *v);
 
 public:
-    dtVector();
-    dtVector(const m_type *element, const size_t n_byte);
-    dtVector(const dtVector &v);
-    dtVector(const dtMatrix<m_row, 1, m_type> &v);
-    ~dtVector() {}
+    Vector();
+    Vector(const t_type *element, const size_t n_byte);
+    Vector(const Vector &v);
+    Vector(const Vector<0, t_type> &v);
+    Vector(const Matrix<t_row, 1, t_type> &v);
+    Vector(const Matrix<0, 0, t_type> &v);
+    ~Vector() {}
 
     void SetZero();
-    void SetFill(const m_type value);
-    void SetElement(const m_type *element, const size_t n_byte);
-    void SetElement(const dtVector &v);
-    void SetElement(const dtMatrix<m_row, 1, m_type> &v);
-    // void SetElement(const m_type elem0, ...);
+    void SetFill(const t_type value);
+    void SetElement(const t_type *element, const size_t n_byte);
+    // void SetElement(const Vector &v);
+    // void SetElement(const Matrix<t_row, 1, t_type> &v);
+    // void SetElement(const Matrix<0, 0, t_type> &v);
+    // void SetElement(const t_type elem0, ...);
     template <uint16_t row>
-    void SetBlock(const uint16_t idxRow, const dtVector<row, m_type> &v);
-    void SetBlock(const uint16_t idxRow, const m_type *v, const size_t n_byte);
-    void SetBlock(const uint16_t idxRow, const dtVector3<m_type, 3> &v);
-    void SetBlock(const uint16_t idxRow, const dtVector4<m_type, 4> &v);
-    void SetBlock(const uint16_t idxRow, const dtQuaternion<m_type, 4> &v);
-    void SetBlock(const uint16_t idxRow, const dtVector6<m_type, 6> &v);
+    void SetBlock(const uint16_t idxRow, const Vector<row, t_type> &v, const uint16_t jdx = 0, const int16_t size = row);
+    void SetBlock(const uint16_t idxRow, const t_type *v, const size_t n_byte);
+    void SetBlock(const uint16_t idxRow, const Vector3<t_type, 3> &v, const uint16_t jdx = 0, const int16_t size = 3);
+    void SetBlock(const uint16_t idxRow, const Vector4<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4);
+    void SetBlock(const uint16_t idxRow, const Vector6<t_type, 6> &v, const uint16_t jdx = 0, const int16_t size = 6);
+    void SetBlock(const uint16_t idxRow, const Quaternion<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4);
     template <uint16_t row>
-    void SetBlock(const uint16_t idxRow, const dtMatrix<row, 1, m_type> &v);
+    void SetBlock(const uint16_t idxRow, const Matrix<row, 1, t_type> &v, const uint16_t jdx = 0, const int16_t size = row);
+    void SetBlock(const uint16_t idxRow, const Matrix<0, 0, t_type> &v, const uint16_t jdx = 0, int16_t size = -1);
+    void SetBlock(const uint16_t idxRow, const Vector<0, t_type> &v, const uint16_t jdx = 0, int16_t size = -1);
     void SetSwap(const uint16_t i, const uint16_t j);
     void SetNormalize();
 
-    const m_type *const GetElementsAddr() const;
-    uint16_t GetDim() const { return m_row; }
+    const t_type *const GetElementsAddr() const;
+    uint16_t GetDim() const { return t_row; }
     template <uint16_t row>
-    dtVector<row, m_type> GetBlock(const uint16_t idx);
-    dtVector3<m_type, 3> GetBlockVec3(const uint16_t idx);
-    dtVector4<m_type, 4> GetBlockVec4(const uint16_t idx);
-    dtVector6<m_type, 6> GetBlockVec6(const uint16_t idx);
+    int8_t GetBlock(const uint16_t idx, Vector<row, t_type> &v, const uint16_t jdx = 0, const int16_t size = row);
+    int8_t GetBlock(const uint16_t idx, Vector<0, t_type> &v, const uint16_t jdx = 0, int16_t size = -1);
+    int8_t GetBlock(const uint16_t idx, Vector3<t_type, 3> &v, const uint16_t jdx = 0, const int16_t size = 3);
+    int8_t GetBlock(const uint16_t idx, Vector4<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4);
+    int8_t GetBlock(const uint16_t idx, Vector6<t_type, 6> &v, const uint16_t jdx = 0, const int16_t size = 6);
+    int8_t GetBlock(const uint16_t idx, Quaternion<t_type, 4> &v, const uint16_t jdx = 0, const int16_t size = 4);
     template <uint16_t row>
-    int8_t GetBlock(const uint16_t idx, dtVector<row, m_type> &v) const;
-    int8_t GetBlockVec3(const uint16_t idx, dtVector3<m_type, 3> &v);
-    int8_t GetBlockVec4(const uint16_t idx, dtVector4<m_type, 4> &v);
-    int8_t GetBlockVec6(const uint16_t idx, dtVector6<m_type, 6> &v);
-    m_type GetNorm() const;
-    m_type GetSqNorm() const;
-    m_type GetSum() const;
-    dtVector GetNormalized() const;
-    dtMatrix<3, 3, m_type> GetSkew() const;
-    dtMatrix<1, m_row, m_type> Transpose() const;
+    Vector<row, t_type> GetBlockVec(const uint16_t idx, const uint16_t jdx = 0, const int16_t size = row);
+    Vector<0, t_type> GetBlockVec0(const uint16_t idx, const uint16_t row, const uint16_t jdx = 0, int16_t size = -1);
+    Vector3<t_type, 3> GetBlockVec3(const uint16_t idx, const uint16_t jdx = 0, const int16_t size = 3);
+    Vector4<t_type, 4> GetBlockVec4(const uint16_t idx, const uint16_t jdx = 0, const int16_t size = 4);
+    Vector6<t_type, 6> GetBlockVec6(const uint16_t idx, const uint16_t jdx = 0, const int16_t size = 6);
+    Quaternion<t_type, 4> GetBlockQuat(const uint16_t idx, const uint16_t jdx = 0, const int16_t size = 4);
+
+    t_type GetNorm() const;              // Frobenius Norm (Euclidean norm, L2 Norm)
+    t_type GetSqNorm() const;            // Squared Frobenius Norm (Euclidean norm, Squared L2 Norm)
+    t_type GetLpNorm(const int p) const; // Generalized Norm (Lp Norm)
+    t_type GetSum() const;
+    Vector GetNormalized() const;
+    Matrix<3, 3, t_type> GetSkew() const;
+    Matrix<1, t_row, t_type> Transpose() const;
+    void Transpose(Matrix<1, t_row, t_type> &m) const;
+    void Transpose(Matrix<0, 0, t_type> &m) const;
 
     /* Member access operators */
-    // returns a row of modifiable elements
-    m_type &operator()(uint16_t irow) { dt_assert(irow <= m_row); return m_elem[irow]; }
-    // returns a row of non-modifiable elements
-    const m_type &operator()(uint16_t irow) const { dt_assert(irow <= m_row); return m_elem[irow]; }
+    t_type &operator()(uint16_t irow);             // returns a row of modifiable elements
+    const t_type &operator()(uint16_t irow) const; // returns a row of non-modifiable elements
 
     /* Assignment operators */
-    dtVector &operator=(const dtVector &v);                    // vector1  = vector2
-    dtVector &operator+=(const dtVector &v);                   // vector1 += vector2
-    dtVector &operator-=(const dtVector &v);                   // vector1 -= vector2
-    dtVector &operator*=(const dtVector &v);                   // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
-    dtVector &operator/=(const dtVector &v);                   // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
-    dtVector &operator=(const dtVector3<m_type, m_row> &v);    // vector1  = vector2
-    dtVector &operator+=(const dtVector3<m_type, m_row> &v);   // vector1 += vector2
-    dtVector &operator-=(const dtVector3<m_type, m_row> &v);   // vector1 -= vector2
-    dtVector &operator*=(const dtVector3<m_type, m_row> &v);   // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
-    dtVector &operator/=(const dtVector3<m_type, m_row> &v);   // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
-    dtVector &operator=(const dtVector4<m_type, m_row> &v);    // vector1  = vector2
-    dtVector &operator+=(const dtVector4<m_type, m_row> &v);   // vector1 += vector2
-    dtVector &operator-=(const dtVector4<m_type, m_row> &v);   // vector1 -= vector2
-    dtVector &operator*=(const dtVector4<m_type, m_row> &v);   // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
-    dtVector &operator/=(const dtVector4<m_type, m_row> &v);   // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
-    dtVector &operator=(const dtVector6<m_type, m_row> &v);    // vector1  = vector2
-    dtVector &operator+=(const dtVector6<m_type, m_row> &v);   // vector1 += vector2
-    dtVector &operator-=(const dtVector6<m_type, m_row> &v);   // vector1 -= vector2
-    dtVector &operator*=(const dtVector6<m_type, m_row> &v);   // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
-    dtVector &operator/=(const dtVector6<m_type, m_row> &v);   // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
-    dtVector &operator=(const dtMatrix<m_row, 1, m_type> &v);  // vector1  = vector2
-    dtVector &operator+=(const dtMatrix<m_row, 1, m_type> &v); // vector1 += vector2
-    dtVector &operator-=(const dtMatrix<m_row, 1, m_type> &v); // vector1 -= vector2
-    dtVector &operator*=(const dtMatrix<m_row, 1, m_type> &v); // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
-    dtVector &operator/=(const dtMatrix<m_row, 1, m_type> &v); // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
-    dtVector &operator=(const m_type s);                       // vector1  = scalar, all elements set scalar
-    dtVector &operator+=(const m_type s);                      // vector1 += scalar, vector1(i) = vector1(i) + scalar
-    dtVector &operator-=(const m_type s);                      // vector1 -= scalar, vector1(i) = vector1(i) - scalar
-    dtVector &operator*=(const m_type s);                      // vector1 *= scalar
-    dtVector &operator/=(const m_type s);                      // vector1 /= scalar
-    dtVector &operator&=(const dtVector3<m_type, m_row> &v);   // vector1 x vector2 cross product
-    dtVector &operator&=(const dtVector<m_row, m_type> &v);    // vector1 x vector2 cross product
-    dtVector &operator&=(const dtMatrix<m_row, 1, m_type> &v); // vector1 x vector2 cross product
-    dtCommaInit<m_row, m_type> operator<<(const m_type s);     // Init first matrix elements
+    Vector &operator=(const Vector &v);                    // vector1  = vector2
+    Vector &operator+=(const Vector &v);                   // vector1 += vector2
+    Vector &operator-=(const Vector &v);                   // vector1 -= vector2
+    Vector &CWiseMulEq(const Vector &v);                   // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
+    Vector &CWiseDivEq(const Vector &v);                   // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
+    Vector &operator=(const Vector<0, t_type> &v);         // vector1  = vector2
+    Vector &operator+=(const Vector<0, t_type> &v);        // vector1 += vector2
+    Vector &operator-=(const Vector<0, t_type> &v);        // vector1 -= vector2
+    Vector &CWiseMulEq(const Vector<0, t_type> &v);        // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
+    Vector &CWiseDivEq(const Vector<0, t_type> &v);        // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
+    Vector &operator=(const Vector3<t_type, t_row> &v);    // vector1  = vector2
+    Vector &operator+=(const Vector3<t_type, t_row> &v);   // vector1 += vector2
+    Vector &operator-=(const Vector3<t_type, t_row> &v);   // vector1 -= vector2
+    Vector &CWiseMulEq(const Vector3<t_type, t_row> &v);   // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
+    Vector &CWiseDivEq(const Vector3<t_type, t_row> &v);   // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
+    Vector &operator=(const Vector4<t_type, t_row> &v);    // vector1  = vector2
+    Vector &operator+=(const Vector4<t_type, t_row> &v);   // vector1 += vector2
+    Vector &operator-=(const Vector4<t_type, t_row> &v);   // vector1 -= vector2
+    Vector &CWiseMulEq(const Vector4<t_type, t_row> &v);   // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
+    Vector &CWiseDivEq(const Vector4<t_type, t_row> &v);   // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
+    Vector &operator=(const Vector6<t_type, t_row> &v);    // vector1  = vector2
+    Vector &operator+=(const Vector6<t_type, t_row> &v);   // vector1 += vector2
+    Vector &operator-=(const Vector6<t_type, t_row> &v);   // vector1 -= vector2
+    Vector &CWiseMulEq(const Vector6<t_type, t_row> &v);   // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
+    Vector &CWiseDivEq(const Vector6<t_type, t_row> &v);   // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
+    Vector &operator=(const Matrix<t_row, 1, t_type> &v);  // vector1  = vector2
+    Vector &operator+=(const Matrix<t_row, 1, t_type> &v); // vector1 += vector2
+    Vector &operator-=(const Matrix<t_row, 1, t_type> &v); // vector1 -= vector2
+    Vector &CWiseMulEq(const Matrix<t_row, 1, t_type> &v); // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
+    Vector &CWiseDivEq(const Matrix<t_row, 1, t_type> &v); // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
+    Vector &operator=(const Matrix<0, 0, t_type> &v);      // vector1  = vector2
+    Vector &operator+=(const Matrix<0, 0, t_type> &v);     // vector1 += vector2
+    Vector &operator-=(const Matrix<0, 0, t_type> &v);     // vector1 -= vector2
+    Vector &CWiseMulEq(const Matrix<0, 0, t_type> &v);     // vector1 *= vector2, vector1(i) = vector1(i) * vector2(i)
+    Vector &CWiseDivEq(const Matrix<0, 0, t_type> &v);     // vector1 /= vector2, vector1(i) = vector1(i) / vector2(i)
+    Vector &operator=(const t_type s);                     // vector1  = scalar, all elements set scalar
+    Vector &operator+=(const t_type s);                    // vector1 += scalar, vector1(i) = vector1(i) + scalar
+    Vector &operator-=(const t_type s);                    // vector1 -= scalar, vector1(i) = vector1(i) - scalar
+    Vector &operator*=(const t_type s);                    // vector1 *= scalar
+    Vector &operator/=(const t_type s);                    // vector1 /= scalar
+    Vector &operator&=(const Vector3<t_type, t_row> &v);   // vector1 x vector2 cross product
+    Vector &operator&=(const Vector<3, t_type> &v);        // vector1 x vector2 cross product
+    Vector &operator&=(const Vector<0, t_type> &v);        // vector1 x vector2 cross product
+    Vector &operator&=(const Matrix<3, 1, t_type> &v);     // vector1 x vector2 cross product
+    Vector &operator&=(const Matrix<0, 0, t_type> &v);     // vector1 x vector2 cross product
+    CommaInit<t_row, t_type> operator<<(const t_type s);   // Init first matrix elements
 
     /* Arithmetic operators */
-    dtVector operator-() const;                                                                  // minus sign
-    dtVector operator+(const dtVector &v) const;                                                 // vector + vector
-    dtVector operator-(const dtVector &v) const;                                                 // vector - vector
-    dtVector operator*(const dtVector &v) const;                                                 // vector * vector = m_elem(i) * v.m_elem(i)
-    dtVector operator/(const dtVector &v) const;                                                 // vector / vector = m_elem(i) / v.m_elem(i)
-    dtVector operator+(const dtVector3<m_type, m_row> &v) const;                                 // vector + vector
-    dtVector operator-(const dtVector3<m_type, m_row> &v) const;                                 // vector - vector
-    dtVector operator*(const dtVector3<m_type, m_row> &v) const;                                 // vector * vector = m_elem(i) * v.m_elem(i)
-    dtVector operator/(const dtVector3<m_type, m_row> &v) const;                                 // vector / vector = m_elem(i) / v.m_elem(i)
-    dtVector operator+(const dtVector4<m_type, m_row> &v) const;                                 // vector + vector
-    dtVector operator-(const dtVector4<m_type, m_row> &v) const;                                 // vector - vector
-    dtVector operator*(const dtVector4<m_type, m_row> &v) const;                                 // vector * vector = m_elem(i) * v.m_elem(i)
-    dtVector operator/(const dtVector4<m_type, m_row> &v) const;                                 // vector / vector = m_elem(i) / v.m_elem(i)
-    dtVector operator+(const dtVector6<m_type, m_row> &v) const;                                 // vector + vector
-    dtVector operator-(const dtVector6<m_type, m_row> &v) const;                                 // vector - vector
-    dtVector operator*(const dtVector6<m_type, m_row> &v) const;                                 // vector * vector = m_elem(i) * v.m_elem(i)
-    dtVector operator/(const dtVector6<m_type, m_row> &v) const;                                 // vector / vector = m_elem(i) / v.m_elem(i)
-    dtVector operator+(const dtMatrix<m_row, 1, m_type> &v) const;                               // vector + vector
-    dtVector operator-(const dtMatrix<m_row, 1, m_type> &v) const;                               // vector - vector
-    dtVector operator*(const dtMatrix<m_row, 1, m_type> &v) const;                               // vector * vector = m_elem(i) * v.m_elem(i)
-    dtVector operator/(const dtMatrix<m_row, 1, m_type> &v) const;                               // vector / vector = m_elem(i) / v.m_elem(i)
-    dtVector operator+(const m_type s) const;                                                    // vector + scalar = m_elem(i) + scalar
-    dtVector operator-(const m_type s) const;                                                    // vector - scalar = m_elem(i) - scalar
-    dtVector operator*(const m_type s) const;                                                    // vector * scalar
-    dtVector operator/(const m_type s) const;                                                    // vector / scalar
-    dtVector operator&(const dtVector3<m_type, m_row> &v) const;                                 // vector x vector cross product
-    dtVector operator&(const dtVector<m_row, m_type> &v) const;                                  // vector x vector cross product
-    dtVector operator&(const dtMatrix<m_row, 1, m_type> &v) const;                               // vector x vector cross product
-    dtMatrix3<m_type, m_row, m_row> operator&(const dtMatrix3<m_type, m_row, m_row> &m) const;   // [v]x * RotMat, []x is skew-symmetric matrix
-    dtRotation<m_type, m_row, m_row> operator&(const dtRotation<m_type, m_row, m_row> &m) const; // [v]x * RotMat, []x is skew-symmetric matrix
-
+    Vector operator-() const;                                  // minus sign
+    Vector operator+(const Vector &v) const;                   // vector + vector
+    Vector operator-(const Vector &v) const;                   // vector - vector
+    Vector CWiseMul(const Vector &v) const;                    // vector * vector = m_elem(i) * v.m_elem(i)
+    Vector CWiseDiv(const Vector &v) const;                    // vector / vector = m_elem(i) / v.m_elem(i)
+    Vector operator+(const Vector<0, t_type> &v) const;        // vector + vector
+    Vector operator-(const Vector<0, t_type> &v) const;        // vector - vector
+    Vector CWiseMul(const Vector<0, t_type> &v) const;         // vector * vector = m_elem(i) * v.m_elem(i)
+    Vector CWiseDiv(const Vector<0, t_type> &v) const;         // vector / vector = m_elem(i) / v.m_elem(i)
+    Vector operator+(const Vector3<t_type, t_row> &v) const;   // vector + vector
+    Vector operator-(const Vector3<t_type, t_row> &v) const;   // vector - vector
+    Vector CWiseMul(const Vector3<t_type, t_row> &v) const;    // vector * vector = m_elem(i) * v.m_elem(i)
+    Vector CWiseDiv(const Vector3<t_type, t_row> &v) const;    // vector / vector = m_elem(i) / v.m_elem(i)
+    Vector operator+(const Vector4<t_type, t_row> &v) const;   // vector + vector
+    Vector operator-(const Vector4<t_type, t_row> &v) const;   // vector - vector
+    Vector CWiseMul(const Vector4<t_type, t_row> &v) const;    // vector * vector = m_elem(i) * v.m_elem(i)
+    Vector CWiseDiv(const Vector4<t_type, t_row> &v) const;    // vector / vector = m_elem(i) / v.m_elem(i)
+    Vector operator+(const Vector6<t_type, t_row> &v) const;   // vector + vector
+    Vector operator-(const Vector6<t_type, t_row> &v) const;   // vector - vector
+    Vector CWiseMul(const Vector6<t_type, t_row> &v) const;    // vector * vector = m_elem(i) * v.m_elem(i)
+    Vector CWiseDiv(const Vector6<t_type, t_row> &v) const;    // vector / vector = m_elem(i) / v.m_elem(i)
+    Vector operator+(const Matrix<t_row, 1, t_type> &v) const; // vector + vector
+    Vector operator-(const Matrix<t_row, 1, t_type> &v) const; // vector - vector
+    Vector CWiseMul(const Matrix<t_row, 1, t_type> &v) const;  // vector * vector = m_elem(i) * v.m_elem(i)
+    Vector CWiseDiv(const Matrix<t_row, 1, t_type> &v) const;  // vector / vector = m_elem(i) / v.m_elem(i)
+    Vector operator+(const Matrix<0, 0, t_type> &v) const;     // vector + vector
+    Vector operator-(const Matrix<0, 0, t_type> &v) const;     // vector - vector
+    Vector CWiseMul(const Matrix<0, 0, t_type> &v) const;      // vector * vector = m_elem(i) * v.m_elem(i)
+    Vector CWiseDiv(const Matrix<0, 0, t_type> &v) const;      // vector / vector = m_elem(i) / v.m_elem(i)
+    Vector operator+(const t_type s) const;                    // vector + scalar = m_elem(i) + scalar
+    Vector operator-(const t_type s) const;                    // vector - scalar = m_elem(i) - scalar
+    Vector operator*(const t_type s) const;                    // vector * scalar
+    Vector operator/(const t_type s) const;                    // vector / scalar
     template <uint16_t col>
-    dtMatrix<m_row, col, m_type> operator*(const dtMatrix<1, col, m_type> &m) const; // vector1 * matrix(1xcol) outer product
+    Matrix<t_row, col, t_type> operator*(const Matrix<1, col, t_type> &m) const; // vector(mx1) * matrix(1xcol) = matrix(mxcol)
+    Matrix<0, 0, t_type> operator*(const Matrix<0, 0, t_type> &m) const;         // vector(mx1) * matrix(1xn) = matrix(mxn)
+    Vector operator&(const Vector3<t_type, t_row> &v) const;                     // vector x vector cross product
+    Vector operator&(const Vector<t_row, t_type> &v) const;                      // vector x vector cross product
+    Vector operator&(const Vector<0, t_type> &v) const;                          // vector x vector cross product
+    Vector operator&(const Matrix<t_row, 1, t_type> &v) const;                   // vector x vector cross product
+    Vector operator&(const Matrix<0, 0, t_type> &v) const;                       // vector x vector cross product
+    Matrix3<t_type, 3, 3> operator&(const Matrix3<t_type, 3, 3> &m) const;       // [v]x * RotMat, []x is skew-symmetric matrix
+    Rotation<t_type, 3, 3> operator&(const Rotation<t_type, 3, 3> &m) const;     // [v]x * RotMat, []x is skew-symmetric matrix
 
-    m_type dot(const dtVector &v) const;                   // vector1 * vector2 dot(inner) product
-    m_type dot(const dtVector3<m_type, m_row> &v) const;   // vector1 * vector2 dot(inner) product
-    m_type dot(const dtVector4<m_type, m_row> &v) const;   // vector1 * vector2 dot(inner) product
-    m_type dot(const dtVector6<m_type, m_row> &v) const;   // vector1 * vector2 dot(inner) product
-    m_type dot(const dtMatrix<m_row, 1, m_type> &v) const; // vector1 * vector2 dot(inner) product
+    Matrix<t_row, 3, t_type> Outer(const Vector3<t_type, 3> &v) const; // vector1 * vector2, outer product, vector1 * vector2.Transpos()
+    Matrix<t_row, 4, t_type> Outer(const Vector4<t_type, 4> &v) const; // vector1 * vector2, outer product, vector1 * vector2.Transpos()
+    Matrix<t_row, 6, t_type> Outer(const Vector6<t_type, 6> &v) const; // vector1 * vector2, outer product, vector1 * vector2.Transpos()
+    Matrix<0, 0, t_type> Outer(const Vector<0, t_type> &v) const;      // vector1 * vector2 outer product, vector1 * vector2.Transpos()
+    Matrix<0, 0, t_type> Outer(const Matrix<0, 0, t_type> &v) const;   // vector1 * vector2 outer product, vector1 * vector2.Transpos()
+    template <uint16_t row>
+    Matrix<t_row, row, t_type> Outer(const Vector<row, t_type> &v) const; // vector1 * vector2 outer product, vector1 * vector2.Transpos()
+    template <uint16_t row>
+    Matrix<t_row, row, t_type> Outer(const Matrix<row, 1, t_type> &v) const; // vector1 * vector2 outer product, vector1 * vector2.Transpose()
+
+    t_type Inner(const Vector &v) const;                   // vector1 * vector2 inner(dot) product, vector1.Transpose() * vector2
+    t_type Inner(const Vector<0, t_type> &v) const;        // vector1 * vector2 inner(dot) product, vector1.Transpose() * vector2
+    t_type Inner(const Vector3<t_type, t_row> &v) const;   // vector1 * vector2 inner(dot) product, vector1.Transpose() * vector2
+    t_type Inner(const Vector4<t_type, t_row> &v) const;   // vector1 * vector2 inner(dot) product, vector1.Transpose() * vector2
+    t_type Inner(const Vector6<t_type, t_row> &v) const;   // vector1 * vector2 inner(dot) product, vector1.Transpose() * vector2
+    t_type Inner(const Matrix<t_row, 1, t_type> &v) const; // vector1 * vector2 inner(dot) product, vector1.Transpose() * vector2
+    t_type Inner(const Matrix<0, 0, t_type> &v) const;     // vector1 * vector2 inner(dot) product, vector1.Transpose() * vector2
 
     /* Comparison operators */
-    bool operator==(const dtVector &v) const;                   // (true or false) vector1 == vector2
-    bool operator!=(const dtVector &v) const;                   // (true or false) vector1 != vector2
-    bool operator==(const dtVector3<m_type, m_row> &v) const;   // (true or false) vector1 == vector2
-    bool operator!=(const dtVector3<m_type, m_row> &v) const;   // (true or false) vector1 != vector2
-    bool operator==(const dtVector4<m_type, m_row> &v) const;   // (true or false) vector1 == vector2
-    bool operator!=(const dtVector4<m_type, m_row> &v) const;   // (true or false) vector1 != vector2
-    bool operator==(const dtVector6<m_type, m_row> &v) const;   // (true or false) vector1 == vector2
-    bool operator!=(const dtVector6<m_type, m_row> &v) const;   // (true or false) vector1 != vector2
-    bool operator==(const dtMatrix<m_row, 1, m_type> &v) const; // (true or false) vector1 == vector2
-    bool operator!=(const dtMatrix<m_row, 1, m_type> &v) const; // (true or false) vector1 != vector2
+    bool operator==(const Vector &v) const;                   // (true or false) vector1 == vector2
+    bool operator!=(const Vector &v) const;                   // (true or false) vector1 != vector2
+    bool operator==(const Vector<0, t_type> &v) const;        // (true or false) vector1 == vector2
+    bool operator!=(const Vector<0, t_type> &v) const;        // (true or false) vector1 != vector2
+    bool operator==(const Vector3<t_type, t_row> &v) const;   // (true or false) vector1 == vector2
+    bool operator!=(const Vector3<t_type, t_row> &v) const;   // (true or false) vector1 != vector2
+    bool operator==(const Vector4<t_type, t_row> &v) const;   // (true or false) vector1 == vector2
+    bool operator!=(const Vector4<t_type, t_row> &v) const;   // (true or false) vector1 != vector2
+    bool operator==(const Vector6<t_type, t_row> &v) const;   // (true or false) vector1 == vector2
+    bool operator!=(const Vector6<t_type, t_row> &v) const;   // (true or false) vector1 != vector2
+    bool operator==(const Matrix<t_row, 1, t_type> &v) const; // (true or false) vector1 == vector2
+    bool operator!=(const Matrix<t_row, 1, t_type> &v) const; // (true or false) vector1 != vector2
+    bool operator==(const Matrix<0, 0, t_type> &v) const;     // (true or false) vector1 == vector2
+    bool operator!=(const Matrix<0, 0, t_type> &v) const;     // (true or false) vector1 != vector2
 
     void Print(const char endChar = 0);
 
     /* Friend classes */
-    template <uint16_t row, typename type> friend class dtVector;
-    template <uint16_t row, uint16_t col, typename type> friend class dtMatrix;
-    template <uint16_t row, uint16_t col, typename type> friend class dtCscMatrix;
-    template <typename type, uint16_t row, uint16_t col> friend class dtMatrix3;
-    template <typename type, uint16_t row, uint16_t col> friend class dtRotation;
-    template <typename type, uint16_t row> friend class dtVector3;
-    template <typename type, uint16_t row> friend class dtVector4;
-    template <typename type, uint16_t row> friend class dtVector6;
-    template <typename type, uint16_t row> friend class dtQuaternion;
+    template <uint16_t row, typename type> friend class Vector;
+    template <uint16_t row, uint16_t col, typename type> friend class Matrix;
+    template <uint16_t row, uint16_t col, typename type> friend class CscMatrix;
+    template <typename type, uint16_t row, uint16_t col> friend class Matrix3;
+    template <typename type, uint16_t row, uint16_t col> friend class Rotation;
+    template <typename type, uint16_t row> friend class Vector3;
+    template <typename type, uint16_t row> friend class Vector4;
+    template <typename type, uint16_t row> friend class Vector6;
+    template <typename type, uint16_t row> friend class Quaternion;
 
-    template <uint16_t row, uint16_t col, typename type> friend class dtLowerTriangular;
-    template <uint16_t row, uint16_t col, typename type> friend class dtUpperTriangular;
-    template <uint16_t row, uint16_t col, typename type> friend class dtNoPivLU;
-    template <uint16_t row, uint16_t col, typename type> friend class dtPartialPivLU;
-    template <uint16_t row, uint16_t col, typename type> friend class dtLLT;
-    template <uint16_t row, uint16_t col, typename type> friend class dtLDLT;
-    template <uint16_t row, uint16_t col, typename type> friend class dtSVD;
+    template <uint16_t row, uint16_t col, typename type> friend class LowerMatrix;
+    template <uint16_t row, uint16_t col, typename type> friend class UpperMatrix;
+    template <uint16_t row, uint16_t col, typename type> friend class NoPivLU;
+    template <uint16_t row, uint16_t col, typename type> friend class PartialPivLU;
+    template <uint16_t row, uint16_t col, typename type> friend class FullPivLU;
+    template <uint16_t row, uint16_t col, typename type> friend class LLT;
+    template <uint16_t row, uint16_t col, typename type> friend class LDLT;
+    template <uint16_t row, uint16_t col, typename type> friend class SVD;
+
+    template <uint16_t row, uint16_t col, typename type> friend class CscAMD;
+    template <uint16_t row, uint16_t col, typename type> friend class CscLLT;
 
     /* Friend template function */
     template <uint16_t row, typename type>
-    friend dtVector<row, type> operator+(const type s, const dtVector<row, type> &v); // scalar + vector = scalar + m_elem(i)
+    friend Vector<row, type> operator+(const type s, const Vector<row, type> &v); // scalar + vector = scalar + m_elem(i)
     template <uint16_t row, typename type>
-    friend dtVector<row, type> operator-(const type s, const dtVector<row, type> &v); // scalar - vector = scalar - m_elem(i)
+    friend Vector<row, type> operator-(const type s, const Vector<row, type> &v); // scalar - vector = scalar - m_elem(i)
     template <uint16_t row, typename type>
-    friend dtVector<row, type> operator*(const type s, const dtVector<row, type> &v); // scalar * vector = scalar * m_elem(i)
+    friend Vector<row, type> operator*(const type s, const Vector<row, type> &v); // scalar * vector = scalar * m_elem(i)
     template <uint16_t row, typename type>
-    friend dtVector<row, type> operator/(const type s, const dtVector<row, type> &v); // scalar / vector = scalar / m_elem(i)
+    friend Vector<row, type> operator/(const type s, const Vector<row, type> &v); // scalar / vector = scalar / m_elem(i)
 };
 
-} // namespace dtMath
+} // namespace Math
+} // namespace dt
 
 #include "dtVector.tpp"
+
+#include "dtVector0.h"
 
 #endif // DTMATH_DTVECTOR_H_
