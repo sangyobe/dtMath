@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.16)
+project(appdtmath)
+file(GLOB SRCS "*.cpp")
+add_executable(${PROJECT_NAME} ${SRCS})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
