@@ -13,7 +13,7 @@
 #ifndef DTMATH_DTCARE_H_
 #define DTMATH_DTCARE_H_
 
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 #include <stdint.h>
 #include <stdio.h>
 #elif defined(ARDUINO)

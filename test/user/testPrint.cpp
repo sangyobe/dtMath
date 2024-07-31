@@ -21,7 +21,7 @@ void PrintTitle(const char* str)
 
     memcpy(&title[3], str, strlen(str));
 
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[92m");
     Printf("%s", asterisk);
     Printf("%s", title);
@@ -47,7 +47,7 @@ void PrintHeading(const char* str)
     title[80] = 0;
     memcpy(&title[3], str, strlen(str));
 
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[36m");
     Printf("%s", title);
     Printf("\033[0m");

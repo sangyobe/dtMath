@@ -69,7 +69,7 @@ void MatAdd()
     matB.Print();
     Printf("Result matC is\n");
     matC.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 1000000);
 #else
@@ -88,7 +88,7 @@ void MatAdd()
     mat3B.Print();
     Printf("Result mat3C is\n");
     mat3C.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 1000000);
 #else
@@ -118,7 +118,7 @@ void MatScalar()
     matA.Print();
     Printf("Result matA * 100 is\n");
     matC.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 1000000);
 #else
@@ -135,7 +135,7 @@ void MatScalar()
     mat3A.Print();
     Printf("Result mat3A * 100 is\n");
     mat3C.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 1000000);
 #else
@@ -170,7 +170,7 @@ void MatMat()
     matB.Print();
     Printf("Result matA * matB is \n");
     matC.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else
@@ -189,7 +189,7 @@ void MatMat()
     mat3B.Print();
     Printf("Result mat3A * mat3B is \n");
     mat3C.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else
@@ -222,7 +222,7 @@ void MatVec()
     vecA.Print();
     Printf("Result matA * vecA is \n");
     vecB.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else
@@ -241,7 +241,7 @@ void MatVec()
     vecA.Print();
     Printf("Result mat3A * vecA is \n");
     vecB.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else
@@ -269,7 +269,7 @@ void MatTranspose()
     Printf("// dtMath dtMatrix Mat Transpose\n");
     Printf("Result matA.Transpose is \n");
     matC.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else
@@ -284,7 +284,7 @@ void MatTranspose()
     Printf("// dtMath dtMatrix3 Mat Transpose\n");
     Printf("Result mat3A.Transpose is \n");
     mat3C.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else
@@ -314,7 +314,7 @@ void MatInv()
     matA.Print();
     Printf("Result is \n");
     matC.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else
@@ -331,7 +331,7 @@ void MatInv()
     mat3A.Print();
     Printf("Result is\n");
     mat3C.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else
@@ -361,7 +361,7 @@ void MatPInv()
     matA.Print();
     Printf("Result is \n");
     matC.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else
@@ -378,7 +378,7 @@ void MatPInv()
     mat3A.Print();
     Printf("Result is \n");
     mat3C.Print();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
     Printf("\033[33mTotal elapsed time is %fms\033[0m\n", elapseTime.GetElapsedTime_msec());
     Printf("\033[33mAvg elapsed time is %fms\033[0m\n\n", elapseTime.GetElapsedTime_msec() / 100000);
 #else

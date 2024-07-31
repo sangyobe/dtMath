@@ -14,7 +14,11 @@
 #include "dtMathMem.h"
 
 #include <cstdlib>  // malloc, calloc, realloc, free
+#if defined(__APPLE__)
+#include <malloc/malloc.h>
+#else
 #include <malloc.h> // malloc_usable_size
+#endif
 #include <new>      // bad_alloc
 
 namespace dt
@@ -71,7 +75,11 @@ inline void MemFree(t_type *ptr)
 template <typename t_type>
 inline size_t MemSize(t_type *ptr)
 {
+#if defined(__APPLE__)
+    return malloc_size((void *)ptr);
+#else
     return malloc_usable_size((void *)ptr);
+#endif
 }
 
 } // namespace Math

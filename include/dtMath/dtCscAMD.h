@@ -13,7 +13,7 @@
 
 #include "dtDefine.h"
 
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 #include <stdint.h>
 #include <string.h>
 #elif defined(ARDUINO)
@@ -22,6 +22,7 @@
 
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 namespace dt
 {

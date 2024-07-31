@@ -1,4 +1,4 @@
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 #include "dhTerm.h"
 #include <iostream>
 #include <stdio.h>
@@ -66,7 +66,7 @@ void dtMathQuadProg()
     }
 }
 
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 void Test_QuadrupedRobotQP()
 {
     PrintTitle("Test Quadruped Robot QP");
@@ -1126,4 +1126,4 @@ void dtMathMoBedQP()
     Println;
     Println;
 }
-#endif /* defined(_WIN32) || defined(__linux__) */
+#endif /* defined(_WIN32) || defined(__linux__) || defined(__APPLE__) */

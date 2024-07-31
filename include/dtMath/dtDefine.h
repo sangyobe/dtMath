@@ -11,7 +11,7 @@
 
 #pragma once
 
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <stdint.h>

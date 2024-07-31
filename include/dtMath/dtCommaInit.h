@@ -14,7 +14,7 @@
 
 #include "dtDefine.h"
 
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 #include <assert.h>
 #include <stdint.h>
 #elif defined(ARDUINO)

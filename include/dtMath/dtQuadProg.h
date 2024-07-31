@@ -74,7 +74,7 @@ s.t.
 #ifndef DTMATH_DTQUAD_PROG_H_
 #define DTMATH_DTQUAD_PROG_H_
 
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 #include <cstdlib>
 #include <iostream>
 #elif defined(ARDUINO)

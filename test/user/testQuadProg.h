@@ -3,11 +3,11 @@
 void Test_QuadProg();
 void EigenQuadProg();
 void dtMathQuadProg();
-#if defined(_WIN32) || defined(__linux__)
+#if defined(_WIN32) || defined(__linux__) || defined(__APPLE__)
 void Test_QuadrupedRobotQP();
 void EigenQuadrupedRobotQP();
 void dtMathQuadrupedRobotQP();
 void dtMathQuadrupedRobotQP_DH();
 void dtMathQuadrupedRobotQP_DJ();
 void dtMathMoBedQP();
-#endif /* defined(_WIN32) || defined(__linux__) */
+#endif /* defined(_WIN32) || defined(__linux__) || defined(__APPLE__) */
