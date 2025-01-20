@@ -1824,15 +1824,15 @@ inline Vector<t_row, t_type> &Vector<t_row, t_type>::operator-=(const t_type s)
 
     for (cnt = t_row >> 2u; cnt > 0u; cnt--, irow += 4)
     {
-        m_elem[irow] /= s;
-        m_elem[irow + 1] /= s;
-        m_elem[irow + 2] /= s;
-        m_elem[irow + 3] /= s;
+        m_elem[irow] -= s;
+        m_elem[irow + 1] -= s;
+        m_elem[irow + 2] -= s;
+        m_elem[irow + 3] -= s;
     }
 
     for (cnt = t_row % 4u; cnt > 0u; cnt--, irow++)
     {
-        m_elem[irow] /= s;
+        m_elem[irow] -= s;
     }
 
     return (*this);

@@ -947,10 +947,10 @@ inline CscMatrix<t_row, col, t_type> CscMatrix<t_row, t_col, t_type>::operator*(
     t_type x[t_row] = {
         0,
     };
-    t_type elem[t_row * t_col] = {
+    t_type elem[t_row * col] = {
         0,
     };
-    int rowIdx[t_row * t_col] = {
+    int rowIdx[t_row * col] = {
         0,
     };
     int colPtr[col + 1] = {

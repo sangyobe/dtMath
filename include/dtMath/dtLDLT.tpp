@@ -86,7 +86,8 @@ inline int8_t LDLT<t_row, t_col, t_type>::Compute()
 
         // If diagonal element is not positive, return the error,
         // the matrix is not positive definite symmetric.
-        if (*(pMi + i) <= std::numeric_limits<t_type>::epsilon())
+        if (std::abs(*(pMi + i)) <= std::numeric_limits<t_type>::epsilon())
+
         {
             m_isOk = 0;
             return -1;
