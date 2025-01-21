@@ -1,3 +1,12 @@
-v1.4.1
+#### [v1.5.0]
+(2015/1/20)
+##### 
+[BUG FIX] Minor but important changes made to ART_FRAMEWORK dtMath library
+- "-=" operator fixed in dtVector.tpp file
+- "-=" operator fixed in dtVector0.tpp file
+- fail condition fixed in dtLDLT.tpp
+- fail condition fixed in dtLDLT0.tpp
+- bug fixed in CscMatrix matrix-matrix multiplication library
+- set missing argument for calling dt::Math::Matrix::GetColVec() in dtQuadProg::Solve()
 
-v1.4.0.pre
+#### [v1.4.0]

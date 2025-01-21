@@ -849,7 +849,7 @@ Label_2:
     }
 
     /* set np = n[ip] */
-    mCi.GetColVec(ip, m_vNp);
+    mCi.GetColVec(0, ip, m_vNp);
 
     /* set u = [u 0]^T */
     m_vU(iq) = 0;

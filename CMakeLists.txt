@@ -11,7 +11,7 @@ cmake_minimum_required(VERSION 3.13)
 
 project(dtMath
     LANGUAGES CXX
-    VERSION 1.4.0
+    VERSION 1.5.0
     DESCRIPTION "A math library."
     HOMEPAGE_URL "https://gitlabee.hmg-corp.io/rlab/art/ctrlpart/project/arch/03-art-framework/dtmath.git"
 )
