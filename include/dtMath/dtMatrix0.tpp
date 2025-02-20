@@ -1324,7 +1324,8 @@ inline Matrix<0, 0, t_type> Matrix<0, 0, t_type>::Inv(int8_t *isOk) const
 template <typename t_type>
 inline Matrix<0, 0, t_type> Matrix<0, 0, t_type>::FInv(int8_t *isOk) const
 {
-    return FullPivLU<0, 0, t_type>(*this).Inverse(isOk);
+    // return FullPivLU<0, 0, t_type>(*this).Inverse(isOk);
+    return FullPivLU<0, 0, t_type>(m_row, m_col, m_elem).Inverse(isOk);
 }
 
 template <typename t_type>
